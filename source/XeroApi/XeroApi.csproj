@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{20A56AFE-3B15-4FA6-A06D-96F20D5A770D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>XeroApi</RootNamespace>
+    <AssemblyName>XeroApi</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Linq\ApiQuery.cs" />
+    <Compile Include="Linq\ApiQueryDescription.cs" />
+    <Compile Include="Linq\ApiQueryProvider.cs" />
+    <Compile Include="Linq\ApiQueryTranslator.cs" />
+    <Compile Include="Exceptions\ApiResponseException.cs" />
+    <Compile Include="Model\ModelSerializer.cs" />
+    <Compile Include="OAuth\Consumer\IMessageLogger.cs" />
+    <Compile Include="OAuth\Logging\DebugMessageLogger.cs" />
+    <Compile Include="Repository.cs" />
+    <Compile Include="Linq\ExpressionVisitor.cs" />
+    <Compile Include="Integration\IIntegrationProxy.cs" />
+    <Compile Include="Integration\IntegrationProxy.cs" />
+    <Compile Include="Model\Contact.cs" />
+    <Compile Include="Model\Contacts.cs" />
+    <Compile Include="Model\Invoice.cs" />
+    <Compile Include="Model\Invoices.cs" />
+    <Compile Include="Model\ModelAttributes.cs" />
+    <Compile Include="Model\ModelBase.cs" />
+    <Compile Include="Model\ModelList.cs" />
+    <Compile Include="Model\ModelTypeHelper.cs" />
+    <Compile Include="Model\Organisation.cs" />
+    <Compile Include="Model\Organisations.cs" />
+    <Compile Include="Model\Response.cs" />
+    <Compile Include="OAuth\Consumer\ConsumerRequest.cs" />
+    <Compile Include="OAuth\Consumer\ConsumerRequestExtensions.cs" />
+    <Compile Include="OAuth\Consumer\ConsumerResponse.cs" />
+    <Compile Include="OAuth\Consumer\DefaultConsumerRequestFactory.cs" />
+    <Compile Include="OAuth\Consumer\ICertificateFactory.cs" />
+    <Compile Include="OAuth\Consumer\IConsumerRequest.cs" />
+    <Compile Include="OAuth\Consumer\IConsumerRequestFactory.cs" />
+    <Compile Include="OAuth\Consumer\IOAuthConsumerContext.cs" />
+    <Compile Include="OAuth\Consumer\IOAuthSession.cs" />
+    <Compile Include="OAuth\Consumer\LocalFileCertificateFactory.cs" />
+    <Compile Include="OAuth\Consumer\LocalMachineCertificateFactory.cs" />
+    <Compile Include="OAuth\Consumer\NullCertificateFactory.cs" />
+    <Compile Include="OAuth\Consumer\OAuthConsumerContext.cs" />
+    <Compile Include="OAuth\Consumer\OAuthSession.cs" />
+    <Compile Include="OAuth\Consumer\RequestDescription.cs" />
+    <Compile Include="OAuth\Consumer\SimpleCertificateFactory.cs" />
+    <Compile Include="OAuth\Consumer\WebExceptionHelper.cs" />
+    <Compile Include="OAuth\Framework\BoundParameter.cs" />
+    <Compile Include="OAuth\Framework\DateTimeUtility.cs" />
+    <Compile Include="OAuth\Framework\Error.cs" />
+    <Compile Include="OAuth\Framework\IConsumer.cs" />
+    <Compile Include="OAuth\Framework\INonceGenerator.cs" />
+    <Compile Include="OAuth\Framework\IOAuthContext.cs" />
+    <Compile Include="OAuth\Framework\IToken.cs" />
+    <Compile Include="OAuth\Framework\NonceGenerator.cs" />
+    <Compile Include="OAuth\Framework\OAuthContext.cs" />
+    <Compile Include="OAuth\Framework\OAuthContextBuilder.cs" />
+    <Compile Include="OAuth\Framework\OAuthException.cs" />
+    <Compile Include="OAuth\Framework\OAuthProblemReport.cs" />
+    <Compile Include="OAuth\Framework\OAuthProblems.cs" />
+    <Compile Include="OAuth\Framework\Parameters.cs" />
+    <Compile Include="OAuth\Framework\SignatureMethod.cs" />
+    <Compile Include="OAuth\Framework\SigningContext.cs" />
+    <Compile Include="OAuth\Framework\Signing\HmacSha1SignatureImplementation.cs" />
+    <Compile Include="OAuth\Framework\Signing\IContextSignatureImplementation.cs" />
+    <Compile Include="OAuth\Framework\Signing\IOAuthContextSigner.cs" />
+    <Compile Include="OAuth\Framework\Signing\OAuthContextSigner.cs" />
+    <Compile Include="OAuth\Framework\Signing\PlainTextSignatureImplementation.cs" />
+    <Compile Include="OAuth\Framework\Signing\RsaSha1SignatureImplementation.cs" />
+    <Compile Include="OAuth\Framework\TokenBase.cs" />
+    <Compile Include="OAuth\Framework\UriUtility.cs" />
+    <Compile Include="OAuth\Framework\With.cs" />
+    <Compile Include="OAuth\Utility\Storage\Basic\AccessToken.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="OAuth\Utility\Storage\Basic\RequestToken.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="OAuth\Utility\ReflectionBasedDictionaryAdapter.cs" />
+    <Compile Include="OAuth\Utility\StreamExtensions.cs" />
+    <Compile Include="OAuth\XeroApiPartnerSession.cs" />
+    <Compile Include="OAuth\XeroApiPrivateSession.cs" />
+    <Compile Include="OAuth\XeroApiEndpoints.cs" />
+    <Compile Include="OAuth\XeroApiPublicSession.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Linq\PropertyInfoExtensions.cs" />
+    <Compile Include="Linq\QueryProvider.cs" />
+    <Compile Include="Linq\TypeSystem.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
