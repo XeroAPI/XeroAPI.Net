@@ -92,7 +92,7 @@ namespace XeroApi
 
         public Organisation Organisation
         {
-            get { return new ApiQuery<Organisation>(_provider).ToList().FirstOrDefault(); }
+            get { return new ApiQuery<Organisation>(_provider).FirstOrDefault(); }
         }
 
         /// <summary>
