@@ -27,6 +27,8 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Runtime.Remoting;
+using System.Security;
 using System.Security.Cryptography.X509Certificates;
 
 
@@ -69,17 +71,24 @@ namespace DevDefined.OAuth.Consumer
         {
             HttpWebResponse httpWebResponse = (webEx.Response as HttpWebResponse);
 
-            // Try to supress any exceptions generated from an http 4xx and 5xx responses code...
+            // Try to supress any exceptions generated from an http 4xx and 5xx responses code. These may still be used as a positive result from the server.
             if (httpWebResponse != null)
             {
                 consumerResponse = new ConsumerResponse(httpWebResponse);
                 _oauthSession.LogMessage(this, consumerResponse);
             }
             
+            // Check if the response is an OAuth signing/consumerkey/certificate/etc problem
             OAuthException authException;
             if (WebExceptionHelper.TryWrapException(Context, webEx, out authException))
             {
                 throw authException;
+            }
+
+            // Some http 403 errors are actually html pages that are difficult to decode
+            if (httpWebResponse != null && httpWebResponse.StatusCode == HttpStatusCode.Forbidden)
+            {
+                throw new ApplicationException(string.Format("The API server returned http {0} with content type {1}. See the inner exception for more details.", (int)httpWebResponse.StatusCode, httpWebResponse.ContentType), webEx); 
             }
 
             if (consumerResponse == null)
