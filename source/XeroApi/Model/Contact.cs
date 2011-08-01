@@ -4,14 +4,16 @@ namespace XeroApi.Model
 {
     public class Contact : ModelBase
     {
-
-        public string Name { get; set; }
-
+        [ItemId]
         public Guid ContactID { get; set; }
 
+        [ItemNumber]
         public string ContactNumber { get; set; }
 
+        [ItemUpdatedDate]
         public DateTime UpdatedDateUTC { get; set; }
+        
+        public string Name { get; set; }
 
         public string FirstName { get; set; }
 
