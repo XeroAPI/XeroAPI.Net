@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XeroApi.Console", "XeroApi.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XeroApi.Tests", "XeroApi.Tests\XeroApi.Tests.csproj", "{F2AEE2B2-FEE7-4144-8B92-F258200A27B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XeroApi.MvcWebApp", "XeroApi.MvcWebApp\XeroApi.MvcWebApp.csproj", "{51821CFB-9788-4B86-9B01-F9A07C6AE0EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,16 @@ Global
 		{F2AEE2B2-FEE7-4144-8B92-F258200A27B9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{F2AEE2B2-FEE7-4144-8B92-F258200A27B9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{F2AEE2B2-FEE7-4144-8B92-F258200A27B9}.Release|x86.ActiveCfg = Release|Any CPU
+		{51821CFB-9788-4B86-9B01-F9A07C6AE0EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51821CFB-9788-4B86-9B01-F9A07C6AE0EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51821CFB-9788-4B86-9B01-F9A07C6AE0EA}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{51821CFB-9788-4B86-9B01-F9A07C6AE0EA}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{51821CFB-9788-4B86-9B01-F9A07C6AE0EA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{51821CFB-9788-4B86-9B01-F9A07C6AE0EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51821CFB-9788-4B86-9B01-F9A07C6AE0EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51821CFB-9788-4B86-9B01-F9A07C6AE0EA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{51821CFB-9788-4B86-9B01-F9A07C6AE0EA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{51821CFB-9788-4B86-9B01-F9A07C6AE0EA}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
