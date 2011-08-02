@@ -45,7 +45,7 @@ This software is published under the [MIT Micense](http://en.wikipedia.org/wiki/
 
 Portions of this software were taken from the DevDefined.OAuth library (https://github.com/bittercoder/DevDefined.OAuth).
 
-	Copyright (c) 2010 Xero Limited
+	Copyright (c) 2011 Xero Limited
 
 	Permission is hereby granted, free of charge, to any person
 	obtaining a copy of this software and associated documentation
