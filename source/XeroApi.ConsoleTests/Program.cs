@@ -49,25 +49,10 @@ namespace XeroApi.ConsoleApp
             }
 
             // Make a call to api.xero.com to check that we can use the access token.
-            try
-            {
-                Organisation organisation = repository.Organisation;
-                Console.WriteLine(string.Format("You have been authorised against organisation: {0}", organisation.Name));
-            }
-            catch (OAuthException ex)
-            {
-                Console.WriteLine("An OAuthException was caught:");
-                Console.WriteLine(ex.Report);
-                return;
-            }
-            catch (WebException ex)
-            {
-                Console.WriteLine("A WebException was caught:");
-                Console.WriteLine(ex.Response.GetResponseStream().ReadToEnd());
-                return;
-            }
+            Organisation organisation = repository.Organisation;
+            Console.WriteLine(string.Format("You have been authorised against organisation: {0}", organisation.Name));
 
-
+            
 
 
             // Make a PUT call to the API - add a dummy contact
@@ -78,55 +63,25 @@ namespace XeroApi.ConsoleApp
             {
                 return;
             }
-
-
+            
             Contact contact = new Contact
             {
                 Name = contactName
             };
+            
+            contact = repository.UpdateOrCreate(contact);
+            Console.WriteLine(string.Format("The contact '{0}' was created with id: {1}", contact.Name, contact.ContactID));
 
-
-            try
-            {
-                contact = repository.UpdateOrCreate(contact);
-                Console.WriteLine(string.Format("The contact '{0}' was created with id: {1}", contact.Name, contact.ContactID));
-            }
-            catch (OAuthException ex)
-            {
-                Console.WriteLine("An OAuthException was caught:");
-                Console.WriteLine(ex.Report);
-                return;
-            }
-            catch (WebException ex)
-            {
-                Console.WriteLine("A WebException was caught:");
-                Console.WriteLine(ex.Response.GetResponseStream().ReadToEnd());
-                return;
-            }
-
-
+            
 
 
             // Try to update the contact that's just been created, but this time use a POST method
             contact.EmailAddress = string.Format("{0}@nowhere.com", contact.Name.ToLower().Replace(" ", "."));
+            
+            contact = repository.UpdateOrCreate(contact);
+            Console.WriteLine(string.Format("The contact '{0}' was updated with email address: {1}", contact.Name, contact.EmailAddress));
+            
 
-            try
-            {
-                contact = repository.UpdateOrCreate(contact);
-                Console.WriteLine(string.Format("The contact '{0}' was updated with email address: {1}", contact.Name, contact.EmailAddress));
-            }
-            catch (OAuthException ex)
-            {
-                Console.WriteLine("An OAuthException was caught:");
-                Console.WriteLine(ex.Report);
-                return;
-            }
-            catch (WebException ex)
-            {
-                Console.WriteLine("A WebException was caught:");
-                Console.WriteLine(ex.Response.GetResponseStream().ReadToEnd());
-                return;
-            }
 
 
             // Construct a linq expression to call 'GET Invoices'
@@ -139,8 +94,10 @@ namespace XeroApi.ConsoleApp
             Console.WriteLine(string.Format("There were {0} contacts created or updated in the last month.", invoiceCount));
             
 
+
+
             // Find out how many bank accounts are defined for the organisation...
-            var bankAccounts = repository.Accounts.Where(account => account.Type == "BANK");
+            IQueryable<Account> bankAccounts = repository.Accounts.Where(account => account.Type == "BANK");
 
             Console.WriteLine(string.Format("There were {0} bank accounts in this organisation.", bankAccounts.Count()));
 
@@ -150,8 +107,9 @@ namespace XeroApi.ConsoleApp
             }
 
 
+
             // Get the tracking categories in this org
-            var trackingCategories = repository.TrackingCategories;
+            IQueryable<TrackingCategory> trackingCategories = repository.TrackingCategories;
 
             foreach (var trackingCategory in trackingCategories)
             {
