@@ -130,26 +130,39 @@ namespace XeroApi.ConsoleApp
 
 
             // Construct a linq expression to call 'GET Invoices'
-            try
-            {
-                int invoiceCount = repository.Contacts
-                    .Where(c => c.UpdatedDateUTC >= DateTime.UtcNow.AddMonths(-1))
-                    .Count();
+            DateTime oneMonthAgo = DateTime.UtcNow.AddMonths(-1);
 
-                Console.WriteLine(string.Format("There were {0} contacts created or updated in the last month.", invoiceCount));
-            }
-            catch (OAuthException ex)
+            int invoiceCount = repository.Contacts
+                .Where(c => c.UpdatedDateUTC >= oneMonthAgo)
+                .Count();
+
+            Console.WriteLine(string.Format("There were {0} contacts created or updated in the last month.", invoiceCount));
+            
+
+            // Find out how many bank accounts are defined for the organisation...
+            var bankAccounts = repository.Accounts.Where(account => account.Type == "BANK");
+
+            Console.WriteLine(string.Format("There were {0} bank accounts in this organisation.", bankAccounts.Count()));
+
+            foreach (var bankAaccount in bankAccounts)
             {
-                Console.WriteLine("An OAuthException was caught:");
-                Console.WriteLine(ex.Report);
-                return;
+                Console.WriteLine(string.Format("Bank Account Name:{0} Code:{1} Number:{2}", bankAaccount.Name, bankAaccount.Code, bankAaccount.BankAccountNumber));
             }
-            catch (WebException ex)
+
+
+            // Get the tracking categories in this org
+            var trackingCategories = repository.TrackingCategories;
+
+            foreach (var trackingCategory in trackingCategories)
             {
-                Console.WriteLine("A WebException was caught:");
-                Console.WriteLine(ex.Response.GetResponseStream().ReadToEnd());
-                return;
+                Console.WriteLine(string.Format("Tracking Category: {0}", trackingCategory.Name));
+
+                foreach (var trackingOption in trackingCategory.Options)
+                {
+                    Console.WriteLine(string.Format("    Option: {0}", trackingOption.Name));
+                }
             }
+
         }
     }
 }
