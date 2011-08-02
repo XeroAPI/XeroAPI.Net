@@ -80,11 +80,11 @@ namespace XeroApi.ConsoleApp
             
             contact = repository.UpdateOrCreate(contact);
             Console.WriteLine(string.Format("The contact '{0}' was updated with email address: {1}", contact.Name, contact.EmailAddress));
-            
 
 
 
-            // Construct a linq expression to call 'GET Invoices'
+
+            // Construct a linq expression to call 'GET Invoices'...
             DateTime oneMonthAgo = DateTime.UtcNow.AddMonths(-1);
 
             int invoiceCount = repository.Contacts
@@ -108,6 +108,7 @@ namespace XeroApi.ConsoleApp
 
 
 
+
             // Get the tracking categories in this org
             IQueryable<TrackingCategory> trackingCategories = repository.TrackingCategories;
 
@@ -121,6 +122,18 @@ namespace XeroApi.ConsoleApp
                 }
             }
 
+
+
+
+            // Try the linq syntax to select items with sales details..
+            var items = from item in repository.Items
+                        where item.SalesDetails != null
+                        select item;
+
+            foreach (var item in items)
+            {
+                Console.WriteLine(string.Format("Item {0} is sold at price: {1} {2}", item.Description, item.SalesDetails.UnitPrice, organisation.BaseCurrency));
+            }
         }
     }
 }
