@@ -1,0 +1,83 @@
+XeroApi .Net Library 
+====================
+
+![Project status](http://stillmaintained.com/XeroAPI/XeroAPI.Net.png)
+
+
+Introduction
+------------
+
+This is a .Net wrapper library, written in C#, used to comnunicate with the Xero API (http://api.xero.com).
+
+You can use this library to communicate with the Xero API, without needing any priod knowlege of Xml or OAuth. The library can work in [public](http://developer.xero.com/api-overview/setup-an-application/#public-apps), [private](http://developer.xero.com/api-overview/setup-an-application/#private-apps) or [partner](http://developer.xero.com/api-overview/setup-an-application/#partner-apps) mode.
+
+Features
+--------
+
+This library contains a linq provider for writing linq queries:
+
+	var bankAccounts = from account in repository.Accounts
+					   where account.Type == "BANK"
+					   select account;
+
+Or, using linq extension methods...
+
+	int invoiceCount = repository.Contacts
+		.Where(c => c.UpdatedDateUTC >= DateTime.UtcNow.AddMonths(-1))
+		.Count();
+
+Entities can be created or updated using the familiar repository pattern:
+
+	Contact contact = new Contact
+	{
+		Name = "Joe Bloggs",
+		FirstName = "Joe",
+		LastName = "Bloggs",
+		EmailAddress = "joe.bloggs@nowhere.com"
+	};
+	
+	repository.Create(contact);
+
+
+License
+-------
+This software is published under the [MIT Micense](http://en.wikipedia.org/wiki/MIT_License).
+
+Portions of this software were taken from the DevDefined.OAuth library (https://github.com/bittercoder/DevDefined.OAuth).
+
+	Copyright (c) 2010 Xero Limited
+
+	Permission is hereby granted, free of charge, to any person
+	obtaining a copy of this software and associated documentation
+	files (the "Software"), to deal in the Software without
+	restriction, including without limitation the rights to use,
+	copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the
+	Software is furnished to do so, subject to the following
+	conditions:
+
+	The above copyright notice and this permission notice shall be
+	included in all copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+	EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+	OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+	NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+	HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+	FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+	OTHER DEALINGS IN THE SOFTWARE.
+
+	
+Installation
+------------
+Currently the source code can be downloaded from https://github.com/XeroAPI/XeroAPI.Net. There are plans to publish a complied dll via [NuGet](http://nuget.codeplex.com/).
+
+
+Usage
+-----
+
+There is are sample projects in the git repository that have example usage:
+
+1. XeroApi.Console - A console app that can run in public, private or partner mode.
+2. XeroApi.MvcWebApp - An ASP.Net MVC2 web app that runs in partner mode.
