@@ -95,7 +95,7 @@ In fact, here's one I wrote earlier:
             IOAuthSession session = new XeroApi.OAuth.XeroApiPrivateSession(
                 "XeroAPI Mini App",
                 "YOUR-CONSUMER-KEY",
-                new X509Certificate2(@"D:\Your-Certificate.pfx", "xero"));
+                new X509Certificate2(@"D:\Your-Certificate.pfx", "your-pfx-password"));
 
             Repository repository = new Repository(session);
             
