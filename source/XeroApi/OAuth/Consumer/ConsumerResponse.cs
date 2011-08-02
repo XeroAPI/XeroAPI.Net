@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Specialized;
 using System.IO;
 using System.Net;
 using System.Web;
@@ -18,6 +19,8 @@ namespace DevDefined.OAuth.Consumer
         bool IsGoodResponse { get; }
 
         string Content { get; }
+        string ContentType { get; }
+        int ContentLength { get; }
 
         XDocument ToXDocument();
         T DeSerialiseTo<T>();
@@ -30,6 +33,13 @@ namespace DevDefined.OAuth.Consumer
         public ConsumerResponse(HttpWebResponse webResponse)
         {
             Content = webResponse.GetResponseStream().ReadToEnd();
+
+            if (webResponse.Headers["Content-Type"] != string.Empty)
+                ContentType = webResponse.Headers["Content-Type"];
+
+            if (webResponse.Headers["Content-Length"] != string.Empty)
+                ContentLength = int.Parse(webResponse.Headers["Content-Length"]);
+
             ResponseCode = webResponse.StatusCode;
             Headers = webResponse.Headers;
         }
@@ -37,7 +47,19 @@ namespace DevDefined.OAuth.Consumer
         public string Content
         {
             get; 
-            set;
+            private set;
+        }
+
+        public string ContentType
+        {
+            get; 
+            private set;
+        }
+
+        public int ContentLength
+        { 
+            get; 
+            private set;
         }
 
         public XDocument ToXDocument()
