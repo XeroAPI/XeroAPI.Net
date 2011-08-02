@@ -9,17 +9,26 @@ namespace XeroApi.Model
     public class Response
     {
         public DateTime DateTimeUTC { get; set; }
-
         public string Status { get; set; }
-
         public string ProviderName { get; set; }
 
-        public Organisations Organisations { get; set; }
-
+        public Accounts Accounts { get; set; }
+        public BankTransactions BankTransactions { get; set; }
+        public BrandingThemes BrandingThemes { get; set; }
         public Contacts Contacts { get; set; }
-
+        public CreditNotes CreditNotes { get; set; }
+        public Currencies Currencies { get; set; }
+        public Employees Employees { get; set; }
         public Invoices Invoices { get; set; }
-
+        public Items Items { get; set; }
+        public Journals Journals { get; set; }
+        public ManualJournals ManualJournals { get; set; }
+        public Organisations Organisations { get; set; }
+        public Payments Payments { get; set; }
+        public Reports Reports { get; set; }
+        public TaxRates TaxRates { get; set; }
+        public TrackingCategories TrackingCategories { get; set; }
+        
 
         #region Type Helper Methods
 

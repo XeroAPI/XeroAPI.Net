@@ -7,9 +7,27 @@ namespace XeroApi.Model
 
         public static Type GetElementCollectionType(Type elementType)
         {
-            // Forgive me...
-            return Type.GetType(elementType.Namespace + "." + elementType.Name + "s");
+            return Type.GetType(elementType.Namespace + "." + Pluralize(elementType.Name));
         }
 
+        public static string Pluralize(string elementName)
+        {
+            elementName = elementName.Trim();
+
+            if (elementName.EndsWith("s"))
+            {
+                return elementName;
+            }
+
+            // Fugly is as fugly does...
+
+            if (elementName.EndsWith("y"))
+            {
+                // e.g. currency -> currencies
+                return elementName.TrimEnd('y') + "ies";
+            }
+            
+            return elementName + "s";
+        }
     }
 }

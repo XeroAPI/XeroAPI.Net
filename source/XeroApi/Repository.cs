@@ -74,26 +74,41 @@ namespace XeroApi
             return ModelSerializer.Deserialize<TModel>(responseXml, elementCollectionType).FirstOrDefault();
         }
 
+        public Organisation Organisation { get { return Organisations.FirstOrDefault(); } }
 
-        public IQueryable<Invoice> Invoices
-        {
-            get { return new ApiQuery<Invoice>(_provider); }
-        }
+        public IQueryable<Organisation> Organisations { get { return new ApiQuery<Organisation>(_provider); } }
 
-        public IQueryable<Contact> Contacts
-        {
-            get { return new ApiQuery<Contact>(_provider); }
-        }
+        public IQueryable<Invoice> Invoices { get { return new ApiQuery<Invoice>(_provider); } }
 
-        public IQueryable<Organisation> Organisations
-        {
-            get { return new ApiQuery<Organisation>(_provider); }
-        }
+        public IQueryable<Contact> Contacts { get { return new ApiQuery<Contact>(_provider); } }
+        
+        public IQueryable<TaxRate> TaxRates { get { return new ApiQuery<TaxRate>(_provider); } }
 
-        public Organisation Organisation
-        {
-            get { return new ApiQuery<Organisation>(_provider).FirstOrDefault(); }
-        }
+        public IQueryable<Account> Accounts { get { return new ApiQuery<Account>(_provider); } }
+
+        public IQueryable<TrackingCategory> TrackingCategories { get { return new ApiQuery<TrackingCategory>(_provider); } }
+
+        public IQueryable<CreditNote> CreditNotes { get { return new ApiQuery<CreditNote>(_provider); } }
+
+        public IQueryable<Currency> Currencies { get { return new ApiQuery<Currency>(_provider); } }
+
+        public IQueryable<Payment> Payments { get { return new ApiQuery<Payment>(_provider); } }
+
+        public IQueryable<ManualJournal> ManualJournals { get { return new ApiQuery<ManualJournal>(_provider); } }
+
+        public IQueryable<BankTransaction> BankTransactions { get { return new ApiQuery<BankTransaction>(_provider); } }
+        
+        public IQueryable<Item> Items { get { return new ApiQuery<Item>(_provider); } }
+
+        public IQueryable<BrandingTheme> BrandingThemes { get { return new ApiQuery<BrandingTheme>(_provider); } }
+
+        public IQueryable<Journal> Journals { get { return new ApiQuery<Journal>(_provider); } }
+        
+        public IQueryable<Employee> Employees { get { return new ApiQuery<Employee>(_provider); } }
+
+        public IQueryable<Report> Reports { get { return new ApiQuery<Report>(_provider); } }
+        
+
 
         /// <summary>
         /// Creates the specified in the remote repository

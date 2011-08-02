@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using DevDefined.OAuth.Consumer;
 using XeroApi.Exceptions;
 using XeroApi.Linq;
+using XeroApi.Model;
 
 namespace XeroApi.Integration
 {
@@ -24,7 +25,7 @@ namespace XeroApi.Integration
                 "GET", 
                 string.Empty, 
                 _oauthSession.ConsumerContext.BaseEndpointUri,
-                Pluralize(apiQueryDescription.ElementName), 
+                ModelTypeHelper.Pluralize(apiQueryDescription.ElementName), 
                 null,
                 apiQueryDescription.Where,
                 apiQueryDescription.Order,
@@ -46,7 +47,7 @@ namespace XeroApi.Integration
                 "GET", 
                 string.Empty, 
                 _oauthSession.ConsumerContext.BaseEndpointUri,
-                Pluralize(endpointName), 
+                ModelTypeHelper.Pluralize(endpointName), 
                 itemId, 
                 null,
                 null, 
@@ -68,7 +69,7 @@ namespace XeroApi.Integration
                 "POST",
                 body,
                 _oauthSession.ConsumerContext.BaseEndpointUri,
-                Pluralize(endpointName),
+                ModelTypeHelper.Pluralize(endpointName),
                 null,
                 null,
                 null,
@@ -91,7 +92,7 @@ namespace XeroApi.Integration
                 "PUT",
                 body,
                 _oauthSession.ConsumerContext.BaseEndpointUri,
-                Pluralize(endpointName),
+                ModelTypeHelper.Pluralize(endpointName),
                 null,
                 null,
                 null,
@@ -164,14 +165,6 @@ namespace XeroApi.Integration
             
             return uriBuilder.Uri;
         }
-
-        public static string Pluralize(string elementName)
-        {
-            // Shudder...
-            return elementName.Trim().EndsWith("s")
-                ? elementName.Trim()
-                : elementName.Trim() + "s";
-        }
-
+        
     }
 }

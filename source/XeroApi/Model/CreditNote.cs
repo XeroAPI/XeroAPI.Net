@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 
 namespace XeroApi.Model
 {
-    public class Invoice : ModelBase
+    public class CreditNote : ModelBase
     {
         [ItemId]
-        public virtual Guid InvoiceID { get; set; }
+        public Guid CreditNoteID { get; set; }
 
         [ItemNumber]
-        public string InvoiceNumber { get; set; }
+        public string CreditNoteNumber { get; set; }
 
         [ItemUpdatedDate]
         public DateTime? UpdatedDateUTC { get; set; }
@@ -16,22 +16,10 @@ namespace XeroApi.Model
         public string Type { get; set; }
 
         public string Reference { get; set; }
-
-        public Payments Payments { get; set; }
-
-        public CreditNotes CreditNotes { get; set; }
-
-        public decimal? AmountDue { get; set; }
-
-        public decimal? AmountPaid { get; set; }
-
-        public decimal? AmountCredited { get; set; }
         
-        public string Url { get; set; }
-
-        public string ExternalLinkProviderName { get; set; }
-
         public bool? SentToContact { get; set; }
+
+        public decimal? AppliedAmount { get; set; }
 
         public decimal? CurrencyRate { get; set; }
 
@@ -59,9 +47,8 @@ namespace XeroApi.Model
 
         public DateTime? FullyPaidOnDate { get; set; }
     }
-   
-   
-    public class Invoices : ModelList<Invoice>
+    
+    public class CreditNotes : ModelList<CreditNote>
     {
     }
 }

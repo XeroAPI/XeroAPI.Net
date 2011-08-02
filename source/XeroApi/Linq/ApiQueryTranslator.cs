@@ -156,7 +156,7 @@ namespace XeroApi.Linq
                 }
                 if (mExp.Member.Name == _query.ElementUpdatedDateProperty.SafeName())
                 {
-                    _query.ElementUpdatedDate = EvaluateExpression<DateTime>(b.Right);
+                    _query.ElementUpdatedDate = EvaluateExpression<DateTime?>(b.Right);
                     return b;
                 }
             }
