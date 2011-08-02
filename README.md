@@ -41,7 +41,7 @@ Entities can be created or updated using the familiar repository pattern:
 
 License
 -------
-This software is published under the [MIT Micense](http://en.wikipedia.org/wiki/MIT_License).
+This software is published under the [MIT License](http://en.wikipedia.org/wiki/MIT_License).
 
 Portions of this software were taken from the DevDefined.OAuth library (https://github.com/bittercoder/DevDefined.OAuth).
 
@@ -76,14 +76,14 @@ There are 2 ways to install this library:
 1. Download the source code from github and compile yourself:
  **https://github.com/XeroAPI/XeroAPI.Net**
 
-2. Download into Visual Studio using NuGet powershell command:
+2. Download directly into Visual Studio using the NuGet powershell command:
  **PM&gt; Install XeroAPI.Net**
 
 
 Usage
 -----
 
-There is are sample projects in the git repository that have example usage:
+There are sample projects in the git repository show how to use the library:
 
 1. **XeroApi.Console** - A console app that can run in public, private or partner mode.
 2. **XeroApi.MvcWebApp** - An ASP.Net MVC2 web app that runs in partner mode.
