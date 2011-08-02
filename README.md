@@ -9,7 +9,7 @@ Introduction
 
 This is a .Net wrapper library, written in C#, used to comnunicate with the Xero API (http://api.xero.com).
 
-You can use this library to communicate with the Xero API, without needing any priod knowlege of Xml or OAuth. The library can work in [public](http://developer.xero.com/api-overview/setup-an-application/#public-apps), [private](http://developer.xero.com/api-overview/setup-an-application/#private-apps) or [partner](http://developer.xero.com/api-overview/setup-an-application/#partner-apps) mode.
+You can use this library to communicate with the Xero API, without needing any prior knowledge of Xml or OAuth. The library can work in [public](http://developer.xero.com/api-overview/setup-an-application/#public-apps), [private](http://developer.xero.com/api-overview/setup-an-application/#private-apps) or [partner](http://developer.xero.com/api-overview/setup-an-application/#partner-apps) mode.
 
 Features
 --------
@@ -71,7 +71,13 @@ Portions of this software were taken from the DevDefined.OAuth library (https://
 	
 Installation
 ------------
-Currently the source code can be downloaded from https://github.com/XeroAPI/XeroAPI.Net. There are plans to publish a complied dll via [NuGet](http://nuget.codeplex.com/).
+There are 2 ways to install this library:
+
+1. Download the source code from github and compile yourself:
+ **https://github.com/XeroAPI/XeroAPI.Net**
+
+2. Download into Visual Studio using NuGet powershell command:
+ **PM&gt; Install XeroAPI.Net**
 
 
 Usage
@@ -79,5 +85,20 @@ Usage
 
 There is are sample projects in the git repository that have example usage:
 
-1. XeroApi.Console - A console app that can run in public, private or partner mode.
-2. XeroApi.MvcWebApp - An ASP.Net MVC2 web app that runs in partner mode.
+1. **XeroApi.Console** - A console app that can run in public, private or partner mode.
+2. **XeroApi.MvcWebApp** - An ASP.Net MVC2 web app that runs in partner mode.
+
+In fact, here's one I wrote earlier:
+
+        static void Main(string[] args)
+        {
+            IOAuthSession session = new XeroApi.OAuth.XeroApiPrivateSession(
+                "XeroAPI Mini App",
+                "YOUR-CONSUMER-KEY",
+                new X509Certificate2(@"D:\Your-Certificate.pfx", "xero"));
+
+            Repository repository = new Repository(session);
+            
+            Console.WriteLine("You're connected to " + repository.Organisation.Name);
+            Console.ReadLine();
+        }
