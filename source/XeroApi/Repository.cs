@@ -54,6 +54,22 @@ namespace XeroApi
         }
 
         /// <summary>
+        /// Finds an item from the remote repository by Id
+        /// </summary>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <param name="id">The id.</param>
+        /// <param name="contentType">The Content-Type to request</param>
+        /// <returns></returns>
+        public byte[] FindById<TModel>(string id, string contentType)
+            where TModel : ModelBase
+        {
+            Type collectionType = ModelTypeHelper.GetElementCollectionType(typeof(TModel));
+            return _proxy.FindOne(collectionType.Name, id, contentType);
+        }
+
+
+
+        /// <summary>
         /// Finds all items from the remote repository.
         /// </summary>
         /// <typeparam name="TModel">The type of the model.</typeparam>
@@ -64,15 +80,6 @@ namespace XeroApi
             return new ApiQuery<TModel>(_provider);
         }
 
-
-        public TModel FindOne<TModel>(string itemIdOrCode)
-            where TModel : ModelBase
-        {
-            string responseXml = _proxy.GetElement(typeof(TModel).Name, itemIdOrCode);
-
-            Type elementCollectionType = ModelTypeHelper.GetElementCollectionType(typeof(TModel));
-            return ModelSerializer.Deserialize<TModel>(responseXml, elementCollectionType).FirstOrDefault();
-        }
 
         public Organisation Organisation { get { return Organisations.FirstOrDefault(); } }
 

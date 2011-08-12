@@ -18,6 +18,8 @@ namespace DevDefined.OAuth.Consumer
         bool IsClientError { get; }
         bool IsGoodResponse { get; }
 
+        Stream Stream { get; }
+        byte[] ByteArray { get; }
         string Content { get; }
         string ContentType { get; }
         int ContentLength { get; }
@@ -29,10 +31,11 @@ namespace DevDefined.OAuth.Consumer
 
     public class ConsumerResponse : IConsumerResponse
     {
+        private readonly MemoryStream _responseContentStream = new MemoryStream();
 
         public ConsumerResponse(HttpWebResponse webResponse)
         {
-            Content = webResponse.GetResponseStream().ReadToEnd();
+            webResponse.GetResponseStream().CopyTo(_responseContentStream);
 
             if (webResponse.Headers["Content-Type"] != string.Empty)
                 ContentType = webResponse.Headers["Content-Type"];
@@ -40,11 +43,36 @@ namespace DevDefined.OAuth.Consumer
             if (webResponse.Headers["Content-Length"] != string.Empty)
                 ContentLength = int.Parse(webResponse.Headers["Content-Length"]);
 
+            ContentEncoding = webResponse.ContentEncoding;
             ResponseCode = webResponse.StatusCode;
             Headers = webResponse.Headers;
         }
 
+        public Byte[] ByteArray
+        {
+            get
+            {
+                return _responseContentStream.ToArray();
+            }
+        }
+
+        public Stream Stream
+        {
+            get
+            {
+                return _responseContentStream;
+            }
+        }
+
         public string Content
+        {
+            get
+            {
+                return Stream.ReadToEnd();
+            }
+        }
+
+        public string ContentEncoding
         {
             get; 
             private set;
@@ -71,8 +99,8 @@ namespace DevDefined.OAuth.Consumer
         {
             var serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
 
-            using (TextReader tr = new StringReader(Content))
-            using (XmlReader xr = new XmlTextReader(tr))
+            using (StreamReader sr = new StreamReader(Stream))
+            using (XmlReader xr = new XmlTextReader(sr))
             {
                 return (T)serializer.Deserialize(xr);
             }

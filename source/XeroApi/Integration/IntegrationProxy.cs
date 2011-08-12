@@ -2,6 +2,7 @@
 using System.Collections.Specialized;
 
 using DevDefined.OAuth.Consumer;
+using DevDefined.OAuth.Utility;
 using XeroApi.Exceptions;
 using XeroApi.Linq;
 using XeroApi.Model;
@@ -30,6 +31,7 @@ namespace XeroApi.Integration
                 apiQueryDescription.Where,
                 apiQueryDescription.Order,
                 apiQueryDescription.ElementUpdatedDate,
+                null,
                 null);
 
             if (consumerResponse.IsGoodResponse || consumerResponse.IsClientError)
@@ -40,7 +42,7 @@ namespace XeroApi.Integration
             throw new ApiResponseException(consumerResponse);
         }
 
-        public string GetElement(string endpointName, string itemId)
+        public byte[] FindOne(string endpointName, string itemId, string acceptMimeType)
         {
             IConsumerResponse consumerResponse = CallApi(
                 _oauthSession, 
@@ -52,11 +54,12 @@ namespace XeroApi.Integration
                 null,
                 null, 
                 null,
-                null);
+                null,
+                acceptMimeType);
 
             if (consumerResponse.IsGoodResponse || consumerResponse.IsClientError)
             {
-                return consumerResponse.Content;
+                return consumerResponse.ByteArray;
             }
 
             throw new ApiResponseException(consumerResponse);
@@ -74,7 +77,8 @@ namespace XeroApi.Integration
                 null,
                 null,
                 null,
-                new NameValueCollection { { "summarizeErrors", "false" } });
+                new NameValueCollection { { "summarizeErrors", "false" } }, 
+                null);
 
             if (consumerResponse.IsGoodResponse || consumerResponse.IsClientError)
             {
@@ -97,7 +101,8 @@ namespace XeroApi.Integration
                 null,
                 null,
                 null,
-                new NameValueCollection { { "summarizeErrors", "false" } });
+                new NameValueCollection { { "summarizeErrors", "false" } }, 
+                null);
 
             if (consumerResponse.IsGoodResponse || consumerResponse.IsClientError)
             {
@@ -108,7 +113,7 @@ namespace XeroApi.Integration
         }
 
 
-        public static IConsumerResponse CallApi(IOAuthSession oauthSession, string method, string body, Uri baseUrl, string endpointName, string itemId, string whereClause, string orderBy, DateTime? lastModifiedDate, NameValueCollection additionalQueryParams)
+        public static IConsumerResponse CallApi(IOAuthSession oauthSession, string method, string body, Uri baseUrl, string endpointName, string itemId, string whereClause, string orderBy, DateTime? lastModifiedDate, NameValueCollection additionalQueryParams, string acceptMimeType)
         {
             method = string.IsNullOrEmpty(method) ? "GET" : method.ToUpper();
 
@@ -117,7 +122,7 @@ namespace XeroApi.Integration
             IConsumerRequest oauthRequest = oauthSession.Request()
                 .ForMethod(method)
                 .ForUri(uri)
-                .WithAcceptHeader("text/xml")
+                .WithAcceptHeader(acceptMimeType ?? "text/xml")
                 .SignWithToken();
 
             if ((method == "PUT" || method == "POST"))

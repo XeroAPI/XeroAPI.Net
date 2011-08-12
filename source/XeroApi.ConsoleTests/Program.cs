@@ -1,9 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using System.Net;
-
-using DevDefined.OAuth.Framework;
-using DevDefined.OAuth.Utility;
+using System.Text;
 using XeroApi.Model;
 
 namespace XeroApi.ConsoleApp
@@ -52,7 +51,6 @@ namespace XeroApi.ConsoleApp
             Organisation organisation = repository.Organisation;
             Console.WriteLine(string.Format("You have been authorised against organisation: {0}", organisation.Name));
 
-            
 
 
             // Make a PUT call to the API - add a dummy contact
@@ -64,10 +62,7 @@ namespace XeroApi.ConsoleApp
                 return;
             }
             
-            Contact contact = new Contact
-            {
-                Name = contactName
-            };
+            Contact contact = new Contact { Name = contactName };
             
             contact = repository.UpdateOrCreate(contact);
             Console.WriteLine(string.Format("The contact '{0}' was created with id: {1}", contact.Name, contact.ContactID));
@@ -85,10 +80,8 @@ namespace XeroApi.ConsoleApp
 
 
             // Construct a linq expression to call 'GET Invoices'...
-            DateTime oneMonthAgo = DateTime.UtcNow.AddMonths(-1);
-
             int invoiceCount = repository.Contacts
-                .Where(c => c.UpdatedDateUTC >= oneMonthAgo)
+                .Where(c => c.UpdatedDateUTC >= DateTime.UtcNow.AddMonths(-1))
                 .Count();
 
             Console.WriteLine(string.Format("There were {0} contacts created or updated in the last month.", invoiceCount));
@@ -124,7 +117,6 @@ namespace XeroApi.ConsoleApp
 
 
 
-
             // Try the linq syntax to select items with sales details..
             var items = from item in repository.Items
                         where item.SalesDetails != null
@@ -134,6 +126,35 @@ namespace XeroApi.ConsoleApp
             {
                 Console.WriteLine(string.Format("Item {0} is sold at price: {1} {2}", item.Description, item.SalesDetails.UnitPrice, organisation.BaseCurrency));
             }
+
+
+            // Download a PDF of the first AR invoice in the system
+            Invoice firstInvoice = repository.Invoices.First(invoice => invoice.Type == "ACCREC");
+            
+            if (firstInvoice != null)
+            {
+                byte[] invoicePdf = repository.FindById<Invoice>(firstInvoice.InvoiceID.ToString(), MimeTypes.ApplicationPdf);
+                string invoicePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), firstInvoice.InvoiceNumber + ".pdf");
+
+                FileInfo file = new FileInfo(invoicePath);
+
+                if (file.Exists)
+                {
+                    file.Delete();
+                }
+
+                using (FileStream fs = file.OpenWrite())
+                {
+                    fs.Write(invoicePdf, 0, invoicePdf.Length);
+                }
+
+                Console.WriteLine("PDF for invoice '{0}' has been saved to:", firstInvoice.InvoiceNumber);
+                Console.WriteLine(invoicePath);
+
+                // This commented-out line of code will try and start a PDF viewer to view the invoice PDF.
+                //Process.Start(invoicePath);
+            }
+            
         }
     }
 }

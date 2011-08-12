@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Text;
 using XeroApi.Integration;
 using XeroApi.Linq;
 
@@ -11,6 +11,11 @@ namespace XeroApi.Tests.Stubs
         {
             LastQueryDescription = apiQueryDescription;
             return GenerateSampleResponseXml(apiQueryDescription.ElementName);
+        }
+
+        public byte[] FindOne(string endpointName, string itemId, string acceptMimeType)
+        {
+            return Encoding.UTF8.GetBytes(GenerateSampleResponseXml(endpointName));
         }
 
         public string GetElement(string endpointName, string itemId)

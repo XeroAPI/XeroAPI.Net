@@ -46,6 +46,7 @@
     <Compile Include="Linq\ApiQueryProvider.cs" />
     <Compile Include="Linq\ApiQueryTranslator.cs" />
     <Compile Include="Exceptions\ApiResponseException.cs" />
+    <Compile Include="MimeTypes.cs" />
     <Compile Include="Model\Account.cs" />
     <Compile Include="Model\Address.cs" />
     <Compile Include="Model\Attachment.cs" />
@@ -72,6 +73,9 @@
     <Compile Include="Model\TrackingCategory.cs" />
     <Compile Include="OAuth\Consumer\IMessageLogger.cs" />
     <Compile Include="OAuth\Logging\DebugMessageLogger.cs" />
+    <Compile Include="OAuth\Utility\StreamExtensions.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Repository.cs" />
     <Compile Include="Linq\ExpressionVisitor.cs" />
     <Compile Include="Integration\IIntegrationProxy.cs" />
@@ -134,7 +138,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="OAuth\Utility\ReflectionBasedDictionaryAdapter.cs" />
-    <Compile Include="OAuth\Utility\StreamExtensions.cs" />
     <Compile Include="OAuth\XeroApiPartnerSession.cs" />
     <Compile Include="OAuth\XeroApiPrivateSession.cs" />
     <Compile Include="OAuth\XeroApiEndpoints.cs" />
