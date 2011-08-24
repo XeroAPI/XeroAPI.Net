@@ -177,11 +177,11 @@ namespace XeroApi.ConsoleApp
 
 
             // Find the subscriber for this organisation
-            User subscriber = repository.Users.First(user => user.IsSubscriber == true);
+            User subscriber = repository.Users.FirstOrDefault(user => user.IsSubscriber == true);
 
             if (subscriber == null)
             {
-                Console.WriteLine("There is no subscriber for this organisaiton. Maybe a demo organisation? Maybe this endpoints hasn't been released yet?");
+                Console.WriteLine("There is no subscriber for this organisation. Maybe a demo organisation? Maybe this endpoint hasn't been released yet?");
             }
             else
             {
@@ -255,6 +255,18 @@ namespace XeroApi.ConsoleApp
                 }
 
             }
+
+
+            // Get a list of all expense claims
+            Console.WriteLine("Getting a list of all submitted expense claims...");
+
+            foreach (var expenseClaim in repository.ExpenseClaims.Where(expenseClaim => expenseClaim.Status != "CURRENT"))
+            {
+                Console.WriteLine("Expense claim {0} for user {1} for amount {2} with status {3}", expenseClaim.ExpenseClaimID, expenseClaim.User.EmailAddress, expenseClaim.Total, expenseClaim.Status);
+            }
+
+
+            Console.WriteLine("All done!");
         }
     }
 }

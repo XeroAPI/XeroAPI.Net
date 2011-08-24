@@ -119,6 +119,8 @@ namespace XeroApi
 
         public IQueryable<Receipt> Receipts { get { return new ApiQuery<Receipt>(_provider); } }
 
+        public IQueryable<ExpenseClaim> ExpenseClaims { get { return new ApiQuery<ExpenseClaim>(_provider); } }
+
         public AttachmentRepository Attachments { get { return new AttachmentRepository(_proxy); } }
 
 

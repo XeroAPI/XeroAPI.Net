@@ -30,4 +30,8 @@ namespace XeroApi.Model
 
         public string TaxNumber;
     }
+
+    public class Organisations : ModelList<Organisation>
+    {
+    }
 }

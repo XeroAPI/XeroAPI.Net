@@ -31,6 +31,7 @@ namespace XeroApi.Model
         public Attachments Attachments { get; set; }
         public Users Users { get; set; }
         public Receipts Receipts { get; set; }
+        public ExpenseClaims ExpenseClaims { get; set; }
 
         #region Type Helper Methods
 

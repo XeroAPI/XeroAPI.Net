@@ -30,17 +30,17 @@ namespace XeroApi.Linq
         {
             ApiQueryDescription queryDescription = Translate(expression);
 
-            // Call the API
+            // Call the API..
             string xml = _proxy.FindElements(queryDescription);
 
             Response response = ModelSerializer.DeserializeResponse(xml);
 
-            if (response == null)
-            {
-                return null;
-            }
 
-            IModelList elementCollection = response.GetTypedProperty(queryDescription.ElementListType);
+            // Guard against an empty response..
+            IModelList elementCollection = (response == null)
+                ? (IModelList)Activator.CreateInstance(queryDescription.ElementListType)        // TODO: too much going on here, needs tidying up
+                : response.GetTypedProperty(queryDescription.ElementListType);
+
 
             if (queryDescription.ClientSideExpression == null)
             {

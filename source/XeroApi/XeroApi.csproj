@@ -57,6 +57,7 @@
     <Compile Include="Model\CreditNote.cs" />
     <Compile Include="Model\Currency.cs" />
     <Compile Include="Model\Employee.cs" />
+    <Compile Include="Model\ExpenseClaim.cs" />
     <Compile Include="Model\InventoryPrice.cs" />
     <Compile Include="Model\Inventorytem.cs" />
     <Compile Include="Model\LineAmountType.cs" />
