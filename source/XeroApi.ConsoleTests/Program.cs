@@ -133,6 +133,8 @@ namespace XeroApi.ConsoleApp
             
             if (firstInvoice != null)
             {
+                Console.WriteLine(string.Format("Downloading the PDF of invoice {0}...", firstInvoice.InvoiceNumber));
+
                 byte[] invoicePdf = repository.FindById<Invoice>(firstInvoice.InvoiceID.ToString(), MimeTypes.ApplicationPdf);
                 string invoicePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), firstInvoice.InvoiceNumber + ".pdf");
 
@@ -199,7 +201,7 @@ namespace XeroApi.ConsoleApp
                             {
                                 Description = "Flat White",
                                 Quantity = 1m,
-                                AccountCode = "200",
+                                AccountCode = "429",
                                 UnitAmount = 3.8m
                             },
                                            
@@ -207,7 +209,7 @@ namespace XeroApi.ConsoleApp
                             {
                                 Description = "Mocha",
                                 Quantity = 1m,
-                                AccountCode = "200",
+                                AccountCode = "429",
                                 UnitAmount = 4.2m
                             }
                     }
@@ -216,6 +218,9 @@ namespace XeroApi.ConsoleApp
 
                 // Save the receipt to Xero
                 receipt = repository.Create(receipt);
+
+                Console.WriteLine("Receipt {0} was created for {1} for user {2}", receipt.ReceiptID, receipt.Contact.Name, receipt.User.FullName);
+
 
 
                 // Upload an attachment against the newly creacted receipt
@@ -229,6 +234,7 @@ namespace XeroApi.ConsoleApp
 
 
                 // Upload the attachment against the receipt
+                Console.WriteLine("Attaching file {0} to Receipt {1}...", attachmentFileInfo.Name, receipt.ReceiptID);
                 repository.Attachments.UpdateOrCreate(receipt, attachmentFileInfo);
 
 
