@@ -28,7 +28,9 @@ namespace XeroApi.Model
         public Reports Reports { get; set; }
         public TaxRates TaxRates { get; set; }
         public TrackingCategories TrackingCategories { get; set; }
-        
+        public Attachments Attachments { get; set; }
+        public Users Users { get; set; }
+        public Receipts Receipts { get; set; }
 
         #region Type Helper Methods
 

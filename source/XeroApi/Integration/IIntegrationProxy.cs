@@ -1,4 +1,6 @@
-﻿using XeroApi.Linq;
+﻿using System.IO;
+using XeroApi.Linq;
+using XeroApi.Model;
 
 namespace XeroApi.Integration
 {
@@ -11,6 +13,8 @@ namespace XeroApi.Integration
         /// <returns></returns>
         string FindElements(ApiQueryDescription apiQueryDescription);
 
+        string FindAttachments(string endpointName, string itemId);
+
         /// <summary>
         /// Gets one element using the specified MimeType.
         /// </summary>
@@ -22,7 +26,9 @@ namespace XeroApi.Integration
         /// <param name="acceptMimeType">the MimeType to request from the API server.</param>
         /// <returns></returns>
         byte[] FindOne(string endpointName, string itemId, string acceptMimeType);
-        
+
+        Stream FindOneAttachment(string endpointName, string itemId, string attachmentIdOrFileName);
+
         /// <summary>
         /// Updates the or creates the elements.
         /// </summary>
@@ -35,6 +41,15 @@ namespace XeroApi.Integration
         string UpdateOrCreateElements(string endpointName, string body);
 
         /// <summary>
+        /// Updates the or create attachment.
+        /// </summary>
+        /// <param name="endpointName">Name of the endpoint.</param>
+        /// <param name="itemId">The item id.</param>
+        /// <param name="attachment">The attachment.</param>
+        /// <returns></returns>
+        string UpdateOrCreateAttachment(string endpointName, string itemId, Attachment attachment);
+
+        /// <summary>
         /// Creates the elements.
         /// </summary>
         /// <remarks>
@@ -44,5 +59,14 @@ namespace XeroApi.Integration
         /// <param name="body">The body.</param>
         /// <returns></returns>
         string CreateElements(string endpointName, string body);
+
+        /// <summary>
+        /// Creates the attachment.
+        /// </summary>
+        /// <param name="endpointName">Name of the endpoint.</param>
+        /// <param name="itemId">The item id.</param>
+        /// <param name="attachment">The attachment.</param>
+        /// <returns></returns>
+        string CreateAttachment(string endpointName, string itemId, Attachment attachment);
     }
 }

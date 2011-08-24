@@ -1,8 +1,10 @@
-﻿namespace XeroApi
+﻿using System.IO;
+using Microsoft.Win32;
+
+namespace XeroApi
 {
     public static class MimeTypes
     {
-
         public const string TextXml = "text/xml";
         public const string TextCsv = "text/csv";
 
@@ -17,5 +19,23 @@
 
         public const string Unknown = "application/octet-stream";
 
+
+        // Taken from http://stackoverflow.com/questions/58510/using-net-how-can-you-find-the-mime-type-of-a-file-based-on-the-file-signature
+        public static string GetMimeType(FileInfo fileInfo)
+        {
+            string mimeType = "application/unknown";
+
+            RegistryKey regKey = Registry.ClassesRoot.OpenSubKey(fileInfo.Extension.ToLower(), RegistryKeyPermissionCheck.ReadSubTree);
+
+            if (regKey != null)
+            {
+                object contentType = regKey.GetValue("Content Type");
+
+                if (contentType != null)
+                    mimeType = contentType.ToString();
+            }
+
+            return mimeType;
+        }
     }
 }

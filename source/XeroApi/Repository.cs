@@ -114,7 +114,12 @@ namespace XeroApi
         public IQueryable<Employee> Employees { get { return new ApiQuery<Employee>(_provider); } }
 
         public IQueryable<Report> Reports { get { return new ApiQuery<Report>(_provider); } }
-        
+
+        public IQueryable<User> Users { get { return new ApiQuery<User>(_provider); } }
+
+        public IQueryable<Receipt> Receipts { get { return new ApiQuery<Receipt>(_provider); } }
+
+        public AttachmentRepository Attachments { get { return new AttachmentRepository(_proxy); } }
 
 
         /// <summary>

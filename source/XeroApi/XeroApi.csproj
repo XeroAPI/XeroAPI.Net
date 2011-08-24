@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AttachmentRepository.cs" />
     <Compile Include="Linq\ApiQuery.cs" />
     <Compile Include="Linq\ApiQueryDescription.cs" />
     <Compile Include="Linq\ApiQueryProvider.cs" />
@@ -68,9 +69,11 @@
     <Compile Include="Model\ModelSerializer.cs" />
     <Compile Include="Model\Payment.cs" />
     <Compile Include="Model\Phone.cs" />
+    <Compile Include="Model\Receipt.cs" />
     <Compile Include="Model\Report.cs" />
     <Compile Include="Model\TaxRate.cs" />
     <Compile Include="Model\TrackingCategory.cs" />
+    <Compile Include="Model\User.cs" />
     <Compile Include="OAuth\Consumer\IMessageLogger.cs" />
     <Compile Include="OAuth\Logging\DebugMessageLogger.cs" />
     <Compile Include="OAuth\Utility\StreamExtensions.cs">

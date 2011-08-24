@@ -1,7 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Text;
 using XeroApi.Integration;
 using XeroApi.Linq;
+using XeroApi.Model;
 
 namespace XeroApi.Tests.Stubs
 {
@@ -13,9 +15,19 @@ namespace XeroApi.Tests.Stubs
             return GenerateSampleResponseXml(apiQueryDescription.ElementName);
         }
 
+        public string FindAttachments(string endpointName, string itemId)
+        {
+            throw new NotImplementedException();
+        }
+
         public byte[] FindOne(string endpointName, string itemId, string acceptMimeType)
         {
             return Encoding.UTF8.GetBytes(GenerateSampleResponseXml(endpointName));
+        }
+
+        public Stream FindOneAttachment(string endpointName, string itemId, string attachmentIdOrFileName)
+        {
+            throw new NotImplementedException();
         }
 
         public string GetElement(string endpointName, string itemId)
@@ -28,9 +40,19 @@ namespace XeroApi.Tests.Stubs
             return GenerateSampleResponseXml(endpointName);
         }
 
+        public string UpdateOrCreateAttachment(string endpointName, string itemId, Attachment attachment)
+        {
+            throw new NotImplementedException();
+        }
+
         public string CreateElements(string endpointName, string body)
         {
             return GenerateSampleResponseXml(endpointName);
+        }
+
+        public string CreateAttachment(string endpointName, string itemId, Attachment attachment)
+        {
+            throw new NotImplementedException();
         }
 
         public ApiQueryDescription LastQueryDescription

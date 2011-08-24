@@ -39,6 +39,11 @@ namespace XeroApi.Model
         internal static IModelList<TModel> Deserialize<TModel>(string xml, Type modelListType)
             where TModel : ModelBase
         {
+            if (string.IsNullOrEmpty(xml))
+            {
+                return null;
+            }
+
             var serializer = new System.Runtime.Serialization.DataContractSerializer(modelListType);
 
             using (TextReader tr = new StringReader(xml))
@@ -50,6 +55,11 @@ namespace XeroApi.Model
 
         internal static Response DeserializeResponse(string xml)
         {
+            if (string.IsNullOrEmpty(xml))
+            {
+                return null;
+            }
+
             var serializer = new System.Xml.Serialization.XmlSerializer(typeof(Response));
 
             using (TextReader tr = new StringReader(xml))

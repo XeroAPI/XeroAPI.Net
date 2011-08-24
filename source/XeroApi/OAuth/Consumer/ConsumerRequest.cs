@@ -84,7 +84,7 @@ namespace DevDefined.OAuth.Consumer
             {
                 throw authException;
             }
-
+            
             // Some http 403 errors are actually html pages that are difficult to decode
             if (httpWebResponse != null && httpWebResponse.StatusCode == HttpStatusCode.Forbidden)
             {

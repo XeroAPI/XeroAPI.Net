@@ -22,4 +22,16 @@ namespace XeroApi.Model
     {
 
     }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public class ReadOnlyAttribute : Attribute
+    {
+        
+    }
+
+    
+    public interface IAttachmentParent
+    {
+    }
+  
 }

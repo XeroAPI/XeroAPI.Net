@@ -42,6 +42,37 @@ namespace XeroApi.Tests
         }
 
         [Test]
+        public void TestApiQueryCanCallInvoicesEndpointWithContactNumberFilter()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            List<Invoice> invoices = repository.Invoices.Where(inv => inv.Contact.ContactNumber == "S0029").ToList();
+
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+            Assert.AreEqual("Invoice", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("(Contact.ContactNumber == \"S0029\")", queryDesctipion.Where);
+            Assert.AreEqual("", queryDesctipion.Order);
+            Assert.AreEqual(0, invoices.Count);
+        }
+
+        [Test]
+        public void TestApiQueryCanCallUsersEndpointWithBooleanFilter()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            // Note: This needs the '== true' but to work correctly
+            List<User> invoices = repository.Users.Where(user => user.IsSubscriber == true).ToList();
+
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+            Assert.AreEqual("User", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("(IsSubscriber == true)", queryDesctipion.Where);
+            Assert.AreEqual("", queryDesctipion.Order);
+            Assert.AreEqual(0, invoices.Count);
+        }
+
+        [Test]
         public void TestApiQueryCanCallOrganisationsEndpointWithTwoWhereArguments()
         {
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();

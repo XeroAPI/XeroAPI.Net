@@ -154,7 +154,101 @@ namespace XeroApi.ConsoleApp
                 // This commented-out line of code will try and start a PDF viewer to view the invoice PDF.
                 //Process.Start(invoicePath);
             }
-            
+
+
+            // TODO: Enable filtering invoices by ContactID e.g. .Where(invoice => invoice.Contact.ContactID.ToString() == contactId)
+            // Find all invoices that were against the same contact as the first AR invoice that we have
+            /*if (firstInvoice != null)
+            {
+                var contactId = firstInvoice.Contact.ContactID.ToString();
+
+                var invoicesForContact = repository.Invoices.Where(invoice => invoice.Contact.ContactID.ToString() == contactId).ToList();
+
+                Console.WriteLine("There are {0} invoice raised against {1}", invoicesForContact.Count, firstInvoice.Contact.Name );
+
+                foreach (var invoiceForContact in invoicesForContact)
+                {
+                    Console.WriteLine("Invoice {0} was raised against {1} on {2} for {3}{4}", invoiceForContact.InvoiceNumber, invoiceForContact.Contact.Name, invoiceForContact.Date, invoiceForContact.Total, invoiceForContact.CurrencyCode);
+                }
+            }*/
+
+
+
+            // Find the subscriber for this organisation
+            User subscriber = repository.Users.First(user => user.IsSubscriber == true);
+
+            if (subscriber == null)
+            {
+                Console.WriteLine("There is no subscriber for this organisaiton. Maybe a demo organisation? Maybe this endpoints hasn't been released yet?");
+            }
+            else
+            {
+                Console.WriteLine("The subscriber for this organisation is " + subscriber.FullName);
+
+
+                // Create a receipt
+                Receipt receipt = new Receipt
+                {
+                    Contact = new Contact { Name = "Mojo Coffee" },
+                    User = subscriber,
+                    Date = DateTime.Today.Date,
+                    LineAmountTypes = LineAmountType.Inclusive,
+                    LineItems = new LineItems
+                    {
+                        new LineItem
+                            {
+                                Description = "Flat White",
+                                Quantity = 1m,
+                                AccountCode = "200",
+                                UnitAmount = 3.8m
+                            },
+                                           
+                        new LineItem
+                            {
+                                Description = "Mocha",
+                                Quantity = 1m,
+                                AccountCode = "200",
+                                UnitAmount = 4.2m
+                            }
+                    }
+                };
+
+
+                // Save the receipt to Xero
+                receipt = repository.Create(receipt);
+
+
+                // Upload an attachment against the newly creacted receipt
+                FileInfo attachmentFileInfo = new FileInfo(@".\Attachments\Receipt.png");
+
+                if (!attachmentFileInfo.Exists)
+                {
+                    Console.WriteLine("The Receipt.png file cannot be loaded from disk!" + subscriber.FullName);
+                    return;
+                }
+
+
+                // Upload the attachment against the receipt
+                repository.Attachments.UpdateOrCreate(receipt, attachmentFileInfo);
+
+
+                // Fetch the attachment that was just uploaded
+                Attachment attachment = repository.Attachments.GetAttachmentFor(receipt);
+
+                if (attachment.ContentLength != attachmentFileInfo.Length)
+                {
+                    Console.WriteLine("The uploaded attachment filesize {0} does not match the original filesize {1}", attachment.ContentLength, attachmentFileInfo.Length);
+                }
+                else if (attachment.Filename != attachmentFileInfo.Name)
+                {
+                    Console.WriteLine("The uploaded attachment filename '{0}' does not match the original filename '{1}'", attachment.Filename, attachmentFileInfo.Name);
+                }
+                else
+                {
+                    Console.WriteLine("Attachment succesfully uploaded!");
+                }
+
+            }
         }
     }
 }

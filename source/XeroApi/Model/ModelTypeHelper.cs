@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
+using XeroApi.Linq;
 
 namespace XeroApi.Model
 {
@@ -28,6 +31,19 @@ namespace XeroApi.Model
             }
             
             return elementName + "s";
+        }
+
+        public static string GetModelItemId<TModel>(TModel model)
+            where TModel : ModelBase
+        {
+            PropertyInfo itemIdProperty = typeof (TModel).GetProperties().FirstOrDefault(prop => prop.HasAttribute(typeof (ItemIdAttribute)));
+
+            if (itemIdProperty == null)
+                throw new ArgumentException("The model type '' does not have an [ItemId] attribute specified on one of it's properties");
+
+            var propValue = itemIdProperty.GetValue(model, new object[0]);
+
+            return Convert.ToString(propValue);
         }
     }
 }

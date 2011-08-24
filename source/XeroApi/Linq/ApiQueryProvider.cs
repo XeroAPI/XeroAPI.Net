@@ -35,6 +35,11 @@ namespace XeroApi.Linq
 
             Response response = ModelSerializer.DeserializeResponse(xml);
 
+            if (response == null)
+            {
+                return null;
+            }
+
             IModelList elementCollection = response.GetTypedProperty(queryDescription.ElementListType);
 
             if (queryDescription.ClientSideExpression == null)
