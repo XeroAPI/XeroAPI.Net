@@ -9,33 +9,6 @@ namespace XeroApi.Model
     internal class ModelSerializer
     {
 
-        /// <summary>
-        /// Deserializes the specified items.
-        /// </summary>
-        /// <typeparam name="TModel">The type of the model.</typeparam>
-        /// <param name="items">The items.</param>
-        /// <returns></returns>
-        internal static string Deserialize<TModel>(ModelList<TModel> items)
-            where TModel : ModelBase
-        {
-            StringBuilder sb = new StringBuilder();
-            using (StringWriter sw = new StringWriter(sb)) 
-            {
-
-                using (XmlWriter xw = new XmlTextWriter(sw))
-                {
-                    var serializer = new System.Runtime.Serialization.DataContractSerializer(items.GetType());
-                    serializer.WriteObject(xw, items);
-
-                    xw.Flush();
-                }
-
-                sw.Flush();
-            }
-
-            return sb.ToString();
-        }
-
         internal static IModelList<TModel> Deserialize<TModel>(string xml, Type modelListType)
             where TModel : ModelBase
         {
@@ -53,19 +26,20 @@ namespace XeroApi.Model
             }
         }
 
-        internal static Response DeserializeResponse(string xml)
+        internal static T DeserializeTo<T>(string xml)
+            where T : class
         {
             if (string.IsNullOrEmpty(xml))
             {
                 return null;
             }
 
-            var serializer = new System.Xml.Serialization.XmlSerializer(typeof(Response));
+            var serializer = new System.Xml.Serialization.XmlSerializer(typeof(T));
 
             using (TextReader tr = new StringReader(xml))
             using (XmlReader xr = new XmlTextReader(tr))
             {
-                return (Response)serializer.Deserialize(xr);
+                return (T)serializer.Deserialize(xr);
             }
         }
 

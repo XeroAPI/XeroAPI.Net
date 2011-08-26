@@ -50,6 +50,7 @@
     <Compile Include="MimeTypes.cs" />
     <Compile Include="Model\Account.cs" />
     <Compile Include="Model\Address.cs" />
+    <Compile Include="Model\ApiException.cs" />
     <Compile Include="Model\Attachment.cs" />
     <Compile Include="Model\BankTransaction.cs" />
     <Compile Include="Model\BrandingTheme.cs" />

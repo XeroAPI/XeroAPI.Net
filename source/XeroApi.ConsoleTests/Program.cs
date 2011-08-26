@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using XeroApi.Integration;
+using XeroApi.Linq;
 using XeroApi.Model;
 
 namespace XeroApi.ConsoleApp
@@ -50,7 +53,6 @@ namespace XeroApi.ConsoleApp
             // Make a call to api.xero.com to check that we can use the access token.
             Organisation organisation = repository.Organisation;
             Console.WriteLine(string.Format("You have been authorised against organisation: {0}", organisation.Name));
-
 
 
             // Make a PUT call to the API - add a dummy contact
@@ -158,21 +160,32 @@ namespace XeroApi.ConsoleApp
             }
 
 
-            // TODO: Enable filtering invoices by ContactID e.g. .Where(invoice => invoice.Contact.ContactID.ToString() == contactId)
+            
             // Find all invoices that were against the same contact as the first AR invoice that we have
-            /*if (firstInvoice != null)
+            if (firstInvoice != null)
             {
-                var contactId = firstInvoice.Contact.ContactID.ToString();
-
-                var invoicesForContact = repository.Invoices.Where(invoice => invoice.Contact.ContactID.ToString() == contactId).ToList();
-
-                Console.WriteLine("There are {0} invoice raised against {1}", invoicesForContact.Count, firstInvoice.Contact.Name );
-
-                foreach (var invoiceForContact in invoicesForContact)
+                try
                 {
-                    Console.WriteLine("Invoice {0} was raised against {1} on {2} for {3}{4}", invoiceForContact.InvoiceNumber, invoiceForContact.Contact.Name, invoiceForContact.Date, invoiceForContact.Total, invoiceForContact.CurrencyCode);
+                    Console.WriteLine("Getting a list of all invoice created for {0}", firstInvoice.Contact.Name);
+
+                    Guid contactId = firstInvoice.Contact.ContactID;
+                    var invoicesForContact = repository.Invoices.Where(invoice => invoice.Contact.ContactID == contactId).ToList();
+
+                    Console.WriteLine("There are {0} invoices raised for {1}", invoicesForContact.Count, firstInvoice.Contact.Name);
+
+                    foreach (var invoiceForContact in invoicesForContact)
+                    {
+                        Console.WriteLine("Invoice {0} was raised against {1} on {2} for {3}{4}", invoiceForContact.InvoiceNumber,
+                                          invoiceForContact.Contact.Name, invoiceForContact.Date, invoiceForContact.Total,
+                                          invoiceForContact.CurrencyCode);
+                    }
                 }
-            }*/
+                catch (ApiException ex)
+                {
+                    Console.WriteLine("Filtering on Guid types doesn't yet work.");
+                    Console.WriteLine(ex.Message);
+                }
+            }
 
 
 
@@ -265,7 +278,7 @@ namespace XeroApi.ConsoleApp
                 Console.WriteLine("Expense claim {0} for user {1} for amount {2} with status {3}", expenseClaim.ExpenseClaimID, expenseClaim.User.EmailAddress, expenseClaim.Total, expenseClaim.Status);
             }
 
-
+            
             Console.WriteLine("All done!");
         }
     }

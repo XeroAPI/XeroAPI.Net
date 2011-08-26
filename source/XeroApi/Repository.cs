@@ -136,8 +136,8 @@ namespace XeroApi
             string requestXml = ModelSerializer.Serialize(itemsToCreate);
 
             string responseXml = _proxy.CreateElements(typeof(TModel).Name, requestXml);
-            
-            Response response = ModelSerializer.DeserializeResponse(responseXml);
+
+            Response response = ModelSerializer.DeserializeTo<Response>(responseXml);
 
             return response.GetTypedProperty<TModel>();
         }
@@ -156,7 +156,7 @@ namespace XeroApi
 
             string responseXml = _proxy.CreateElements(typeof(TModel).Name, requestXml);
 
-            Response response = ModelSerializer.DeserializeResponse(responseXml);
+            Response response = ModelSerializer.DeserializeTo<Response>(responseXml);
 
             return response.GetTypedProperty<TModel>().First();
         }
@@ -175,7 +175,7 @@ namespace XeroApi
 
             string responseXml = _proxy.UpdateOrCreateElements(typeof(TModel).Name, requestXml);
 
-            Response response = ModelSerializer.DeserializeResponse(responseXml);
+            Response response = ModelSerializer.DeserializeTo<Response>(responseXml);
 
             return response.GetTypedProperty<TModel>();
         }
@@ -194,7 +194,7 @@ namespace XeroApi
 
             string responseXml = _proxy.UpdateOrCreateElements(typeof(TModel).Name, requestXml);
 
-            Response response = ModelSerializer.DeserializeResponse(responseXml);
+            Response response = ModelSerializer.DeserializeTo<Response>(responseXml);
 
             return response.GetTypedProperty<TModel>().First();
         }

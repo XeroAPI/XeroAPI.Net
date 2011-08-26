@@ -237,7 +237,16 @@ namespace XeroApi.Integration
                 oauthRequest.Context.Headers.Add("If-Modified-Since", lastModifiedDate.Value.ToString("yyyy-MM-dd hh:mm:ss"));
             }
 
-            return oauthRequest.ToConsumerResponse();
+            var consumerResponse = oauthRequest.ToConsumerResponse();
+
+            // Check for <ApiException> response message
+            if (consumerResponse.Content.StartsWith("<ApiException"))
+            {
+                ApiExceptionDetails details = ModelSerializer.DeserializeTo<ApiExceptionDetails>(consumerResponse.Content);
+                throw new ApiException(details);
+            }
+
+            return consumerResponse;
         }
 
         public static Uri ConstructUri(Uri baseUrl, string endpointName, string itemId, string whereClause, string orderBy, NameValueCollection additionalQueryParams)

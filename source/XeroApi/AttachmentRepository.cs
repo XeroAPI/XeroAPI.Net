@@ -33,7 +33,7 @@ namespace XeroApi
                 ModelTypeHelper.GetModelItemId(model), 
                 new Attachment(fileInfo));
 
-            Response response = ModelSerializer.DeserializeResponse(xml);
+            Response response = ModelSerializer.DeserializeTo<Response>(xml);
 
             return response.Attachments.First();
         }
@@ -49,7 +49,7 @@ namespace XeroApi
                 ModelTypeHelper.GetModelItemId(model),
                 new Attachment(fileInfo));
 
-            return ModelSerializer.DeserializeResponse(xml).Attachments.First();
+            return ModelSerializer.DeserializeTo<Response>(xml).Attachments.First();
         }
 
 
@@ -63,7 +63,7 @@ namespace XeroApi
                 typeof(TModel).Name,
                 ModelTypeHelper.GetModelItemId(model));
 
-            Attachments attachments = ModelSerializer.DeserializeResponse(xml).Attachments;
+            Attachments attachments = ModelSerializer.DeserializeTo<Response>(xml).Attachments;
 
             if (attachments == null || attachments.Count == 0)
             {

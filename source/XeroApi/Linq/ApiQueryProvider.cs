@@ -33,7 +33,7 @@ namespace XeroApi.Linq
             // Call the API..
             string xml = _proxy.FindElements(queryDescription);
 
-            Response response = ModelSerializer.DeserializeResponse(xml);
+            Response response = ModelSerializer.DeserializeTo<Response>(xml);
 
 
             // Guard against an empty response..
