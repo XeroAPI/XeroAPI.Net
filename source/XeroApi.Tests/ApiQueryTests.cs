@@ -223,6 +223,56 @@ namespace XeroApi.Tests
             Assert.AreEqual("(Name == \"Demo Company\")", queryDesctipion.Where);
             Assert.AreEqual("CreatedDateUTC", queryDesctipion.Order);
         }
+        
+        [Test]
+        public void TestApiQueryCanCallInvoicesEndpointFilteringByGuidParameter()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            Guid brandingThemeID = new Guid("071509D6-BADC-4237-9F52-AD2B4CCD9264");
+
+            repository.Invoices
+                .Where(invoice => invoice.BrandingThemeID == brandingThemeID)
+                .ToList();
+
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+            Assert.AreEqual("Invoice", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("(BrandingThemeID == Guid(\"071509d6-badc-4237-9f52-ad2b4ccd9264\"))", queryDesctipion.Where);
+        }
+
+
+        [Test]
+        public void TestApiQueryCanCallInvoicesEndpointFilteringByGuidConstant()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            Guid brandingThemeID = new Guid("071509D6-BADC-4237-9F52-AD2B4CCD9264");
+
+            repository.Invoices
+                .Where(invoice => invoice.BrandingThemeID == brandingThemeID)
+                .ToList();
+
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+            Assert.AreEqual("Invoice", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("(BrandingThemeID == Guid(\"071509d6-badc-4237-9f52-ad2b4ccd9264\"))", queryDesctipion.Where);
+        }
+
+        [Test]
+        public void TestApiQueryCanCallInvoicesEndpointFilteringByContactID()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            repository.Invoices
+                .Where(invoice => invoice.Contact.ContactID == new Guid("071509D6-BADC-4237-9F52-AD2B4CCD9264"))
+                .ToList();
+
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+            Assert.AreEqual("Invoice", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("(Contact.ContactID == Guid(\"071509d6-badc-4237-9f52-ad2b4ccd9264\"))", queryDesctipion.Where);
+        }
     }
 }
 
