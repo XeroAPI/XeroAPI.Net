@@ -119,7 +119,6 @@
     <Compile Include="OAuth\Framework\IToken.cs" />
     <Compile Include="OAuth\Framework\NonceGenerator.cs" />
     <Compile Include="OAuth\Framework\OAuthContext.cs" />
-    <Compile Include="OAuth\Framework\OAuthContextBuilder.cs" />
     <Compile Include="OAuth\Framework\OAuthException.cs" />
     <Compile Include="OAuth\Framework\OAuthProblemReport.cs" />
     <Compile Include="OAuth\Framework\OAuthProblems.cs" />
