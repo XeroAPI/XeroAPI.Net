@@ -135,7 +135,7 @@ namespace DevDefined.OAuth.Framework
       {
         _rawUri = value;
 
-        NameValueCollection newParameters = HttpUtility.ParseQueryString(_rawUri.Query);
+        NameValueCollection newParameters = UriUtility.ParseQueryString(_rawUri.Query);
 
         // TODO: tidy this up, bit clunky
 

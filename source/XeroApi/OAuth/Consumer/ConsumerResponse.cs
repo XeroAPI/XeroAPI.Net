@@ -5,6 +5,7 @@ using System.Net;
 using System.Web;
 using System.Xml;
 using System.Xml.Linq;
+using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Utility;
 
 namespace DevDefined.OAuth.Consumer
@@ -108,7 +109,7 @@ namespace DevDefined.OAuth.Consumer
 
         public NameValueCollection ToBodyParameters()
         {
-            return HttpUtility.ParseQueryString(Content);
+            return UriUtility.ParseQueryString(Content);
         }
 
         public HttpStatusCode ResponseCode

@@ -27,10 +27,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using System.Web;
 using QueryParameter = System.Collections.Generic.KeyValuePair<string, string>;
 
 namespace DevDefined.OAuth.Framework
@@ -124,7 +122,7 @@ namespace DevDefined.OAuth.Framework
 
             string itemValue = temp[1];
             itemValue = StripQuotes(itemValue);
-            itemValue = HttpUtility.UrlDecode(itemValue);
+            itemValue = Uri.UnescapeDataString(itemValue); // HttpUtility.UrlDecode(itemValue)
 
             return new QueryParameter(temp[0].Trim(), itemValue);
         }
@@ -336,6 +334,32 @@ namespace DevDefined.OAuth.Framework
         .Append("&").Append(Parameters.OAuth_Token_Secret).Append("=").Append(UrlEncode(token.TokenSecret));
 
       return builder.ToString();
+    }
+
+    public static NameValueCollection ParseQueryString(string queryString)
+    {
+        if (queryString.StartsWith("?"))
+            queryString = queryString.Remove(0, 1);
+
+        NameValueCollection collection = new NameValueCollection();
+
+        if (string.IsNullOrEmpty(queryString)) 
+            return collection;
+
+        foreach (string s in queryString.Split('&').Where(s => !string.IsNullOrEmpty(s)))
+        {
+            if (s.IndexOf('=') > -1)
+            {
+                string[] temp = s.Split('=');
+                collection.Add(Uri.UnescapeDataString(temp[0]), Uri.UnescapeDataString(temp[1]));
+            }
+            else
+            {
+                collection.Add(s, string.Empty);
+            }
+        }
+
+        return collection;
     }
 
     /// <summary>

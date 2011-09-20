@@ -72,7 +72,7 @@ namespace DevDefined.OAuth.Framework
     }
 
     public OAuthProblemReport(string formattedReport)
-      : this(HttpUtility.ParseQueryString(formattedReport))
+        : this(UriUtility.ParseQueryString(formattedReport))
     {
     }
 

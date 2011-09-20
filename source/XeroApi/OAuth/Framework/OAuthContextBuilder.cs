@@ -34,16 +34,16 @@ using System.Web;
 
 namespace DevDefined.OAuth.Framework
 {
-  public interface IOAuthContextBuilder
+  /*public interface IOAuthContextBuilder
   {
     IOAuthContext FromUri(string httpMethod, Uri uri);
     IOAuthContext FromHttpRequest(HttpRequest request);
     IOAuthContext FromHttpRequest(HttpRequestBase request);
     IOAuthContext FromWebRequest(HttpWebRequest request, Stream rawBody);
     IOAuthContext FromWebRequest(HttpWebRequest request, string body);
-  }
+  }*/
 
-  public class OAuthContextBuilder : IOAuthContextBuilder
+  /*public class OAuthContextBuilder : IOAuthContextBuilder
   {
     public IOAuthContext FromUri(string httpMethod, Uri uri)
     {
@@ -160,5 +160,5 @@ namespace DevDefined.OAuth.Framework
 
       return cookieCollection;
     }
-  }
+  }*/
 }

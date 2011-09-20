@@ -217,7 +217,7 @@ namespace DevDefined.OAuth.Consumer
 
       if (builder.Query != null)
       {
-        collection.Add(HttpUtility.ParseQueryString(builder.Query));
+          collection.Add(UriUtility.ParseQueryString(builder.Query));
       }
 
       if (_queryParameters != null) collection.Add(_queryParameters);
