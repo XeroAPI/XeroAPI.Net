@@ -78,10 +78,15 @@ namespace XeroApi.ConsoleApp
             contact = repository.UpdateOrCreate(contact);
             Console.WriteLine(string.Format("The contact '{0}' was updated with email address: {1}", contact.Name, contact.EmailAddress));
 
+            
+
+            // Get the contact by it's Id...
+            var reReadContact = repository.Contacts.First(c => c.ContactID == contact.ContactID);
+            Console.WriteLine(string.Format("The contact '{0}' was re-read using it's ContactID: {1}", reReadContact.Name, reReadContact.ContactID));
 
 
 
-            // Construct a linq expression to call 'GET Invoices'...
+            // Construct a linq expression to call 'GET Contacts'...
             int invoiceCount = repository.Contacts
                 .Where(c => c.UpdatedDateUTC >= DateTime.UtcNow.AddMonths(-1))
                 .Count();
