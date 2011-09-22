@@ -1,4 +1,5 @@
 using System;
+using System.Xml.Serialization;
 
 namespace XeroApi.Model
 {
@@ -17,7 +18,8 @@ namespace XeroApi.Model
         public LineAmountType LineAmountTypes { get; set; }
         
         public string Narration { get; set; }
-        
+
+        [XmlArrayItem("JournalLine")]
         public ManualJournalLineItems JournalLines { get; set; }
     }
     
