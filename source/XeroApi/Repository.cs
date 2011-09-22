@@ -37,6 +37,17 @@ namespace XeroApi
             _provider = new ApiQueryProvider(_proxy);
         }
 
+        /// <summary>
+        /// Finds an item from the remote repository by Id
+        /// </summary>
+        /// <typeparam name="TModel">The type of the model.</typeparam>
+        /// <param name="id">The id.</param>
+        /// <returns></returns>
+        public TModel FindById<TModel>(Guid id) 
+            where TModel : ModelBase
+        {
+            return FindById<TModel>(id.ToString());
+        }
 
         /// <summary>
         /// Finds an item from the remote repository by Id
@@ -50,7 +61,10 @@ namespace XeroApi
             var queryDescription = new ApiQueryDescription { ElementId = id, ElementType=typeof(TModel)  };
             string responseXml = _proxy.FindElements(queryDescription);
 
-            return ModelSerializer.Deserialize<TModel>(responseXml, queryDescription.ElementListType).FirstOrDefault();
+            Response response = ModelSerializer.DeserializeTo<Response>(responseXml);
+            return response.GetTypedProperty<TModel>().FirstOrDefault();
+
+            //return ModelSerializer.Deserialize<TModel>(responseXml, queryDescription.ElementListType).FirstOrDefault();
         }
 
         /// <summary>

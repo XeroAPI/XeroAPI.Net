@@ -138,6 +138,13 @@ namespace XeroApi.ConsoleApp
             // Download a PDF of the first AR invoice in the system
             Invoice firstInvoice = repository.Invoices.First(invoice => invoice.Type == "ACCREC");
             
+
+
+            // Test the FindById to see if we can re-fetch the invoice WITH the line items this time
+            firstInvoice = repository.FindById<Invoice>(firstInvoice.InvoiceID);
+
+
+
             if (firstInvoice != null)
             {
                 Console.WriteLine(string.Format("Downloading the PDF of invoice {0}...", firstInvoice.InvoiceNumber));
