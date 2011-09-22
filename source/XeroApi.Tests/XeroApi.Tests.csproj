@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="ApiQueryTests.cs" />
     <Compile Include="IntegrationProxyHelperTests.cs" />
+    <Compile Include="ModelSerializationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Stubs\StubIntegrationProxy.cs" />
   </ItemGroup>
