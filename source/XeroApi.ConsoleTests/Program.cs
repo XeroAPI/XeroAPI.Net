@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using XeroApi.Integration;
-using XeroApi.Linq;
+
 using XeroApi.Model;
 
 namespace XeroApi.ConsoleApp
@@ -68,6 +64,7 @@ namespace XeroApi.ConsoleApp
             
             contact = repository.UpdateOrCreate(contact);
             Console.WriteLine(string.Format("The contact '{0}' was created with id: {1}", contact.Name, contact.ContactID));
+            Console.WriteLine(string.Format("The validation status was: {0}", contact.ValidationStatus));
 
             
 
@@ -133,6 +130,37 @@ namespace XeroApi.ConsoleApp
             {
                 Console.WriteLine(string.Format("Item {0} is sold at price: {1} {2}", item.Description, item.SalesDetails.UnitPrice, organisation.BaseCurrency));
             }
+
+
+            // Try and create an invoice - but using incorrect data. This should hopefully be rejected by the Xero API
+            Invoice invoiceToCreate = new Invoice
+            {
+                Contact = contact,
+                Type = "ACCREC",
+                Date = DateTime.Today,
+                LineItems = new LineItems
+                {
+                    new LineItem
+                    {
+                        AccountCode = "200",
+                        Description = "Blue Widget",
+                        UnitAmount = 10m,
+                        TaxAmount = 2m,
+                        LineAmount = 12m
+                    }
+                }
+            };
+
+            Console.WriteLine("Creating an invoice that should cause a validation error...");
+            var createdInvoice = repository.Create(invoiceToCreate);
+
+            if (createdInvoice.ValidationStatus == ValidationStatus.ERROR)
+            {
+                foreach (var message in createdInvoice.ValidationErrors)
+                {
+                    Console.WriteLine("Validation Error: " + message.Message);
+                }
+            } 
 
 
             // Download a PDF of the first AR invoice in the system
