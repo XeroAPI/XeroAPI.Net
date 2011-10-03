@@ -11,7 +11,7 @@ namespace XeroApi.Integration
         /// </summary>
         /// <param name="apiQueryDescription">The API query description.</param>
         /// <returns></returns>
-        string FindElements(ApiQueryDescription apiQueryDescription);
+        string FindElements(IApiQueryDescription apiQueryDescription);
 
         string FindAttachments(string endpointName, string itemId);
 

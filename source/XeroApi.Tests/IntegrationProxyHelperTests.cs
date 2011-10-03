@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Collections.Specialized;
 using NUnit.Framework;
 using XeroApi.Integration;
 
@@ -15,8 +15,6 @@ namespace XeroApi.Tests
                 new Uri("https://api.xero.com/api.xro/2.0"),
                 "Invoices",
                 "",
-                "",
-                "",
                 null);
 
             Assert.AreEqual("https://api.xero.com/api.xro/2.0/Invoices", uri.ToString());
@@ -29,8 +27,6 @@ namespace XeroApi.Tests
                 new Uri("https://api.xero.com/api.xro/2.0"),
                 "Invoices",
                 "INV-123",
-                "",
-                "",
                 null);
 
             Assert.AreEqual("https://api.xero.com/api.xro/2.0/Invoices/INV-123", uri.ToString());
@@ -43,9 +39,7 @@ namespace XeroApi.Tests
                 new Uri("https://api.xero.com/api.xro/2.0"),
                 "Invoices",
                 "INV-123",
-                "(foo = bar)",
-                "",
-                null);
+                new NameValueCollection { { "WHERE", "(foo = bar)" } });
 
             Assert.AreEqual("https://api.xero.com/api.xro/2.0/Invoices/INV-123?WHERE=%28foo%20%3D%20bar%29", uri.AbsoluteUri);
         }
@@ -57,9 +51,7 @@ namespace XeroApi.Tests
                 new Uri("https://api.xero.com/api.xro/2.0"),
                 "Invoices",
                 "INV-123",
-                "(foo = bar)",
-                "InvoiceNumber DESC",
-                null);
+                new NameValueCollection { { "WHERE", "(foo = bar)" }, { "ORDER", "InvoiceNumber DESC" } });
 
             Assert.AreEqual("https://api.xero.com/api.xro/2.0/Invoices/INV-123?WHERE=%28foo%20%3D%20bar%29&ORDER=InvoiceNumber%20DESC", uri.AbsoluteUri);
         }
@@ -71,9 +63,7 @@ namespace XeroApi.Tests
                 new Uri("https://api.xero.com/api.xro/2.0"),
                 "Invoices",
                 "",
-                "(foo = bar)",
-                "InvoiceNumber DESC",
-                null);
+                new NameValueCollection { { "WHERE", "(foo = bar)" }, { "ORDER", "InvoiceNumber DESC" } });
 
             Assert.AreEqual("https://api.xero.com/api.xro/2.0/Invoices?WHERE=%28foo%20%3D%20bar%29&ORDER=InvoiceNumber%20DESC", uri.AbsoluteUri);
         }

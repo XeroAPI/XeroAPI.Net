@@ -4,7 +4,6 @@ using System.IO;
 using System.Net;
 using DevDefined.OAuth.Consumer;
 using XeroApi.Exceptions;
-using XeroApi.Linq;
 using XeroApi.Model;
 
 namespace XeroApi.Integration
@@ -25,7 +24,7 @@ namespace XeroApi.Integration
 
         #region Structured Data Read/Write methods
 
-        public string FindElements(ApiQueryDescription apiQueryDescription)
+        public string FindElements(IApiQueryDescription apiQueryDescription)
         {
             IConsumerResponse consumerResponse = CallApi(
                 _oauthSession, 
@@ -34,10 +33,10 @@ namespace XeroApi.Integration
                 _oauthSession.ConsumerContext.BaseEndpointUri,
                 ModelTypeHelper.Pluralize(apiQueryDescription.ElementName),
                 apiQueryDescription.ElementId,
-                apiQueryDescription.Where,
-                apiQueryDescription.Order,
-                apiQueryDescription.ElementUpdatedDate,
-                null,
+                /*apiQueryDescription.Where,*/
+                /*apiQueryDescription.Order,*/
+                apiQueryDescription.UpdatedSinceDate,
+                apiQueryDescription.QueryStringParams,
                 null);
 
             if (consumerResponse.ResponseCode == HttpStatusCode.NotFound)
@@ -65,8 +64,8 @@ namespace XeroApi.Integration
                 _oauthSession.ConsumerContext.BaseEndpointUri,
                 ModelTypeHelper.Pluralize(endpointName), 
                 itemId, 
-                null,
-                null, 
+                /*null,*/
+                /*null, */
                 null,
                 null,
                 acceptMimeType);
@@ -88,8 +87,8 @@ namespace XeroApi.Integration
                 body,
                 _oauthSession.ConsumerContext.BaseEndpointUri,
                 ModelTypeHelper.Pluralize(endpointName),
-                null,
-                null,
+                /*null,*/
+                /*null,*/
                 null,
                 null,
                 new NameValueCollection { { "summarizeErrors", "false" } }, 
@@ -112,8 +111,8 @@ namespace XeroApi.Integration
                 body,
                 _oauthSession.ConsumerContext.BaseEndpointUri,
                 ModelTypeHelper.Pluralize(endpointName),
-                null,
-                null,
+                /*null,*/
+                /*null,*/
                 null,
                 null,
                 new NameValueCollection { { "summarizeErrors", "false" } }, 
@@ -215,11 +214,11 @@ namespace XeroApi.Integration
         #endregion
 
 
-        private static IConsumerResponse CallApi(IOAuthSession oauthSession, string method, string body, Uri baseUrl, string endpointName, string itemId, string whereClause, string orderBy, DateTime? lastModifiedDate, NameValueCollection additionalQueryParams, string acceptMimeType)
+        private static IConsumerResponse CallApi(IOAuthSession oauthSession, string method, string body, Uri baseUrl, string endpointName, string itemId, /*string whereClause, string orderBy,*/ DateTime? lastModifiedDate, NameValueCollection additionalQueryParams, string acceptMimeType)
         {
             method = string.IsNullOrEmpty(method) ? "GET" : method.ToUpper();
 
-            Uri uri = ConstructUri(baseUrl, endpointName, itemId, whereClause, orderBy, additionalQueryParams);
+            Uri uri = ConstructUri(baseUrl, endpointName, itemId, /*whereClause, orderBy,*/ additionalQueryParams);
 
             IConsumerRequest oauthRequest = oauthSession.Request()
                 .ForMethod(method)
@@ -249,7 +248,7 @@ namespace XeroApi.Integration
             return consumerResponse;
         }
 
-        public static Uri ConstructUri(Uri baseUrl, string endpointName, string itemId, string whereClause, string orderBy, NameValueCollection additionalQueryParams)
+        public static Uri ConstructUri(Uri baseUrl, string endpointName, string itemId, /*string whereClause, string orderBy,*/ NameValueCollection additionalQueryParams)
         {
             UriBuilder uriBuilder = new UriBuilder(baseUrl);
 
@@ -268,11 +267,11 @@ namespace XeroApi.Integration
 
             NameValueCollection queryStringParameters = additionalQueryParams ?? new NameValueCollection();
 
-            if (!string.IsNullOrEmpty(whereClause))
-                queryStringParameters.Add("WHERE", whereClause.Trim());
+            /*if (!string.IsNullOrEmpty(whereClause))
+                queryStringParameters.Add("WHERE", whereClause.Trim());*/
 
-            if (!string.IsNullOrEmpty(orderBy))
-                queryStringParameters.Add("ORDER", orderBy);
+            /*if (!string.IsNullOrEmpty(orderBy))
+                queryStringParameters.Add("ORDER", orderBy);*/
 
             string queryString = DevDefined.OAuth.Framework.UriUtility.FormatQueryString(queryStringParameters);
 

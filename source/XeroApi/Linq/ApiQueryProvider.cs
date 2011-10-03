@@ -28,7 +28,7 @@ namespace XeroApi.Linq
 
         public override object Execute(Expression expression)
         {
-            ApiQueryDescription queryDescription = Translate(expression);
+            LinqQueryDescription queryDescription = Translate(expression);
 
             // Call the API..
             string xml = _proxy.FindElements(queryDescription);
@@ -70,7 +70,7 @@ namespace XeroApi.Linq
             }
         }
 
-        private static ApiQueryDescription Translate(Expression expression)
+        private static LinqQueryDescription Translate(Expression expression)
         {
             return new ApiQueryTranslator().Translate(expression);
         }

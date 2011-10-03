@@ -41,8 +41,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AttachmentRepository.cs" />
+    <Compile Include="Integration\IApiQueryDescription.cs" />
     <Compile Include="Linq\ApiQuery.cs" />
-    <Compile Include="Linq\ApiQueryDescription.cs" />
+    <Compile Include="Linq\LinqQueryDescription.cs" />
     <Compile Include="Linq\ApiQueryProvider.cs" />
     <Compile Include="Linq\ApiQueryTranslator.cs" />
     <Compile Include="Exceptions\ApiResponseException.cs" />
@@ -72,6 +73,10 @@
     <Compile Include="Model\Phone.cs" />
     <Compile Include="Model\Receipt.cs" />
     <Compile Include="Model\Report.cs" />
+    <Compile Include="Model\Reporting\DynamicReportBase.cs" />
+    <Compile Include="Model\Reporting\PublishedReportBase.cs" />
+    <Compile Include="Model\Reporting\ReportQueryDescription.cs" />
+    <Compile Include="Model\Reporting\TrialBalanceReport.cs" />
     <Compile Include="Model\TaxRate.cs" />
     <Compile Include="Model\TrackingCategory.cs" />
     <Compile Include="Model\User.cs" />
@@ -80,6 +85,7 @@
     <Compile Include="OAuth\Utility\StreamExtensions.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ReportRepository.cs" />
     <Compile Include="Repository.cs" />
     <Compile Include="Linq\ExpressionVisitor.cs" />
     <Compile Include="Integration\IIntegrationProxy.cs" />

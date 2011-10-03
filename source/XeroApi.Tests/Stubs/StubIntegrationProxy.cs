@@ -9,9 +9,9 @@ namespace XeroApi.Tests.Stubs
 {
     internal class StubIntegrationProxy : IIntegrationProxy
     {
-        public string FindElements(ApiQueryDescription apiQueryDescription)
+        public string FindElements(IApiQueryDescription apiQueryDescription)
         {
-            LastQueryDescription = apiQueryDescription;
+            LastQueryDescription = apiQueryDescription as LinqQueryDescription;
             return GenerateSampleResponseXml(apiQueryDescription.ElementName);
         }
 
@@ -55,7 +55,7 @@ namespace XeroApi.Tests.Stubs
             throw new NotImplementedException();
         }
 
-        public ApiQueryDescription LastQueryDescription
+        public LinqQueryDescription LastQueryDescription
         {
             get;
             private set;

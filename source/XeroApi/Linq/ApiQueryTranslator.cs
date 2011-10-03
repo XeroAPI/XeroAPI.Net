@@ -6,13 +6,13 @@ namespace XeroApi.Linq
 {
     internal class ApiQueryTranslator : ExpressionVisitor
     {
-        private ApiQueryDescription _query;
+        private LinqQueryDescription _query;
         private ApiQuerystringName _currentQueryStringName = ApiQuerystringName.Unknown;
 
         
-        internal ApiQueryDescription Translate(Expression expression)
+        internal LinqQueryDescription Translate(Expression expression)
         {
-            _query = new ApiQueryDescription();
+            _query = new LinqQueryDescription();
 
             if (expression.Type.IsGenericType)
             {
@@ -156,7 +156,7 @@ namespace XeroApi.Linq
                 }
                 if (mExp.Member.Name == _query.ElementUpdatedDateProperty.SafeName())
                 {
-                    _query.ElementUpdatedDate = EvaluateExpression<DateTime?>(b.Right);
+                    _query.UpdatedSinceDate = EvaluateExpression<DateTime?>(b.Right);
                     return b;
                 }
             }

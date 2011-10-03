@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-
+using XeroApi.Integration;
 using XeroApi.Model;
 
 namespace XeroApi.Linq
@@ -14,10 +15,13 @@ namespace XeroApi.Linq
         OrderBy
     }
 
-    public class ApiQueryDescription
+    
+    public class LinqQueryDescription : IApiQueryDescription
     {
         private readonly StringBuilder _orderQuery = new StringBuilder();
         private readonly StringBuilder _whereQuery = new StringBuilder();
+
+        private NameValueCollection _queryStringParams;
 
         public Type ElementType 
         { 
@@ -43,7 +47,7 @@ namespace XeroApi.Linq
                 return ModelTypeHelper.GetElementCollectionType(ElementType);
             }
         }
-
+        
         public string ElementName 
         { 
             get 
@@ -88,12 +92,12 @@ namespace XeroApi.Linq
             set;
         }
 
-        public DateTime? ElementUpdatedDate
+        public DateTime? UpdatedSinceDate
         {
             get; 
             set;
         }
-
+        
         public string Where
         {
             get { return _whereQuery.ToString(); }
@@ -103,7 +107,27 @@ namespace XeroApi.Linq
         {
             get { return _orderQuery.ToString(); }
         }
+
+        public NameValueCollection QueryStringParams
+        {
+            get 
+            {
+                NameValueCollection collectionToReturn = new NameValueCollection();
+
+                if (_queryStringParams != null && _queryStringParams.Count > 0)
+                    collectionToReturn.Add(_queryStringParams);
+
+                if (!string.IsNullOrEmpty(Where))
+                    collectionToReturn.Add("WHERE", Where);
+
+                if (!string.IsNullOrEmpty(Order))
+                    collectionToReturn.Add("ORDER", Order);
+
+                return collectionToReturn; 
+            }
+        }
         
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
@@ -120,8 +144,8 @@ namespace XeroApi.Linq
             if (!string.IsNullOrEmpty(Order))
                 sb.Append("Order:" + Order + " ");
 
-            if (ElementUpdatedDate.HasValue)
-                sb.Append("After:" + ElementUpdatedDate.Value.ToString("yyyy-MM-ddTHH:mm:ss") + " ");
+            if (UpdatedSinceDate.HasValue)
+                sb.Append("After:" + UpdatedSinceDate.Value.ToString("yyyy-MM-ddTHH:mm:ss") + " ");
 
             return sb.ToString().Trim();
         }

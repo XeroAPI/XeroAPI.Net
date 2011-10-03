@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 
 using XeroApi.Model;
+using XeroApi.Model.Reporting;
 
 namespace XeroApi.ConsoleApp
 {
@@ -51,6 +52,12 @@ namespace XeroApi.ConsoleApp
             Console.WriteLine(string.Format("You have been authorised against organisation: {0}", organisation.Name));
 
 
+
+            // Get a trial balance report (as per http://answers.xero.com/developer/question/36201/)
+            //TrialBalanceReport trialBalanceReport = repository.Reports.RunDynamicReport(new TrialBalanceReport());
+
+
+
             // Make a PUT call to the API - add a dummy contact
             Console.WriteLine("Please enter the name of a new contact to add to Xero");
             string contactName = Console.ReadLine();
@@ -94,7 +101,10 @@ namespace XeroApi.ConsoleApp
 
 
             // Find out how many bank accounts are defined for the organisation...
-            IQueryable<Account> bankAccounts = repository.Accounts.Where(account => account.Type == "BANK");
+            var bankAccounts = repository.Accounts
+                .Where(account => account.Type == "BANK")
+                .OrderBy(account => account.Name)
+                .ToList();
 
             Console.WriteLine(string.Format("There were {0} bank accounts in this organisation.", bankAccounts.Count()));
 

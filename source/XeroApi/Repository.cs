@@ -58,7 +58,7 @@ namespace XeroApi
         public TModel FindById<TModel>(string id) 
             where TModel : ModelBase
         {
-            var queryDescription = new ApiQueryDescription { ElementId = id, ElementType=typeof(TModel)  };
+            var queryDescription = new LinqQueryDescription { ElementId = id, ElementType=typeof(TModel)  };
             string responseXml = _proxy.FindElements(queryDescription);
 
             Response response = ModelSerializer.DeserializeTo<Response>(responseXml);
@@ -137,6 +137,8 @@ namespace XeroApi
 
         public AttachmentRepository Attachments { get { return new AttachmentRepository(_proxy); } }
 
+        // In the pipeline...
+        //public ReportRepository Reports {get {return new ReportRepository(_proxy, _provider);}}
 
         /// <summary>
         /// Creates the specified in the remote repository
