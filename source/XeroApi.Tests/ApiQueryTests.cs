@@ -273,6 +273,49 @@ namespace XeroApi.Tests
             Assert.AreEqual("Invoice", queryDesctipion.ElementType.Name);
             Assert.AreEqual("(Contact.ContactID == Guid(\"071509d6-badc-4237-9f52-ad2b4ccd9264\"))", queryDesctipion.Where);
         }
+
+
+
+        public string ContactName
+        {
+            get { return "Joe Bloggs"; }
+        }
+
+        [Test]
+        public void TestApiQueryCanCallInvoicesEndpointFilteringByThisClassProperty()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            repository.Invoices
+                .Where(invoice => invoice.Contact.Name == ContactName)
+                .ToList();
+
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+            Assert.AreEqual("Invoice", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("(Contact.Name == \"Joe Bloggs\")", queryDesctipion.Where);
+        }
+        
+        internal StubContact Contact
+        {
+            get { return new StubContact(); }
+        }
+
+        [Test]
+        [Ignore("There's a known bug in ApiQueryTranslator.VisitMemberAccess that prevents properties from being translated correctly")]
+        public void TestApiQueryCanCallInvoicesEndpointFilteringByNestedClassProperty()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            repository.Invoices
+                .Where(invoice => invoice.Contact.Name == Contact.Name)
+                .ToList();
+
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+            Assert.AreEqual("Invoice", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("(Contact.Name == \"Joe Bloggs\")", queryDesctipion.Where);
+        }
     }
 }
 

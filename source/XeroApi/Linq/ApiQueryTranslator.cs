@@ -261,6 +261,7 @@ namespace XeroApi.Linq
             }
             if (m.Expression != null && m.Expression.NodeType == ExpressionType.MemberAccess)
             {
+                // TODO: This is just plain wrong and needs to be re-written
                 Append(m.Member.DeclaringType.Name + "." + m.Member.Name);
                 return m;
             }
