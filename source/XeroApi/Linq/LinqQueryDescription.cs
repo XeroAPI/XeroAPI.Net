@@ -20,9 +20,7 @@ namespace XeroApi.Linq
     {
         private readonly StringBuilder _orderQuery = new StringBuilder();
         private readonly StringBuilder _whereQuery = new StringBuilder();
-
-        private NameValueCollection _queryStringParams;
-
+        
         public Type ElementType 
         { 
             get; 
@@ -113,10 +111,7 @@ namespace XeroApi.Linq
             get 
             {
                 NameValueCollection collectionToReturn = new NameValueCollection();
-
-                if (_queryStringParams != null && _queryStringParams.Count > 0)
-                    collectionToReturn.Add(_queryStringParams);
-
+                
                 if (!string.IsNullOrEmpty(Where))
                     collectionToReturn.Add("WHERE", Where);
 

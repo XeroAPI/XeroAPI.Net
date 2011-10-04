@@ -51,12 +51,7 @@ namespace XeroApi.ConsoleApp
             Organisation organisation = repository.Organisation;
             Console.WriteLine(string.Format("You have been authorised against organisation: {0}", organisation.Name));
 
-
-
-            // Get a trial balance report (as per http://answers.xero.com/developer/question/36201/)
-            //TrialBalanceReport trialBalanceReport = repository.Reports.RunDynamicReport(new TrialBalanceReport());
-
-
+            
 
             // Make a PUT call to the API - add a dummy contact
             Console.WriteLine("Please enter the name of a new contact to add to Xero");
@@ -326,6 +321,39 @@ namespace XeroApi.ConsoleApp
             foreach (var expenseClaim in repository.ExpenseClaims.Where(expenseClaim => expenseClaim.Status != "CURRENT"))
             {
                 Console.WriteLine("Expense claim {0} for user {1} for amount {2} with status {3}", expenseClaim.ExpenseClaimID, expenseClaim.User.EmailAddress, expenseClaim.Total, expenseClaim.Status);
+            }
+
+
+            // Get a trial balance report (as per http://answers.xero.com/developer/question/36201/)
+            Console.WriteLine("Running Trial Balance Report...");
+            Report trialBalance = repository.Reports.RunDynamicReport(new TrialBalanceReport());
+
+            if (trialBalance != null)
+            {
+                foreach (var reportTitle in trialBalance.ReportTitles)
+                {
+                    Console.WriteLine("\t" + reportTitle);
+                }
+
+                foreach (var reportRow in trialBalance.Rows)
+                {
+                    Console.WriteLine("    " + reportRow.Title);
+
+                    if (reportRow.Rows != null)
+                    {
+                        foreach (var subRow in reportRow.Rows)
+                        {
+                            Console.Write("         Row: " + subRow.RowType);
+
+                            foreach (var cell in subRow.Cells)
+                            {
+                                Console.Write(cell.Value + ", ");
+                            }
+
+                            Console.WriteLine();
+                        }
+                    }
+                }
             }
 
             

@@ -73,7 +73,15 @@
     <Compile Include="Model\Phone.cs" />
     <Compile Include="Model\Receipt.cs" />
     <Compile Include="Model\Report.cs" />
+    <Compile Include="Model\Reporting\AgedPayablesByContactReport.cs" />
+    <Compile Include="Model\Reporting\AgedReceivablesByContactReport.cs" />
+    <Compile Include="Model\Reporting\BalanceSheetReport.cs" />
+    <Compile Include="Model\Reporting\BankStatementReport.cs" />
+    <Compile Include="Model\Reporting\BankSummaryReport.cs" />
+    <Compile Include="Model\Reporting\BudgetSummaryReport.cs" />
     <Compile Include="Model\Reporting\DynamicReportBase.cs" />
+    <Compile Include="Model\Reporting\ExecutiveSummaryReport.cs" />
+    <Compile Include="Model\Reporting\ProfitAndLossReport.cs" />
     <Compile Include="Model\Reporting\PublishedReportBase.cs" />
     <Compile Include="Model\Reporting\ReportQueryDescription.cs" />
     <Compile Include="Model\Reporting\TrialBalanceReport.cs" />

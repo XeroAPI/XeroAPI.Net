@@ -127,7 +127,7 @@ namespace XeroApi
         
         public IQueryable<Employee> Employees { get { return new ApiQuery<Employee>(_provider); } }
 
-        public IQueryable<Report> Reports { get { return new ApiQuery<Report>(_provider); } }
+        //public IQueryable<Report> Reports { get { return new ApiQuery<Report>(_provider); } }
 
         public IQueryable<User> Users { get { return new ApiQuery<User>(_provider); } }
 
@@ -138,7 +138,7 @@ namespace XeroApi
         public AttachmentRepository Attachments { get { return new AttachmentRepository(_proxy); } }
 
         // In the pipeline...
-        //public ReportRepository Reports {get {return new ReportRepository(_proxy, _provider);}}
+        public ReportRepository Reports {get {return new ReportRepository(_proxy, _provider);}}
 
         /// <summary>
         /// Creates the specified in the remote repository

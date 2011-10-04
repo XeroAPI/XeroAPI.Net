@@ -31,40 +31,49 @@ namespace XeroApi
         /// <typeparam name="TReport">The type of the report.</typeparam>
         /// <param name="report">The report.</param>
         /// <returns></returns>
-        public TReport RunDynamicReport<TReport>(TReport report)
+        public Report RunDynamicReport<TReport>(TReport report)
             where TReport : DynamicReportBase
         {
-            return null;
+            var queryDescription = new ReportQueryDescription
+            {
+                ElementName = "Report",
+                ElementId = report.ReportName,
+                QueryStringParams = report.GetQueryStringParamCollection()
+            };
 
-            /*ApiQueryDescription queryDescription = new ReportQueryDescription
-                                                       {
-                                                           ElementName = "Reports",
-                                                           ElementId = report.ReportName,
-                                                           
-                                                       };
+            string xml = _integrationProxy.FindElements(queryDescription);
 
-            _integrationProxy.FindElements()*/
-            
+            Response response = ModelSerializer.DeserializeTo<Response>(xml);
+
+            return response.Reports[0];
         }
 
 
         /// <summary>
         /// Gets the published report.
         /// </summary>
-        /// <typeparam name="TReport">The type of the report.</typeparam>
         /// <param name="reportId">The report id.</param>
         /// <returns></returns>
-        public TReport GetPublishedReport<TReport>(Guid reportId)
-            where TReport : PublishedReportBase
+        public Report GetPublishedReport(Guid reportId)
         {
-            throw new NotImplementedException();
+            var queryDescription = new ReportQueryDescription
+            {
+                ElementName = "Report",
+                ElementId = reportId.ToString(),
+            };
+
+            string xml = _integrationProxy.FindElements(queryDescription);
+
+            Response response = ModelSerializer.DeserializeTo<Response>(xml);
+
+            return response.Reports[0];
         }
 
         /// <summary>
         /// Gets the get all published reports.
         /// </summary>
         /// <value>The get all published reports.</value>
-        public IQueryable<Report> GetAllPublishedReports
+        public IQueryable<Report> ListAllPublishedReports
         {
             get { return new ApiQuery<Report>(_queryProvider); }
         }
