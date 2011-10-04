@@ -39,9 +39,9 @@ namespace XeroApi.Model
         
         public ContactGroups ContactGroups { get; set; }
         
-        public bool? IsSupplier { get; set; }
+        public bool IsSupplier { get; set; }
         
-        public bool? IsCustomer { get; set; }
+        public bool IsCustomer { get; set; }
         
         public string DefaultCurrency { get;  set; }
     }
