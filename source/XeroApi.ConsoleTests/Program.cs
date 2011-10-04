@@ -91,8 +91,18 @@ namespace XeroApi.ConsoleApp
                 .Count();
 
             Console.WriteLine(string.Format("There were {0} contacts created or updated in the last month.", invoiceCount));
-            
 
+
+            // Construct a linq expression to call 'GET Contacts'...
+            var customers = repository.Contacts.Where(c => c.IsCustomer == true).ToList();
+
+            Console.WriteLine(string.Format("There are {0} contacts that are customers.", customers.Count));
+
+            if (customers.Any(c => !c.IsCustomer))
+            {
+                Console.WriteLine("Filtering contacts on the IsCustomer flag didn't work!");
+            }
+            
 
 
             // Find out how many bank accounts are defined for the organisation...

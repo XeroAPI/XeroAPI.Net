@@ -316,6 +316,98 @@ namespace XeroApi.Tests
             Assert.AreEqual("Invoice", queryDesctipion.ElementType.Name);
             Assert.AreEqual("(Contact.Name == \"Joe Bloggs\")", queryDesctipion.Where);
         }
+
+        [Test]
+        public void TestApiQueryCanCallContactsEndpointWithAndAlsoOperator()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            repository.Contacts
+                .Where(c => c.ContactStatus == "ACTIVE" && c.IsCustomer == true)
+                .ToList();
+
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+            Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("((ContactStatus == \"ACTIVE\") AND (IsCustomer == true))", queryDesctipion.Where);
+        }
+
+        [Test]
+        public void TestApiQueryCanCallContactsEndpointWithLinqAndAlsoOperator()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            IQueryable<Contact> query = from contact in repository.Contacts
+                      where contact.ContactStatus == "ACTIVE" && contact.IsCustomer == true
+                      select contact;
+
+            query.GetEnumerator();
+
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+            Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("((ContactStatus == \"ACTIVE\") AND (IsCustomer == true))", queryDesctipion.Where);
+        }
+
+        [Test]
+        public void TestApiQueryCanCallContactsEndpointWithOrElseOperator()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            repository.Contacts
+                .Where(c => c.ContactStatus == "ACTIVE" || c.IsCustomer == true)
+                .ToList();
+
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+            Assert.AreEqual("((ContactStatus == \"ACTIVE\") OR (IsCustomer == true))", queryDesctipion.Where);
+        }
+
+        [Test]
+        public void TestApiQueryCanCallContactsEndpointWithOrElseAndAndAlsoOperator()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            repository.Contacts
+                .Where(c => (c.ContactStatus == "ACTIVE" || c.IsCustomer == true) && (c.ContactStatus == "ARCHIVED"))
+                .ToList();
+
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+            Assert.AreEqual("(((ContactStatus == \"ACTIVE\") OR (IsCustomer == true)) AND (ContactStatus == \"ARCHIVED\"))", queryDesctipion.Where);
+        }
+        
+        [Test]
+        public void TestApiQueryCanCallEmployeeEndpointWithImplicitBooleanAndNotOperator()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            repository.Users
+                .Where(u => !u.IsSubscriber)
+                .ToList();
+
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+            Assert.AreEqual("User", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("(IsSubscriber == false)", queryDesctipion.Where);
+        }
+
+        [Test]
+        public void TestApiQueryCanCallEmployeeEndpointWithImplicitLinqBooleanOperator()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            var query = from user in repository.Users
+                        where user.IsSubscriber == false
+                        select user;
+
+            query.GetEnumerator();
+
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+            Assert.AreEqual("User", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("(IsSubscriber == false)", queryDesctipion.Where);
+        }
     }
 }
 

@@ -127,13 +127,15 @@ namespace XeroApi.Linq
             switch (u.NodeType)
             {
                 case ExpressionType.Not:
-                    Append(" NOT ");
+                    Append("(");
                     Visit(u.Operand);
+                    Append(" == false)");
                     break;
                 default:
                     Visit(u.Operand);
                     break;
             }
+
             return u;
         }
 
@@ -168,9 +170,11 @@ namespace XeroApi.Linq
             switch (b.NodeType)
             {
                 case ExpressionType.And:
+                case ExpressionType.AndAlso:
                     Append(" AND ");
                     break;
                 case ExpressionType.Or:
+                case ExpressionType.OrElse:
                     Append(" OR ");
                     break;
                 case ExpressionType.Equal:

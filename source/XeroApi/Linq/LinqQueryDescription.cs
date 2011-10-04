@@ -145,17 +145,21 @@ namespace XeroApi.Linq
             return sb.ToString().Trim();
         }
 
+        private string _lastWhereTerm;
+
         public void AppendTerm(string term, ApiQuerystringName querystringName)
         {
             switch (querystringName)
             {
                 case ApiQuerystringName.Where:
 
-                    if (term == "(" && _whereQuery.Length > 0)
+                    if (_lastWhereTerm == ")" && term == "(")
                         _whereQuery.Append(" AND ");
 
                     _whereQuery.Append(term);
-                    
+
+                    _lastWhereTerm = term;
+
                     break;
 
                 case ApiQuerystringName.OrderBy:
@@ -164,6 +168,7 @@ namespace XeroApi.Linq
                         _orderQuery.Append(", ");
 
                     _orderQuery.Append(term);
+                    
                     break;
                     
                 case ApiQuerystringName.Unknown:
