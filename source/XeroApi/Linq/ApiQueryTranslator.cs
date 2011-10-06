@@ -37,6 +37,8 @@ namespace XeroApi.Linq
 
                 case "FirstOrDefault":
                 case "First":
+                case "SingleOrDefault":
+                case "Single":
 
                     if (!string.IsNullOrEmpty(_query.ClientSideExpression) && !_query.ClientSideExpression.Equals(m.Method.Name))
                     {
@@ -82,8 +84,6 @@ namespace XeroApi.Linq
                 case "Select":
                 case "Take":
                 case "Skip":
-                case "Single":
-                case "SingleOrDefault":
                 case "SelectMany":
                 case "Join":
                 case "GroupJoin":

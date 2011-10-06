@@ -50,22 +50,41 @@ namespace XeroApi.Linq
             switch (queryDescription.ClientSideExpression)
             {
                 case "FirstOrDefault":
+
                     return elementCollection.Count == 0 
                         ? null 
                         : elementCollection[0];
 
                 case "First":
+
                     if (elementCollection.Count == 0)
-                    {
                         throw new InvalidOperationException("The ModelList contains no items");
-                    }
+                    
+                    return elementCollection[0];
+
+                case "SingleOrDefault":
+
+                    if (elementCollection.Count > 1)
+                        throw new InvalidOperationException("The ModelList contains no items");
+
+                    if (elementCollection.Count == 0)
+                        return null;
 
                     return elementCollection[0];
 
+                case "Single":
+
+                    if (elementCollection.Count != 1)
+                        throw new InvalidOperationException("The ModelList contains no items");
+                    
+                    return elementCollection[0];
+
                 case "Count":
+
                     return elementCollection.Count;
 
                 default:
+
                     throw new NotImplementedException(string.Format("The client side aggregator {0} cannot currently be performed", queryDescription.ClientSideExpression));
             }
         }

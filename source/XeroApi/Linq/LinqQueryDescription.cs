@@ -27,7 +27,7 @@ namespace XeroApi.Linq
             internal set; 
         }
 
-        internal string ClientSideExpression
+        public string ClientSideExpression
         {
             get; 
             set;

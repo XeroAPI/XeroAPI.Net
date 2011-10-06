@@ -408,6 +408,35 @@ namespace XeroApi.Tests
             Assert.AreEqual("User", queryDesctipion.ElementType.Name);
             Assert.AreEqual("(IsSubscriber == false)", queryDesctipion.Where);
         }
+
+
+        [Test]
+        public void TestApiQueryCanCallEmployeeEndpointWithSingleOperator()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            Assert.Throws<InvalidOperationException>(() => repository.Users.Single(u => u.FullName == "Joe Bloggs"));
+
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+            Assert.AreEqual("User", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("Single", queryDesctipion.ClientSideExpression);
+            Assert.AreEqual("(FullName == \"Joe Bloggs\")", queryDesctipion.Where);
+        }
+
+        [Test]
+        public void TestApiQueryCanCallEmployeeEndpointWithSingleOrDefaultOperator()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+            
+            repository.Users.SingleOrDefault(u => u.FullName == "Joe Bloggs");
+            
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+            Assert.AreEqual("User", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("SingleOrDefault", queryDesctipion.ClientSideExpression);
+            Assert.AreEqual("(FullName == \"Joe Bloggs\")", queryDesctipion.Where);
+        }
     }
 }
 

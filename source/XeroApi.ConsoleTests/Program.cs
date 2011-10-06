@@ -102,6 +102,12 @@ namespace XeroApi.ConsoleApp
             {
                 Console.WriteLine("Filtering contacts on the IsCustomer flag didn't work!");
             }
+
+
+
+            // Try out the 'Single' linq method (http://answers.xero.com/developer/question/36501/)
+            var organisation2 = repository.Organisations.Single();
+
             
 
 
