@@ -1,4 +1,4 @@
-<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Xero.ScreencastWeb.Models.Contact>>" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<XeroApi.Model.Contact>>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
 	Index
@@ -24,7 +24,7 @@
             <td><%=Html.Encode(item.Name) %></td>
             <td><%=Html.Encode(string.Format("{0} {1}", item.FirstName, item.LastName)) %></td>
             <td><%=Html.Encode(item.EmailAddress) %></td>
-            <td><%=Html.Encode(item.Phones.Where(phone => !phone.IsEmpty).FirstOrDefault())%></td>
+            <td><%=Html.Encode(item.Phones.Where(phone => !string.IsNullOrEmpty(phone.PhoneNumber)).FirstOrDefault())%></td>
             <td>
                 <%= Html.ActionLink("Edit", "Edit", new { id=item.ContactID }) %> |
                 <%= Html.ActionLink("Details", "Details", new { id=item.ContactID })%>

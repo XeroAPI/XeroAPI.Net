@@ -34,6 +34,9 @@ namespace DevDefined.OAuth.Consumer
     public interface IOAuthSession
     {
         IOAuthConsumerContext ConsumerContext { get; set; }
+        ITokenRepository TokenRepository { get; }
+
+        [Obsolete("All tokens should be stored in a ITokenRepository", true)]
         IToken AccessToken { get; set; }
 
         IConsumerRequest Request();
@@ -42,14 +45,26 @@ namespace DevDefined.OAuth.Consumer
         RequestToken GetRequestToken();
         RequestToken GetRequestToken(Uri callbackUri);
 
+        bool HasValidAccessToken { get; }
+
         IMessageLogger MessageLogger { get; set; }
         IConsumerResponse LogMessage(IConsumerRequest request, IConsumerResponse response);
 
+        [Obsolete("The request token is stored in the TokenRepository, use the overloaded method that only uses a verificationCode parameter")]
         AccessToken ExchangeRequestTokenForAccessToken(IToken requestToken);
+
+        [Obsolete("The request token is stored in the TokenRepository, use the overloaded method that only uses a verificationCode parameter")]
         AccessToken ExchangeRequestTokenForAccessToken(IToken requestToken, string verificationCode);
 
+        AccessToken ExchangeRequestTokenForAccessToken(string verificationCode);
+
+        [Obsolete("Use the GetUserAuthorizationUrl method instead")]
         string GetUserAuthorizationUrlForToken(IToken token, string callbackUrl);
+
+        [Obsolete("Use the GetUserAuthorizationUrl method instead")]
         string GetUserAuthorizationUrlForToken(IToken token);
+
+        string GetUserAuthorizationUrl();
 
         IOAuthSession WithFormParameters(IDictionary<string, string> dictionary);
         IOAuthSession WithQueryParameters(IDictionary<string, string> dictionary);
@@ -57,6 +72,9 @@ namespace DevDefined.OAuth.Consumer
         IOAuthSession WithHeaders(IDictionary<string, string> dictionary);
 
         // http://oauth.googlecode.com/svn/spec/ext/session/1.0/drafts/1/spec.html
+        [Obsolete("Use the overloaded method that gets the current access token and session handle from the token repository")]
         AccessToken RenewAccessToken(IToken accessToken, string sessionHandle);
+
+        AccessToken RenewAccessToken();
     }
 }

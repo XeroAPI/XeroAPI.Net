@@ -1,4 +1,4 @@
-<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<Xero.ScreencastWeb.Models.Invoice>>" %>
+<%@ Page Title="" Language="C#" MasterPageFile="~/Views/Shared/Site.Master" Inherits="System.Web.Mvc.ViewPage<IEnumerable<XeroApi.Model.Invoice>>" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
 	Index
@@ -22,9 +22,9 @@
     
         <tr>
             <td><%=item.InvoiceNumber%></td>
-            <td><%=item.Date.ToString("dd-MMM-yyyy")%></td>
-            <td><%=item.Total.ToString("c")%></td>
-            <td><%=item.AmountDue.ToString("c")%></td>
+            <td><%=item.Date.HasValue ? item.Date.Value.ToString("dd-MMM-yyyy") : string.Empty %></td>
+            <td><%=item.Total.HasValue ? item.Total.Value.ToString("c") : string.Empty %></td>
+            <td><%=item.AmountDue.HasValue ? item.AmountDue.Value.ToString("c") : string.Empty %></td>
             <td>
                 <%= Html.ActionLink("Edit", "Edit", new { id = item.InvoiceID })%> |
                 <%= Html.ActionLink("Details", "Details", new { id = item.InvoiceID })%>

@@ -90,6 +90,9 @@
     <Compile Include="Model\User.cs" />
     <Compile Include="OAuth\Consumer\IMessageLogger.cs" />
     <Compile Include="OAuth\Logging\DebugMessageLogger.cs" />
+    <Compile Include="OAuth\Utility\Storage\Basic\FixedValueTokenRepository.cs" />
+    <Compile Include="OAuth\Utility\Storage\Basic\InMemoryTokenRepository.cs" />
+    <Compile Include="OAuth\Utility\Storage\Basic\ITokenRepository.cs" />
     <Compile Include="OAuth\Utility\StreamExtensions.cs">
       <SubType>Code</SubType>
     </Compile>

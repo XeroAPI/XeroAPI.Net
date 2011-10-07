@@ -1,10 +1,11 @@
+using System.Linq;
 using System.Web.Mvc;
-using System.Web.Routing;
-using Xero.ScreencastWeb.Models;
+
 using Xero.ScreencastWeb.Services;
 
 namespace Xero.ScreencastWeb.Controllers
 {
+    [InitServiceProvider]
     public class ContactsController : ControllerBase
     {
         //
@@ -12,23 +13,9 @@ namespace Xero.ScreencastWeb.Controllers
 
         public ActionResult Index()
         {
-            var listRequest = new ApiGetRequest<Contact>
-            {
-                OrderByClause = "Name DESC",
-                WhereClause = ""
-            };
+            var repository = ServiceProvider.GetCurrentRepository();
 
-            ApiRepository repository = new ApiRepository();
-            HttpSessionAccessTokenRepository accessTokenRepository = new HttpSessionAccessTokenRepository(Session);
-
-            if (accessTokenRepository.GetToken("") == null)
-            {
-                return new ReturnToHomeResult("There is no access token for the current user. Please click the 'connect' button on the homepage.");
-            }
-
-            Response response = repository.Get(accessTokenRepository, listRequest);
-
-            return View(response.Contacts);
+            return View(repository.Contacts.ToList());
         }
 
     }

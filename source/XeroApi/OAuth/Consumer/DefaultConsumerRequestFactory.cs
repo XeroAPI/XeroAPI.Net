@@ -4,7 +4,6 @@ namespace DevDefined.OAuth.Consumer
 {
     public class DefaultConsumerRequestFactory : IConsumerRequestFactory
     {
-        readonly ICertificateFactory _clientSslCertificateFactory;
         static IConsumerRequestFactory _defaultInstance;
 
         public DefaultConsumerRequestFactory()
@@ -13,7 +12,7 @@ namespace DevDefined.OAuth.Consumer
 
         public DefaultConsumerRequestFactory(ICertificateFactory clientSslCertificateFactory)
         {
-            _clientSslCertificateFactory = clientSslCertificateFactory;
+            CertificateFactory = clientSslCertificateFactory;
         }
 
         public static IConsumerRequestFactory Instance
@@ -22,9 +21,15 @@ namespace DevDefined.OAuth.Consumer
             set { _defaultInstance = value; }
         }
 
+        public ICertificateFactory CertificateFactory
+        {
+            get; 
+            set;
+        }
+
         public IConsumerRequest CreateConsumerRequest(IOAuthSession session, IOAuthContext context, IOAuthConsumerContext consumerContext, IToken token)
         {
-            return new ConsumerRequest(session, context, consumerContext, _clientSslCertificateFactory);
+            return new ConsumerRequest(session, context, consumerContext, CertificateFactory);
         }
     }
 }

@@ -66,30 +66,15 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Address.cs" />
-    <Compile Include="Models\ApiGetRequest.cs" />
-    <Compile Include="Models\ApiPutRequest.cs" />
-    <Compile Include="Models\Contact.cs" />
-    <Compile Include="Models\ContactGroup.cs" />
-    <Compile Include="Models\Enums.cs" />
-    <Compile Include="Models\Invoice.cs" />
-    <Compile Include="Models\InvoiceLineItem.cs" />
-    <Compile Include="Models\ModelBase.cs" />
-    <Compile Include="Models\ModelListBase.cs" />
-    <Compile Include="Models\ModelSerializer.cs" />
-    <Compile Include="Models\Organisation.cs" />
-    <Compile Include="Models\Phone.cs" />
-    <Compile Include="Models\Response.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\ApiRepository.cs" />
     <Compile Include="Services\CertificateRepository.cs" />
-    <Compile Include="Services\Interfaces\ITokenRepository.cs" />
+    <Compile Include="Services\InitServiceProviderAttribute.cs" />
     <Compile Include="Services\ObjectExtensions.cs" />
-    <Compile Include="Services\TokenRepository.cs" />
+    <Compile Include="Services\ServiceProvider.cs" />
+    <Compile Include="Services\SessionStateTokenRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
-    <Content Include="Views\Connect\Index.aspx" />
     <Content Include="Views\Contacts\Index.aspx" />
     <Content Include="Views\Home\Index.aspx" />
     <Content Include="Views\Invoices\Index.aspx" />
@@ -119,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Connect\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Shared\Site.Master" />
@@ -143,7 +129,7 @@
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
-          <AutoAssignPort>True</AutoAssignPort>
+          <AutoAssignPort>False</AutoAssignPort>
           <DevelopmentServerPort>51306</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>

@@ -1,17 +1,19 @@
 using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.Web.Mvc;
 
 using DevDefined.OAuth.Consumer;
-using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Storage.Basic;
 
-using Xero.ScreencastWeb.Models;
 using Xero.ScreencastWeb.Services;
-using Xero.ScreencastWeb.Services.Interfaces;
+
+using XeroApi;
+using XeroApi.OAuth;
 
 namespace Xero.ScreencastWeb.Controllers
 {
+    [InitServiceProvider]
     public class ConnectController : ControllerBase
     {
 
@@ -21,39 +23,36 @@ namespace Xero.ScreencastWeb.Controllers
         public ActionResult Index()
         {
             Debug.Write("Processing: /Connect/Index");
-
-            ApiRepository apiRepository = new ApiRepository();
-            ITokenRepository<AccessToken> accessTokenRepository = new HttpSessionAccessTokenRepository(Session);
-            ITokenRepository<RequestToken> requestTokenRepository = new HttpSessionRequestTokenRepository(Session);
-
-            // Do we already have a session token in sessionstate? - is it still usable?
-            if (accessTokenRepository.GetToken("") != null)
+            
+            IOAuthSession oauthSession = ServiceProvider.GetCurrentSession();
+            Repository repository = ServiceProvider.GetCurrentRepository();
+            
+            // Can we already access an organisation??
+            if (oauthSession.HasValidAccessToken && repository != null && repository.Organisation != null)
             {
-                if (apiRepository.TestConnectionToXeroApi(accessTokenRepository))
-                {
-                    return new RedirectResult("~/");
-                }
-
-                // The current session token+secret doesn't work - probably due to it expiring in 30mins.
-                accessTokenRepository.SaveToken(null);
+                return new RedirectResult("~/");
             }
             
+            if (oauthSession is XeroApiPrivateSession)
+            {
+                throw new ApplicationException("The current private session cannot access the authorised organisation. Has the access token been revoked?");
+            }
 
-            // Call api.xero.com/oauth/AccessToken
-            IOAuthSession oauthSession = apiRepository.GetOAuthSession();
-            RequestToken requestToken = oauthSession.GetRequestToken();
 
-            requestTokenRepository.SaveToken(requestToken);
+            // Determine the callback uri to use - this must match the domain used when the application was registerd on http://api.xero.com
+            Uri callbackUri = new Uri(ConfigurationManager.AppSettings["XeroApiCallbackUrl"]);
 
+            // Call: GET /oauth/RequestToken
+            RequestToken requestToken = oauthSession.GetRequestToken(callbackUri);
+            
             Trace.WriteLine("OAuth Request Token: " + requestToken.Token);
             Trace.WriteLine("OAuth Request Secret: " + requestToken.TokenSecret);
 
-            string authorisationUrl = oauthSession.GetUserAuthorizationUrlForToken(requestToken);
-
+            string authorisationUrl = oauthSession.GetUserAuthorizationUrl();
             Trace.WriteLine("Redirecting browser to user authorisation uri:" + authorisationUrl);
-
             return new RedirectResult(authorisationUrl);
         }
+
 
         //
         // GET: /Connect/Callback - Callback url from the api.xero.com authorisation endpoint
@@ -62,54 +61,51 @@ namespace Xero.ScreencastWeb.Controllers
         {
             Debug.Write("Processing: /Connect/Callback");
 
-            ApiRepository apiRepository = new ApiRepository();
-
-            ITokenRepository<AccessToken> accessTokenRepository = new HttpSessionAccessTokenRepository(Session);
-            ITokenRepository<RequestToken> requestTokenRepository = new HttpSessionRequestTokenRepository(Session);
-
+            IOAuthSession oauthSession = ServiceProvider.GetCurrentSession();
+            
+            
             string verificationCode = Request.Params["oauth_verifier"];
+            AccessToken accessToken = oauthSession.ExchangeRequestTokenForAccessToken(verificationCode);
 
-            // Call api.xero.com/oauth/AccessToken
-            IOAuthSession oauthSession = apiRepository.GetOAuthSession();
+            Trace.WriteLine("OAuth Access Token: " + accessToken.Token);
+            Trace.WriteLine("OAuth Access Secret: " + accessToken.TokenSecret);
 
-            IToken requestToken = requestTokenRepository.GetToken("");
-
-            if (requestToken == null)
-            {
-                throw new ApplicationException("The request token could not be retrived from the current http session. Is session state and cookies enabled?");
-            }
-
-            AccessToken accessToken = oauthSession.ExchangeRequestTokenForAccessToken(requestToken, verificationCode);
-
-            accessTokenRepository.SaveToken(accessToken);
-
-            GetAndStoreAuthorisedOrganisationName(apiRepository);
+            GetAndStoreAuthorisedOrganisationName();
 
             return new RedirectResult("~/");
         }
+
+
+        //
+        // GET /Connect/RefreshAccessToken
 
         public ActionResult RefreshAccessToken()
         {
             Debug.Write("Processing: /Connect/RefreshAccessToken");
 
-            ApiRepository apiRepository = new ApiRepository();
-            ITokenRepository<AccessToken> accessTokenRepository = new HttpSessionAccessTokenRepository(Session);
+            IOAuthSession session = ServiceProvider.GetCurrentSession();
+            
+            var newAccessToken = session.RenewAccessToken();
 
-            // This will take the existing access token from sessionState, call to API to repace the access token for a new one, and write the new access token back to session state.
-            apiRepository.RenewAccessToken(accessTokenRepository);
-
-            GetAndStoreAuthorisedOrganisationName(apiRepository);
+            Trace.WriteLine("New OAuth Access Token: " + newAccessToken.Token);
+            Trace.WriteLine("New OAuth Access Secret: " + newAccessToken.TokenSecret);
+            
+            GetAndStoreAuthorisedOrganisationName();
 
             return new RedirectResult("~/");
         }
 
-        private void GetAndStoreAuthorisedOrganisationName(ApiRepository apiRepository)
+
+        private void GetAndStoreAuthorisedOrganisationName()
         {
+            var repository = ServiceProvider.GetCurrentRepository();
+
             // Get the organisation name from the api
-            Response organisationResponse = apiRepository.GetItemByIdOrCode<Organisation>(Session, null);
-            if (organisationResponse.Organisations != null && organisationResponse.Organisations.Count > 0)
+            var currentOrganisation = repository.Organisation;
+
+            if (currentOrganisation != null)
             {
-                Session["xero_organisation_name"] = organisationResponse.Organisations[0].Name;
+                Session["xero_organisation_name"] = currentOrganisation.Name;
                 Session["xero_connection_time"] = DateTime.Now;
             }
         }

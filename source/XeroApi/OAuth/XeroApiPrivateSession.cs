@@ -1,18 +1,21 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using DevDefined.OAuth.Consumer;
 using DevDefined.OAuth.Framework;
+using DevDefined.OAuth.Storage.Basic;
 
 namespace XeroApi.OAuth
 {
     public class XeroApiPrivateSession : OAuthSession
     {
         public XeroApiPrivateSession(string userAgent, string consumerKey, X509Certificate2 signingCertificate) 
-            : base(CreateConsumerContext(userAgent, consumerKey, signingCertificate))
+            : base(
+                CreateConsumerContext(userAgent, consumerKey, signingCertificate), 
+                new FixedValueTokenRepository(consumerKey, string.Empty, consumerKey, string.Empty)
+            )
         {
-            // Private apps re-use the consumer key as the access key
-            AccessToken = new TokenBase {Token = consumerKey};
         }
         
+
         private static IOAuthConsumerContext CreateConsumerContext(string userAgent, string consumerKey, X509Certificate2 signingCertificate)
         {
             return new OAuthConsumerContext

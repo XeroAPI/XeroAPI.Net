@@ -243,7 +243,7 @@ namespace DevDefined.OAuth.Consumer
 
     public IConsumerRequest SignWithToken()
     {
-      return SignWithToken(_oauthSession.AccessToken);
+      return SignWithToken(_oauthSession.TokenRepository.GetAccessToken());
     }
 
     public IConsumerRequest SignWithToken(IToken token)

@@ -1,9 +1,11 @@
+using System.Linq;
 using System.Web.Mvc;
-using Xero.ScreencastWeb.Models;
+
 using Xero.ScreencastWeb.Services;
 
 namespace Xero.ScreencastWeb.Controllers
 {
+    [InitServiceProvider]
     public class InvoicesController : ControllerBase
     {
         //
@@ -11,23 +13,9 @@ namespace Xero.ScreencastWeb.Controllers
 
         public ActionResult Index()
         {
-            ApiGetRequest<Invoice> listRequest = new ApiGetRequest<Invoice>
-            {
-                OrderByClause = "Date DESC",
-                WhereClause = "AmountDue > 0"
-            };
+            var repository = ServiceProvider.GetCurrentRepository();
 
-            ApiRepository repository = new ApiRepository();
-            HttpSessionAccessTokenRepository accessTokenRepository = new HttpSessionAccessTokenRepository(Session);
-
-            if (accessTokenRepository.GetToken("") == null)
-            {
-                return new ReturnToHomeResult("There is no access token for the current user. Please click the 'connect' button on the homepage.");
-            }
-
-            Response response = repository.Get(accessTokenRepository, listRequest);
-
-            return View(response.Invoices);
+            return View(repository.Invoices.ToList());
         }
 
     }

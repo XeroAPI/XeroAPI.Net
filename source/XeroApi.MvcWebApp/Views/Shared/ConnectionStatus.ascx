@@ -1,10 +1,9 @@
 ﻿<%@ Control Language="C#" Inherits="System.Web.Mvc.ViewUserControl" %>
-<%@ Import Namespace="Xero.ScreencastWeb.Models"%>
 <%@ Import Namespace="Xero.ScreencastWeb.Services"%>
 <div>
     <%
-    HttpSessionAccessTokenRepository accessTokenRepository = new HttpSessionAccessTokenRepository(new HttpSessionStateWrapper(Session));
-    var accessToken = accessTokenRepository.GetToken("");
+    var tokenRepository = ServiceProvider.CurrentTokenRepository;
+    var accessToken = tokenRepository.GetAccessToken();
     
     if (accessToken != null && !accessToken.HasExpired()) {
     %>

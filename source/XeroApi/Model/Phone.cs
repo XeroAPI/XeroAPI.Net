@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 
 namespace XeroApi.Model
 {
@@ -11,6 +12,28 @@ namespace XeroApi.Model
         public string PhoneAreaCode { get; set; }
 
         public string PhoneCountryCode { get; set; }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            if (!string.IsNullOrEmpty(PhoneCountryCode))
+            {
+                sb.Append(string.Format("(+{0}) ", PhoneCountryCode));
+            }
+
+            if (!string.IsNullOrEmpty(PhoneAreaCode))
+            {
+                sb.Append(PhoneAreaCode + " ");
+            }
+
+            if (!string.IsNullOrEmpty(PhoneNumber))
+            {
+                sb.Append(PhoneNumber);
+            }
+
+            return sb.ToString().TrimEnd(' ');
+        }
     }
     
     public class Phones : ModelList<Phone>

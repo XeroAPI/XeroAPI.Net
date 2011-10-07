@@ -8,8 +8,8 @@
 <asp:Content ID="indexContent" ContentPlaceHolderID="MainContent" runat="server">
 
     <%
-        var accessTokenRepository = new HttpSessionAccessTokenRepository(new HttpSessionStateWrapper(Session));
-        var accessToken = accessTokenRepository.GetToken("");
+        var tokenRepository = ServiceProvider.CurrentTokenRepository;
+        var accessToken = tokenRepository.GetAccessToken();
     %>
 
     <style type="text/css">
