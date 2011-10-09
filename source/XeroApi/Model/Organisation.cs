@@ -29,6 +29,10 @@ namespace XeroApi.Model
         public DateTime? EndOfYearLockDate;
 
         public string TaxNumber;
+
+        public int FinancialYearEndDay;
+
+        public int FinancialYearEndMonth;
     }
 
     public class Organisations : ModelList<Organisation>
