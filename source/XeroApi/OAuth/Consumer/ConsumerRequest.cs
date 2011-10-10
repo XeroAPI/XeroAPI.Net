@@ -56,7 +56,7 @@ namespace DevDefined.OAuth.Consumer
 
     public IConsumerResponse ToConsumerResponse()
     {
-        return _oauthSession.ExecuteConsumerRequest(this);
+        return _oauthSession.RunConsumerRequest(this);
     }
      
     public virtual HttpWebRequest ToWebRequest()

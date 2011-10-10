@@ -21,6 +21,7 @@ namespace DevDefined.OAuth.Consumer
         bool IsGoodResponse { get; }
         bool IsTokenExpiredResponse { get; }
         bool IsOAuthProblemResponse { get; }
+        bool IsForbiddenResponse { get; }
 
         Stream Stream { get; }
         byte[] ByteArray { get; }
@@ -166,6 +167,11 @@ namespace DevDefined.OAuth.Consumer
         public bool IsOAuthProblemResponse
         {
             get { return _problemReport != null; }
+        }
+
+        public bool IsForbiddenResponse
+        {
+            get { return (int) ResponseCode == 403; }
         }
 
         public bool IsTokenExpiredResponse

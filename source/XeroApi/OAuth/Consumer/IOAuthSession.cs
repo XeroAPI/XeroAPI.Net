@@ -40,6 +40,8 @@ namespace DevDefined.OAuth.Consumer
         IToken AccessToken { get; set; }
 
         IConsumerRequest Request();
+
+        [Obsolete("Use the overloaded method without using an access token")]
         IConsumerRequest Request(IToken accessToken);
 
         RequestToken GetRequestToken();
@@ -77,6 +79,6 @@ namespace DevDefined.OAuth.Consumer
         AccessToken RenewAccessToken(IToken accessToken, string sessionHandle);
         AccessToken RenewAccessToken();
 
-        IConsumerResponse ExecuteConsumerRequest(IConsumerRequest consumerRequest);
+        IConsumerResponse RunConsumerRequest(IConsumerRequest consumerRequest);
     }
 }

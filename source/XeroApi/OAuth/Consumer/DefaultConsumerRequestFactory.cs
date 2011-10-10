@@ -27,7 +27,7 @@ namespace DevDefined.OAuth.Consumer
             set;
         }
 
-        public IConsumerRequest CreateConsumerRequest(IOAuthSession session, IOAuthContext context, IOAuthConsumerContext consumerContext, IToken token)
+        public IConsumerRequest CreateConsumerRequest(IOAuthSession session, IOAuthContext context, IOAuthConsumerContext consumerContext)
         {
             return new ConsumerRequest(session, context, consumerContext, CertificateFactory);
         }

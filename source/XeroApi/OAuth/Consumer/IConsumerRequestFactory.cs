@@ -4,6 +4,6 @@ namespace DevDefined.OAuth.Consumer
 {
   public interface IConsumerRequestFactory
   {
-    IConsumerRequest CreateConsumerRequest(IOAuthSession session, IOAuthContext context, IOAuthConsumerContext consumerContext, IToken token);
+    IConsumerRequest CreateConsumerRequest(IOAuthSession session, IOAuthContext context, IOAuthConsumerContext consumerContext);
   }
 }

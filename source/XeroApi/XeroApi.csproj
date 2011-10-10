@@ -88,6 +88,7 @@
     <Compile Include="Model\TaxRate.cs" />
     <Compile Include="Model\TrackingCategory.cs" />
     <Compile Include="Model\User.cs" />
+    <Compile Include="OAuth\Consumer\ConsumerRequestRunner.cs" />
     <Compile Include="OAuth\Consumer\IMessageLogger.cs" />
     <Compile Include="OAuth\Framework\MissingTokenException.cs" />
     <Compile Include="OAuth\Logging\DebugMessageLogger.cs" />
