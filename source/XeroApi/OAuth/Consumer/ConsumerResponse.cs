@@ -14,17 +14,21 @@ namespace DevDefined.OAuth.Consumer
     {
         HttpStatusCode ResponseCode { get; }
         WebHeaderCollection Headers { get; }
+        WebException WebException { get; }
 
         bool IsServerError { get; }
         bool IsClientError { get; }
         bool IsGoodResponse { get; }
+        bool IsTokenExpiredResponse { get; }
+        bool IsOAuthProblemResponse { get; }
 
         Stream Stream { get; }
         byte[] ByteArray { get; }
         string Content { get; }
         string ContentType { get; }
         int ContentLength { get; }
-
+        
+        OAuthProblemReport ToProblemReport();
         XDocument ToXDocument();
         T DeSerialiseTo<T>();
         NameValueCollection ToBodyParameters();
@@ -33,6 +37,15 @@ namespace DevDefined.OAuth.Consumer
     public class ConsumerResponse : IConsumerResponse
     {
         private readonly MemoryStream _responseContentStream = new MemoryStream();
+        private readonly OAuthProblemReport _problemReport = null;
+        private readonly WebException _webException = null;
+
+
+        public ConsumerResponse(HttpWebResponse webResponse, WebException webException)
+            : this(webResponse)
+        {
+            _webException = webException;
+        }
 
         public ConsumerResponse(HttpWebResponse webResponse)
         {
@@ -47,6 +60,12 @@ namespace DevDefined.OAuth.Consumer
             ContentEncoding = webResponse.ContentEncoding;
             ResponseCode = webResponse.StatusCode;
             Headers = webResponse.Headers;
+
+            // Look for 'oauth_problem' in the message response
+            if (ResponseCode == HttpStatusCode.Unauthorized)
+            {
+                _problemReport = Content.Contains(Parameters.OAuth_Problem) ? new OAuthProblemReport(Content) : null;
+            }
         }
 
         public Byte[] ByteArray
@@ -91,6 +110,11 @@ namespace DevDefined.OAuth.Consumer
             private set;
         }
 
+        public WebException WebException
+        {
+            get { return _webException; }
+        }
+
         public XDocument ToXDocument()
         {
             return XDocument.Parse(Content);
@@ -133,10 +157,30 @@ namespace DevDefined.OAuth.Consumer
         {
             get { return (int) ResponseCode >= 400 && (int) ResponseCode <= 499; }
         }
-
+        
         public bool IsGoodResponse
         {
             get { return (int)ResponseCode >= 200 && (int)ResponseCode <= 299; }
+        }
+
+        public bool IsOAuthProblemResponse
+        {
+            get { return _problemReport != null; }
+        }
+
+        public bool IsTokenExpiredResponse
+        {
+            get
+            {
+                return (_problemReport != null) 
+                    && (string.Compare(_problemReport.Problem, OAuthProblems.TokenExpired, true) == 0)
+                    && ( _problemReport.ProblemAdvice.Contains("expired"));
+            }
+        }
+        
+        public OAuthProblemReport ToProblemReport()
+        {
+            return _problemReport;
         }
     }
 }

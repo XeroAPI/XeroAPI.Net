@@ -143,13 +143,17 @@ namespace XeroApi.ConsoleApp
 
 
             // Try the linq syntax to select items with sales details..
-            var items = from item in repository.Items
+            var itemQuery = from item in repository.Items
                         where item.SalesDetails != null
                         select item;
 
-            foreach (var item in items)
+            var itemList = itemQuery.ToList();
+
+            Console.WriteLine("There are {0} inventory items", itemList.Count);
+
+            foreach (var item in itemList)
             {
-                Console.WriteLine(string.Format("Item {0} is sold at price: {1} {2}", item.Description, item.SalesDetails.UnitPrice, organisation.BaseCurrency));
+                Console.WriteLine(string.Format("   Item {0} is sold at price: {1} {2}", item.Description, item.SalesDetails.UnitPrice, organisation.BaseCurrency));
             }
 
 

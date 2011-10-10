@@ -36,11 +36,39 @@ namespace DevDefined.OAuth.Storage.Basic
   /// </summary>
   public class AccessToken : TokenBase
   {
+    [Obsolete]
     public string UserName { get; set; }
+
+    [Obsolete]
     public string[] Roles { get; set; }
+
     public string ExpiresIn { get; set; }
+
     public string SessionHandle { get; set; }
+
+    public string SessionExpiresIn { get; set; }
+
     public DateTime CreatedDateUtc { get; set; }
+      
+    public TimeSpan TokenTimespan
+    {
+        get
+        {
+            return string.IsNullOrEmpty(ExpiresIn) 
+                ? TimeSpan.Zero 
+                : TimeSpan.FromSeconds(double.Parse(ExpiresIn));
+        }
+    }
+
+      public TimeSpan SessionTimespan
+      {
+          get
+          {
+              return string.IsNullOrEmpty(SessionExpiresIn)
+                  ? TimeSpan.Zero
+                  : TimeSpan.FromSeconds(double.Parse(SessionExpiresIn));              
+          }
+      }
 
       public DateTime? ExpiryDateUtc
       {
@@ -51,35 +79,48 @@ namespace DevDefined.OAuth.Storage.Basic
                   return null;
               }
 
-              double expiresInSeconds;
-
-              if (!double.TryParse(ExpiresIn, out expiresInSeconds))
-              {
-                  return null;
-              }
-
+              double expiresInSeconds = double.Parse(ExpiresIn);
               return CreatedDateUtc.AddSeconds(expiresInSeconds);
           }
       }
 
-      public bool HasExpired()
+      public DateTime? SessionExpiryDateUtc
+      {
+          get
+          {
+              if (string.IsNullOrEmpty(SessionExpiresIn))
+              {
+                  return null;
+              }
+
+              double expiresInSeconds = double.Parse(SessionExpiresIn);
+              return CreatedDateUtc.AddSeconds(expiresInSeconds);              
+          }
+      }
+
+      public bool? HasExpired()
       {
           // By default, the access token should have more than 15 seconds before it has 'expired'.
           return HasExpired(new TimeSpan(0, 0, 15));
       }
 
-      public bool HasExpired(TimeSpan safeMarginTimespan)
+      public bool? HasExpired(TimeSpan safeMarginTimespan)
       {
           // If we don't have an expiry date, we can't determine if the AccessToken has expired or not
           if (!ExpiryDateUtc.HasValue)
           {
-              return false;
+              return null;
           }
 
           // Take off the safety margin to the token expiry date.
           DateTime safeExpiryDateUtc = ExpiryDateUtc.Value.Subtract(safeMarginTimespan);
 
           return (DateTime.UtcNow > safeExpiryDateUtc);
+      }
+
+      public bool CanRefresh
+      {
+          get { return !string.IsNullOrEmpty(SessionHandle); }
       }
   }
 }

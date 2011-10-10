@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace Xero.ScreencastWeb.Services
@@ -15,6 +12,7 @@ namespace Xero.ScreencastWeb.Services
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
+            // Use the current session state to hold request+access tokens for the current user
             ServiceProvider.CurrentTokenRepository = new SessionStateTokenRepository(filterContext.HttpContext.Session);
         }
 

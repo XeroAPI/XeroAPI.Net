@@ -5,7 +5,7 @@ using System.Security.Cryptography.X509Certificates;
 using DevDefined.OAuth.Consumer;
 using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Logging;
-
+using DevDefined.OAuth.Storage.Basic;
 using XeroApi.OAuth;
 
 namespace XeroApi.ConsoleApp
@@ -24,7 +24,8 @@ namespace XeroApi.ConsoleApp
                 UserAgent, 
                 ConsumerKey,
                 OAuthCertificate,               // OAuth signing certificate
-                ClientSslCertificate);              // Client SSL Certificate
+                ClientSslCertificate,           // Client SSL Certificate
+                new InMemoryTokenRepository()); 
 
             consumerSession.MessageLogger = new DebugMessageLogger();
 
@@ -36,8 +37,9 @@ namespace XeroApi.ConsoleApp
 
 
             // 2. Get the user to log into Xero using the request token in the querystring
-            string authorisationUrl = consumerSession.GetUserAuthorizationUrlForToken(requestToken);
+            string authorisationUrl = consumerSession.GetUserAuthorizationUrl();
             Process.Start(authorisationUrl);
+
 
             // 3. Get the use to enter the authorisation code from Xero (4-7 digit number)
             Console.WriteLine("Please input the code you were given in Xero:");
@@ -49,15 +51,13 @@ namespace XeroApi.ConsoleApp
                 return null;
             }
 
-            verificationCode = verificationCode.Trim();
-
-
+            
             // 4. Use the request token and verification code to get an access token
-            IToken accessToken;
+            AccessToken accessToken;
 
             try
             {
-                accessToken = consumerSession.ExchangeRequestTokenForAccessToken(requestToken, verificationCode);
+                accessToken = consumerSession.ExchangeRequestTokenForAccessToken(verificationCode.Trim());
             }
             catch (OAuthException ex)
             {
@@ -68,6 +68,30 @@ namespace XeroApi.ConsoleApp
 
             Console.WriteLine("Access Token Key: {0}", accessToken.Token);
             Console.WriteLine("Access Token Secret: {0}", accessToken.TokenSecret);
+            Console.WriteLine("Access Token Lasts for: {0}", accessToken.TokenTimespan);
+            Console.WriteLine("Session Lasts for: {0}", accessToken.SessionTimespan);
+
+
+
+            // 5. Wait a secon and try and renew the access token..
+            Console.WriteLine("Renewing the access token...");
+            System.Threading.Thread.Sleep(1000);
+
+            try
+            {
+                accessToken = consumerSession.RenewAccessToken();
+            }
+            catch (OAuthException ex)
+            {
+                Console.WriteLine("An OAuthException was caught:");
+                Console.WriteLine(ex.Report);
+                return null;
+            }
+
+            Console.WriteLine("Access Token Key: {0}", accessToken.Token);
+            Console.WriteLine("Access Token Secret: {0}", accessToken.TokenSecret);
+            Console.WriteLine("Access Token Lasts for: {0}", accessToken.TokenTimespan);
+            Console.WriteLine("Session Lasts for: {0}", accessToken.SessionTimespan);
 
             
             // Wrap the authenticated consumerSession in the repository...

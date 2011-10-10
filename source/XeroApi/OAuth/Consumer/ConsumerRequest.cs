@@ -27,10 +27,7 @@
 using System;
 using System.IO;
 using System.Net;
-using System.Runtime.Remoting;
-using System.Security;
 using System.Security.Cryptography.X509Certificates;
-
 
 using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Utility;
@@ -59,47 +56,9 @@ namespace DevDefined.OAuth.Consumer
 
     public IConsumerResponse ToConsumerResponse()
     {
-        HttpWebRequest webRequest = ToWebRequest();
-        ConsumerResponse consumerResponse = null;
-
-        try
-        {
-            consumerResponse = new ConsumerResponse(webRequest.GetResponse() as HttpWebResponse);
-            _oauthSession.LogMessage(this, consumerResponse);
-        }
-        catch (WebException webEx)
-        {
-            HttpWebResponse httpWebResponse = (webEx.Response as HttpWebResponse);
-
-            // Try to supress any exceptions generated from an http 4xx and 5xx responses code. These may still be used as a positive result from the server.
-            if (httpWebResponse != null)
-            {
-                consumerResponse = new ConsumerResponse(httpWebResponse);
-                _oauthSession.LogMessage(this, consumerResponse);
-            }
-            
-            // Check if the response is an OAuth signing/consumerkey/certificate/etc problem
-            OAuthException authException;
-            if (WebExceptionHelper.TryWrapException(Context, webEx, out authException))
-            {
-                throw authException;
-            }
-            
-            // Some http 403 errors are actually html pages that are difficult to decode
-            if (httpWebResponse != null && httpWebResponse.StatusCode == HttpStatusCode.Forbidden)
-            {
-                throw new ApplicationException(string.Format("The API server returned http {0} with content type {1}. See the inner exception for more details.", (int)httpWebResponse.StatusCode, httpWebResponse.ContentType), webEx); 
-            }
-
-            if (consumerResponse == null)
-            {
-                throw;
-            }
-        }
-
-        return consumerResponse;
+        return _oauthSession.ExecuteConsumerRequest(this);
     }
-
+     
     public virtual HttpWebRequest ToWebRequest()
     {
       RequestDescription description = GetRequestDescription();
@@ -213,7 +172,8 @@ namespace DevDefined.OAuth.Consumer
 
       return description;
     }
-      
+
+    [Obsolete("Prefer ToConsumerResponse instead as this has more error handling built in")]
     public HttpWebResponse ToWebResponse()
     {
       try
@@ -243,7 +203,8 @@ namespace DevDefined.OAuth.Consumer
 
     public IConsumerRequest SignWithToken()
     {
-      return SignWithToken(_oauthSession.TokenRepository.GetAccessToken());
+      var accessToken = _oauthSession.GetAccessToken();
+      return SignWithToken(accessToken);
     }
 
     public IConsumerRequest SignWithToken(IToken token)

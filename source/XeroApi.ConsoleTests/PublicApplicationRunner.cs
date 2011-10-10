@@ -4,7 +4,7 @@ using System.Diagnostics;
 using DevDefined.OAuth.Consumer;
 using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Logging;
-
+using DevDefined.OAuth.Storage.Basic;
 using XeroApi.OAuth;
 
 namespace XeroApi.ConsoleApp
@@ -17,7 +17,7 @@ namespace XeroApi.ConsoleApp
 
         public static Repository CreateRepository()
         {
-            IOAuthSession consumerSession = new XeroApiPublicSession(UserAgent, ConsumerKey, ConsumerSecret);
+            IOAuthSession consumerSession = new XeroApiPublicSession(UserAgent, ConsumerKey, ConsumerSecret, new InMemoryTokenRepository());
 
             consumerSession.MessageLogger = new DebugMessageLogger();
 
@@ -29,8 +29,9 @@ namespace XeroApi.ConsoleApp
 
 
             // 2. Get the user to log into Xero using the request token in the querystring
-            string authorisationUrl = consumerSession.GetUserAuthorizationUrlForToken(requestToken);
+            string authorisationUrl = consumerSession.GetUserAuthorizationUrl();
             Process.Start(authorisationUrl);
+
 
             // 3. Get the use to enter the authorisation code from Xero (4-7 digit number)
             Console.WriteLine("Please input the code you were given in Xero:");
@@ -41,16 +42,14 @@ namespace XeroApi.ConsoleApp
                 Console.WriteLine("You didn't type a verification code!");
                 return null;
             }
-
-            verificationCode = verificationCode.Trim();
-
+            
 
             // 4. Use the request token and verification code to get an access token
-            IToken accessToken;
+            AccessToken accessToken;
 
             try
             {
-                accessToken = consumerSession.ExchangeRequestTokenForAccessToken(requestToken, verificationCode);
+                accessToken = consumerSession.ExchangeRequestTokenForAccessToken(verificationCode.Trim());
             }
             catch (OAuthException ex)
             {
@@ -61,7 +60,7 @@ namespace XeroApi.ConsoleApp
 
             Console.WriteLine("Access Token Key: {0}", accessToken.Token);
             Console.WriteLine("Access Token Secret: {0}", accessToken.TokenSecret);
-
+            Console.WriteLine("Access Token Lasts for: {0}", accessToken.TokenTimespan);
 
 
             // Wrap the authenticated consumerSession in the repository...

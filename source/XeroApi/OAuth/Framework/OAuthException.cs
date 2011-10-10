@@ -26,6 +26,7 @@
 
 using System;
 using System.Runtime.Serialization;
+using DevDefined.OAuth.Consumer;
 
 namespace DevDefined.OAuth.Framework
 {
@@ -40,7 +41,8 @@ namespace DevDefined.OAuth.Framework
     {      
     }
 
-    public OAuthException(IOAuthContext context, string problem, string advice) : base(advice)
+    public OAuthException(IOAuthContext context, string problem, string advice) 
+        : base(advice)
     {
       Context = context;
       Report = new OAuthProblemReport() {Problem = problem, ProblemAdvice = advice};
@@ -53,11 +55,21 @@ namespace DevDefined.OAuth.Framework
       Report = new OAuthProblemReport() {Problem = problem, ProblemAdvice = advice};
     }
 
-    public OAuthException(SerializationInfo info, StreamingContext context) : base(info, context)
+    public OAuthException(SerializationInfo info, StreamingContext context) 
+        : base(info, context)
     {
+    }
+
+    public OAuthException(IConsumerResponse consumerResponse, IOAuthContext requestContext, OAuthProblemReport problemReport)
+        : base(problemReport.ProblemAdvice)
+    {
+        ConsumerResponse = consumerResponse;
+        Report = problemReport;
+        Context = requestContext;
     }
 
     public OAuthProblemReport Report { get; set; }
     public IOAuthContext Context { get; set; }
+    public IConsumerResponse ConsumerResponse { get; set;}
   }
 }

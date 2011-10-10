@@ -45,6 +45,7 @@ namespace DevDefined.OAuth.Consumer
         RequestToken GetRequestToken();
         RequestToken GetRequestToken(Uri callbackUri);
 
+        AccessToken GetAccessToken();
         bool HasValidAccessToken { get; }
 
         IMessageLogger MessageLogger { get; set; }
@@ -74,7 +75,8 @@ namespace DevDefined.OAuth.Consumer
         // http://oauth.googlecode.com/svn/spec/ext/session/1.0/drafts/1/spec.html
         [Obsolete("Use the overloaded method that gets the current access token and session handle from the token repository")]
         AccessToken RenewAccessToken(IToken accessToken, string sessionHandle);
-
         AccessToken RenewAccessToken();
+
+        IConsumerResponse ExecuteConsumerRequest(IConsumerRequest consumerRequest);
     }
 }

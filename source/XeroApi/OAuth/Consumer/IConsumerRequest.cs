@@ -9,8 +9,11 @@ namespace DevDefined.OAuth.Consumer
     public interface IConsumerRequest
     {
         IOAuthContext Context { get; }
-        
+
+        [Obsolete("Prefer ToConsumerResponse instead as this has more error handling built in")]
         HttpWebResponse ToWebResponse();
+        HttpWebRequest ToWebRequest();
+
         IConsumerResponse ToConsumerResponse();
         
         RequestDescription GetRequestDescription();

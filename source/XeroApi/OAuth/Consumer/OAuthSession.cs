@@ -27,9 +27,12 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-
+using System.Diagnostics;
+using System.Net;
+using System.Security.Authentication;
 using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Storage.Basic;
+using XeroApi.OAuth.Framework;
 
 
 namespace DevDefined.OAuth.Consumer
@@ -41,22 +44,23 @@ namespace DevDefined.OAuth.Consumer
     readonly NameValueCollection _formParameters = new NameValueCollection();
     readonly NameValueCollection _headers = new NameValueCollection();
     readonly NameValueCollection _queryParameters = new NameValueCollection();
+    readonly ITokenRepository _tokenRepository;
     
 
     [Obsolete("Use the constructor with ITokenReposiory parameter")]
     public OAuthSession(IOAuthConsumerContext consumerContext)
     {
       ConsumerContext = consumerContext;
-      TokenRepository = new InMemoryTokenRepository();
       ConsumerRequestFactory = DefaultConsumerRequestFactory.Instance;
+      _tokenRepository = new InMemoryTokenRepository();
     }
 
 
     public OAuthSession(IOAuthConsumerContext consumerContext, ITokenRepository tokenRepository)
     {
         ConsumerContext = consumerContext;
-        TokenRepository = tokenRepository;
         ConsumerRequestFactory = DefaultConsumerRequestFactory.Instance;
+        _tokenRepository = tokenRepository;
     }
 
 
@@ -66,7 +70,7 @@ namespace DevDefined.OAuth.Consumer
 
     public IOAuthConsumerContext ConsumerContext { get; set; }
 
-    public ITokenRepository TokenRepository { get; private set; }
+    public ITokenRepository TokenRepository { get { return _tokenRepository; } }
 
     [Obsolete("All tokens should be stored in a ITokenRepository these days", true)]
     public IToken AccessToken { get; set; }
@@ -83,11 +87,29 @@ namespace DevDefined.OAuth.Consumer
         return response;
     }
 
+    public AccessToken GetAccessToken()
+    {
+        var accessToken = _tokenRepository.GetAccessToken();
+
+        if (accessToken == null)
+        {
+            throw new MissingTokenException("The token repository doesn't contain a valid access token");
+        }
+
+        if ((accessToken.HasExpired() ?? false) && accessToken.CanRefresh)
+        {
+            // Proactively refresh the access token before using it.
+            return RenewAccessToken();
+        }
+
+        return accessToken;
+    }
+
     public bool HasValidAccessToken
     {
         get
         {
-            return (TokenRepository != null) && (TokenRepository.GetAccessToken() != null) && !TokenRepository.GetAccessToken().HasExpired();
+            return (TokenRepository != null) && (TokenRepository.GetAccessToken() != null) && (!TokenRepository.GetAccessToken().HasExpired() ?? false);
         }
     }
 
@@ -178,10 +200,12 @@ namespace DevDefined.OAuth.Consumer
                     Token = ParseResponseParameter(collection,Parameters.OAuth_Token),
                     TokenSecret = ParseResponseParameter(collection,Parameters.OAuth_Token_Secret),
                     SessionHandle = ParseResponseParameter(collection, Parameters.OAuth_Session_Handle),
+                    SessionExpiresIn = ParseResponseParameter(collection, Parameters.OAuth_Authorization_Expires_In),
                     ExpiresIn = ParseResponseParameter(collection, Parameters.OAuth_Expires_In),
                     CreatedDateUtc = DateTime.UtcNow
                   });
 
+      AssertValidAccessToken(token);
       TokenRepository.SaveAccessToken(token);
 
       return token;
@@ -204,14 +228,17 @@ namespace DevDefined.OAuth.Consumer
                     Token = ParseResponseParameter(collection,Parameters.OAuth_Token),
                     TokenSecret = ParseResponseParameter(collection,Parameters.OAuth_Token_Secret),
                     SessionHandle = ParseResponseParameter(collection, Parameters.OAuth_Session_Handle),
+                    SessionExpiresIn = ParseResponseParameter(collection, Parameters.OAuth_Authorization_Expires_In),
                     ExpiresIn = ParseResponseParameter(collection, Parameters.OAuth_Expires_In),
                     CreatedDateUtc = DateTime.UtcNow
                   });
 
+      AssertValidAccessToken(token);
       TokenRepository.SaveAccessToken(token);
 
       return token;
     }
+      
 
     public AccessToken RenewAccessToken(IToken accessToken, string sessionHandle)
     {
@@ -219,7 +246,7 @@ namespace DevDefined.OAuth.Consumer
 
         if (requestToken == null)
         {
-            throw new ApplicationException("The current token repository doesn't have a current request token");
+            throw new ApplicationException("The token repository doesn't have a current request token");
         }
 
         AccessToken token = BuildRenewAccessTokenContext(accessToken, sessionHandle)
@@ -230,10 +257,12 @@ namespace DevDefined.OAuth.Consumer
                         Token = ParseResponseParameter(collection, Parameters.OAuth_Token),
                         TokenSecret = ParseResponseParameter(collection, Parameters.OAuth_Token_Secret),
                         SessionHandle = ParseResponseParameter(collection, Parameters.OAuth_Session_Handle),
+                        SessionExpiresIn = ParseResponseParameter(collection, Parameters.OAuth_Authorization_Expires_In),
                         ExpiresIn = ParseResponseParameter(collection, Parameters.OAuth_Expires_In),
                         CreatedDateUtc = DateTime.UtcNow
                     });
 
+        AssertValidAccessToken(token);
         TokenRepository.SaveAccessToken(token);
 
         return token;
@@ -245,19 +274,10 @@ namespace DevDefined.OAuth.Consumer
 
         if (currentAccessToken == null)
         {
-            throw new ApplicationException("The current token repository doesn't have a current access token");
+            throw new ApplicationException("The token repository doesn't have a current access token");
         }
 
-        var newAccessToken = RenewAccessToken(currentAccessToken, currentAccessToken.SessionHandle);
-
-        if (newAccessToken == null)
-        {
-            throw new ApplicationException("A new access token was not obtained from the Xero API");
-        }
-
-        TokenRepository.SaveAccessToken(newAccessToken);
-
-        return newAccessToken;
+        return RenewAccessToken(currentAccessToken, currentAccessToken.SessionHandle);
     }
 
     public IConsumerRequest BuildExchangeRequestTokenForAccessTokenContext(IToken requestToken, string verificationCode)
@@ -293,6 +313,11 @@ namespace DevDefined.OAuth.Consumer
     public string GetUserAuthorizationUrl()
     {
         var requestToken = TokenRepository.GetRequestToken();
+
+        if (requestToken == null)
+        {
+            throw new MissingTokenException("The token repository does not contain a valid request token");
+        }
 
         return GetUserAuthorizationUrl(requestToken);
     }
@@ -365,21 +390,82 @@ namespace DevDefined.OAuth.Consumer
       return this;
     }
 
-    private static string ValidateCallbackUrl(string callbackurl)
+    private static void AssertValidAccessToken(AccessToken token)
     {
-        if (string.IsNullOrEmpty(callbackurl))
-            throw new ArgumentNullException("callbackurl", "Callback url should not be empty. For non-web applications, use 'oob'.");
-
-        if (string.Compare(callbackurl, "oob", true) == 0)
-            return "oob";
-
-        Uri parsedUri;
-        if (!Uri.TryCreate(callbackurl, UriKind.Absolute, out parsedUri))
+        if (token == null)
         {
-            throw new ArgumentException(string.Format("The specified callback uri '{0}' is not a recognised absolute uri", callbackurl));
+            throw new MissingTokenException("The access token could not be obtained");
         }
 
-        return callbackurl;
+        string expiryDateString = token.ExpiryDateUtc.HasValue ? token.ExpiryDateUtc.ToString() : "n/a";
+        string usableTimespan = token.SessionTimespan.ToString();
+
+        Debug.WriteLine(string.Format("Access token {0} will last for {1} and will expire at {2} UTC.", token.Token, usableTimespan, expiryDateString));
     }
+
+
+    public IConsumerResponse ExecuteConsumerRequest(IConsumerRequest consumerRequest)
+    {
+        IConsumerResponse consumerResponse = null;
+
+        int retryCounter = 2;
+        while (retryCounter-- > 0)
+        {
+            consumerResponse = ExecuteConsumerRequestInternal(consumerRequest);
+
+            if (consumerResponse.ResponseCode == HttpStatusCode.Forbidden)
+            {
+                // Catch http 403 errors generated by IIS that are actually html pages warning about certificate issues..
+                throw new AuthenticationException(string.Format("The API server returned http {0} with content type {1}. See the inner exception for more details.", (int)consumerResponse.ResponseCode, consumerResponse.ContentType), consumerResponse.WebException);
+            }
+
+            if (consumerResponse.IsTokenExpiredResponse && !string.IsNullOrEmpty(consumerRequest.Context.SessionHandle))
+            {
+                // Refresh the access token and try again..
+                var newAccessToken = RenewAccessToken();
+                consumerRequest.SignWithToken(newAccessToken);
+                continue;
+            }
+            
+            if (consumerResponse.IsOAuthProblemResponse)
+            {
+                // A usable response wasn't returned..
+                throw new OAuthException(consumerResponse, consumerRequest.Context, consumerResponse.ToProblemReport());
+            }
+
+            return consumerResponse;
+        }
+
+        throw new ApplicationException("The consumer request could not be executed into a valid consumer response");
+    }
+
+
+    private IConsumerResponse ExecuteConsumerRequestInternal(IConsumerRequest consumerRequest)
+    {
+        HttpWebRequest webRequest = consumerRequest.ToWebRequest();
+        IConsumerResponse consumerResponse = null;
+        
+        try
+        {
+            consumerResponse = new ConsumerResponse(webRequest.GetResponse() as HttpWebResponse);
+            LogMessage(consumerRequest, consumerResponse);
+        }
+        catch (WebException webEx)
+        {
+            // I *think* it's safe to assume that the response will always be a HttpWebResponse...
+            HttpWebResponse httpWebResponse = (HttpWebResponse)(webEx.Response);
+            
+            if (httpWebResponse == null)
+            {
+                throw new ApplicationException("An HttpWebResponse could not be obtained from the WebException");
+            }
+
+            consumerResponse = new ConsumerResponse(httpWebResponse, webEx);
+            LogMessage(consumerRequest, consumerResponse);
+        }
+
+        return consumerResponse;
+    }
+
   }
 }

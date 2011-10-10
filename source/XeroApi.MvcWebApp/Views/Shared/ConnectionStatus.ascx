@@ -5,7 +5,7 @@
     var tokenRepository = ServiceProvider.CurrentTokenRepository;
     var accessToken = tokenRepository.GetAccessToken();
     
-    if (accessToken != null && !accessToken.HasExpired()) {
+    if (accessToken != null && (!accessToken.HasExpired() ?? false)) {
     %>
         <div>Access Token is valid</div>
         <div><%=Session["xero_organisation_name"]%></div>

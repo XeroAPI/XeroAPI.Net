@@ -28,6 +28,7 @@ using System;
 using System.Security.Cryptography;
 using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Framework.Signing;
+using DevDefined.OAuth.Storage.Basic;
 
 namespace DevDefined.OAuth.Consumer
 {
@@ -91,11 +92,17 @@ namespace DevDefined.OAuth.Consumer
       context.Token = token.Token;
       context.TokenSecret = token.TokenSecret;
 
+      if (token is AccessToken)
+      {
+          // I'm sure this violates SOLID...
+          context.SessionHandle = (token as AccessToken).SessionHandle;
+      }
+
       SignContext(context);
     }
 
 
-      void EnsureStateIsValid()
+    void EnsureStateIsValid()
     {
       if (string.IsNullOrEmpty(ConsumerKey)) throw Error.EmptyConsumerKey();
       if (string.IsNullOrEmpty(SignatureMethod)) throw Error.UnknownSignatureMethod(SignatureMethod);
