@@ -225,30 +225,22 @@ namespace XeroApi.ConsoleApp
             }
 
 
-            
-            // Find all invoices that were against the same contact as the first AR invoice that we have
+
+            // Find all invoices that were against the same contact as the first AR invoice that we've just found (http://answers.xero.com/developer/question/36911/)
             if (firstInvoice != null)
             {
-                try
+                Console.WriteLine("Getting a list of all invoice created for {0}", firstInvoice.Contact.Name);
+
+                Guid contactId = firstInvoice.Contact.ContactID;
+                var invoicesForContact = repository.Invoices.Where(invoice => invoice.Contact.ContactID == contactId).ToList();
+
+                Console.WriteLine("There are {0} invoices raised for {1}", invoicesForContact.Count, firstInvoice.Contact.Name);
+
+                foreach (var invoiceForContact in invoicesForContact)
                 {
-                    Console.WriteLine("Getting a list of all invoice created for {0}", firstInvoice.Contact.Name);
-
-                    Guid contactId = firstInvoice.Contact.ContactID;
-                    var invoicesForContact = repository.Invoices.Where(invoice => invoice.Contact.ContactID == contactId).ToList();
-
-                    Console.WriteLine("There are {0} invoices raised for {1}", invoicesForContact.Count, firstInvoice.Contact.Name);
-
-                    foreach (var invoiceForContact in invoicesForContact)
-                    {
-                        Console.WriteLine("Invoice {0} was raised against {1} on {2} for {3}{4}", invoiceForContact.InvoiceNumber,
-                                          invoiceForContact.Contact.Name, invoiceForContact.Date, invoiceForContact.Total,
-                                          invoiceForContact.CurrencyCode);
-                    }
-                }
-                catch (ApiException ex)
-                {
-                    Console.WriteLine("Filtering on Guid types doesn't yet work.");
-                    Console.WriteLine(ex.Message);
+                    Console.WriteLine("Invoice {0} was raised against {1} on {2} for {3}{4}", invoiceForContact.InvoiceNumber,
+                                        invoiceForContact.Contact.Name, invoiceForContact.Date, invoiceForContact.Total,
+                                        invoiceForContact.CurrencyCode);
                 }
             }
 
