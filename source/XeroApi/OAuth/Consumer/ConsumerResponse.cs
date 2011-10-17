@@ -62,8 +62,8 @@ namespace DevDefined.OAuth.Consumer
             ResponseCode = webResponse.StatusCode;
             Headers = webResponse.Headers;
 
-            // Look for 'oauth_problem' in the message response
-            if (ResponseCode == HttpStatusCode.Unauthorized)
+            // Look for 'oauth_problem' in the message response for http 401 and 400 responses
+            if (ResponseCode == HttpStatusCode.Unauthorized || ResponseCode == HttpStatusCode.BadRequest)
             {
                 _problemReport = Content.Contains(Parameters.OAuth_Problem) ? new OAuthProblemReport(Content) : null;
             }
