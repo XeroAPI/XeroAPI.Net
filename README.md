@@ -13,6 +13,8 @@ You can use this library to communicate with the Xero API, without needing any p
 
 Note: Unless you're looking to debug the library, you don't need to download the source code and compile it yourself. Each release is published to the NuGet package repository (http://nuget.org/List/Packages/XeroAPI.Net).
 
+If you have any questions or problems using this library, have a look at the Xero API Answers site (http://answers.xero.com/developer/).
+
 
 Features
 --------
