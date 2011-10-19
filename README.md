@@ -11,6 +11,9 @@ This is a .Net wrapper library, written in C#, used to comnunicate with the Xero
 
 You can use this library to communicate with the Xero API, without needing any prior knowledge of Xml or OAuth. The library can work in [public](http://developer.xero.com/api-overview/setup-an-application/#public-apps), [private](http://developer.xero.com/api-overview/setup-an-application/#private-apps) or [partner](http://developer.xero.com/api-overview/setup-an-application/#partner-apps) mode.
 
+Note: Unless you're looking to debug the library, you don't need to download the source code and compile it yourself. Each release is published to the NuGet package repository (http://nuget.org/List/Packages/XeroAPI.Net).
+
+
 Features
 --------
 
