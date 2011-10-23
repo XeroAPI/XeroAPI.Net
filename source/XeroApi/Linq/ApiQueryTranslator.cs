@@ -158,7 +158,10 @@ namespace XeroApi.Linq
                 }
                 if (mExp.Member.Name == _query.ElementUpdatedDateProperty.SafeName())
                 {
-                    _query.UpdatedSinceDate = EvaluateExpression<DateTime?>(b.Right);
+                    if (b.Right.Type == typeof(DateTime?))
+                        _query.UpdatedSinceDate = EvaluateExpression<DateTime?>(b.Right);
+                    else if (b.Right.Type == typeof(DateTime))
+                        _query.UpdatedSinceDate = EvaluateExpression<DateTime>(b.Right);
                     return b;
                 }
             }
