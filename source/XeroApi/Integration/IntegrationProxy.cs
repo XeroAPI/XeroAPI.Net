@@ -233,7 +233,7 @@ namespace XeroApi.Integration
 
             if (lastModifiedDate.HasValue)
             {
-                oauthRequest.Context.Headers.Add("If-Modified-Since", lastModifiedDate.Value.ToString("yyyy-MM-dd hh:mm:ss"));
+                oauthRequest.Context.Headers.Add("If-Modified-Since", lastModifiedDate.Value.ToString("yyyy-MM-dd HH:mm:ss"));
             }
 
             var consumerResponse = oauthRequest.ToConsumerResponse();
