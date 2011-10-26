@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>XeroAPI.Net</id>
+    <version>1.1.0.3</version>
+    <title>.Net wrapper library for Xero API</title>
+    <authors>XeroAPI</authors>
+    <owners />
+    <projectUrl>https://github.com/XeroAPI/XeroAPI.Net</projectUrl>
+    <iconUrl>https://secure.gravatar.com/avatar/bce33fac862525d5d62d1cda6a4e133d?s=140&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-140.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>.Net wrapper library for Xero API
+v1.0.0.0 - initial version
+v1.0.0.1 - Updated to allow PDFs of invoices to be downloaded
+v1.0.0.2 - add models for receipt/users/attachmetns
+v1.0.0.3 - Update to build in .net 3.5 client profile
+v1.0.0.4 fixed the 'get item by id' problem no generating url correctly
+v1.0.0.5 fixed the FindById method trying to deserialise correctly and tidied up the serialised xml to be sent to the Xero API
+v1.0.0.6 Enable validation warnings/errors to be de-serialised into the model
+v1.0.0.7 Enables getting of dynamic reports
+v1.0.0.8 Add Single and SingleOrDefault methods; Fix AgedPayableByContact report definition
+v1.1.0.0 Introduce TokenRepository and allow for auto-refreshing of access tokens
+v1.1.0.4 Fix If-Modified-Since bugs</description>
+    <summary />
+  </metadata>
+  <files>
+    <file src="XeroApi\bin\Release\XeroApi.dll" target="lib\XeroApi.dll" />
+    <file src="XeroApi\bin\Release\XeroApi.pdb" target="lib\XeroApi.pdb" />
+  </files>
+</package>

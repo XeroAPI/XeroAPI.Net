@@ -1,0 +1,43 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0" DefaultTargets="default">
+  <PropertyGroup>
+    <BaseDir>$(MSBuildProjectDirectory)</BaseDir>
+    <Configuration Condition="'$(Configuration)'==''" >Release</Configuration>
+    <BuildDir>$(BaseDir)build</BuildDir>
+    <PackageDir>$(BuildDir)Packages</PackageDir>
+    <MSBuildExtensions>$(BaseDir)libmsbuildmsbuild.community.tasks.dll</MSBuildExtensions>
+	<NuGetApiKey></NuGetApiKey>
+  </PropertyGroup>
+ 
+  <Target Name="default" DependsOnTargets="Compile; Package; Publish" />
+ 
+  <Target Name="Compile">
+    <MSBuild Projects="$(BaseDir)\XeroApi.sln" Properties="Configuration=$(Configuration)"  />
+  </Target>
+ 
+  <Target Name="Package">
+  
+    <ItemGroup>
+      <MainBinaries Include="$(BaseDir)\XeroAPI\bin\$(Configuration)\*.*" />
+    </ItemGroup>
+ 
+    <!-- Get the version number of the main FV assembly to insert into the nuspec files -->
+    <GetAssemblyIdentity AssemblyFiles="$(BaseDir)\XeroAPI\bin\$(Configuration)\XeroAPI.dll">
+      <Output TaskParameter="Assemblies" ItemName="AsmInfo" />
+    </GetAssemblyIdentity>
+ 
+    <!-- insert the version number into the nuspec files -->
+    <XmlPoke
+      Namespaces="&lt;Namespace Prefix='x' Uri='http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd' /&gt;"
+      XmlInputPath="$(BaseDir)\XeroAPI.Net.nuspec"
+      Query="/x:package/x:metadata/x:version"
+      Value="%(AsmInfo.Version)" />
+ 
+    <Exec Command="$(BaseDir)\..\tools\nuget.exe pack $(BaseDir)\XeroAPI.Net.nuspec" />
+		  
+  </Target>
+  
+  <Target Name="Publish">
+	<Exec Command="$(BaseDir)\..\tools\nuget.exe publish $(BaseDir)\XeroAPI.Net.%(AsmInfo.Version).nupkg %(AsmInfo.Version) $(NuGetApiKey)" />
+  </Target>
+  
+</Project>
