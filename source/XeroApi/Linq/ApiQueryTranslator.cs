@@ -148,7 +148,10 @@ namespace XeroApi.Linq
             {
                 if (mExp.Member.Name == _query.ElementIdProperty.SafeName())
                 {
-                    _query.ElementId = EvaluateExpression<Guid>(b.Right).ToString();
+                    if (b.Right.Type == typeof(Guid?))
+                        _query.ElementId = EvaluateExpression<Guid?>(b.Right).ToString();
+                    else if (b.Right.Type == typeof(Guid))
+                        _query.ElementId = EvaluateExpression<Guid>(b.Right).ToString();
                     return b;
                 }
                 if (mExp.Member.Name == _query.ElementNumberProperty.SafeName())
