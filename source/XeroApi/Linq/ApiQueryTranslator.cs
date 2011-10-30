@@ -4,12 +4,20 @@ using System.Linq.Expressions;
 
 namespace XeroApi.Linq
 {
+    /// <summary>
+    /// Translates a linq query into a <c ref="LinqQueryDescription" />.
+    /// </summary>
     internal class ApiQueryTranslator : ExpressionVisitor
     {
         private LinqQueryDescription _query;
         private ApiQuerystringName _currentQueryStringName = ApiQuerystringName.Unknown;
 
-        
+
+        /// <summary>
+        /// Translates the specified linq expression into a <c ref="LinqQueryDescription" />.
+        /// </summary>
+        /// <param name="expression">The linq expression.</param>
+        /// <returns></returns>
         internal LinqQueryDescription Translate(Expression expression)
         {
             _query = new LinqQueryDescription();
@@ -319,12 +327,6 @@ namespace XeroApi.Linq
                         Append(string.Format("\"{0}\"", value));
 
                     return;
-            }
-
-            // Does the function return a single element??
-            if (exp.Type.Equals(_query.ElementType))
-            {
-                // ??
             }
             
             throw new NotSupportedException(string.Format("The Expression return type '{0}' is not supported", exp.Type.Name));
