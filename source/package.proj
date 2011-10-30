@@ -33,7 +33,7 @@
   <Target Name="Publish">
   
     <!-- NuGet Publish -->
-	<Exec Command="$(BaseDir)\..\tools\nuget.exe publish XeroAPI.Net %(AsmInfo.Version) $(NuGetApiKey)" />
+	<Exec Command="$(BaseDir)\..\tools\nuget.exe push XeroAPI.Net.%(AsmInfo.Version).nupkg $(NuGetApiKey)" />
 	
   </Target>
   
