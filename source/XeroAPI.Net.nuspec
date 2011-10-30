@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>XeroAPI.Net</id>
-    <version>1.1.0.3</version>
+    <version>1.1.0.5</version>
     <title>.Net wrapper library for Xero API</title>
     <authors>XeroAPI</authors>
     <owners />
@@ -20,7 +20,8 @@ v1.0.0.6 Enable validation warnings/errors to be de-serialised into the model
 v1.0.0.7 Enables getting of dynamic reports
 v1.0.0.8 Add Single and SingleOrDefault methods; Fix AgedPayableByContact report definition
 v1.1.0.0 Introduce TokenRepository and allow for auto-refreshing of access tokens
-v1.1.0.4 Fix If-Modified-Since bugs</description>
+v1.1.0.4 Fix If-Modified-Since bugs
+v1.1.0.5 Allow linq comparison of Guid? types on models</description>
     <summary>.Net wrapper library for Xero API</summary>
   </metadata>
   <files>
