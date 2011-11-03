@@ -10,7 +10,7 @@ namespace XeroApi
     public class ReportRepository
     {
         private readonly IIntegrationProxy _integrationProxy;
-        private readonly ApiQueryProvider _queryProvider;
+        private readonly QueryProvider _queryProvider;
 
 
         /// <summary>
@@ -18,7 +18,7 @@ namespace XeroApi
         /// </summary>
         /// <param name="integrationProxy">The integration proxy.</param>
         /// <param name="queryProvider">The query provider.</param>
-        internal ReportRepository(IIntegrationProxy integrationProxy, ApiQueryProvider queryProvider)
+        internal ReportRepository(IIntegrationProxy integrationProxy, QueryProvider queryProvider)
         {
             _integrationProxy = integrationProxy;
             _queryProvider = queryProvider;
