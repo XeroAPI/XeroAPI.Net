@@ -12,7 +12,7 @@ namespace XeroApi
 {
     public class Repository
     {
-        private readonly ApiQueryProvider _provider;
+        private readonly QueryProvider _provider;
         private readonly IIntegrationProxy _proxy;
 
 
@@ -35,6 +35,17 @@ namespace XeroApi
         {
             _proxy = integrationProxy;
             _provider = new ApiQueryProvider(_proxy);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Repository"/> class.
+        /// </summary>
+        /// <param name="integrationProxy">The integration proxy.</param>
+        /// <param name="provider">The query provider proxy.</param>
+        public Repository(IIntegrationProxy integrationProxy, QueryProvider provider)
+        {
+            _proxy = integrationProxy;
+            _provider = provider;
         }
 
         /// <summary>
