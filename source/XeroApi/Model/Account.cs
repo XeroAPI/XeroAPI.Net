@@ -4,6 +4,7 @@ namespace XeroApi.Model
 {
     public class Account : ModelBase
     {
+        [ItemId]
         public Guid AccountID { get; set; }
 
         public string Code { get; set; }
