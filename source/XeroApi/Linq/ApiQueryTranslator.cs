@@ -87,7 +87,7 @@ namespace XeroApi.Linq
                         Append(" DESC");
                         return expression;
                     }
-
+                    
                 case "LongCount":
                 case "Select":
                 case "Take":
@@ -150,15 +150,15 @@ namespace XeroApi.Linq
         protected override Expression VisitBinary(BinaryExpression b)
         {
             MemberExpression mExp = b.Left as MemberExpression;
-            
+
             // Check if the LHS is an ItemId, ItemNumber or UpdatedDate. If so, record away from the main where clause.
             if (mExp != null && (mExp.Member.DeclaringType.Name == _query.ElementName))
             {
                 if (mExp.Member.Name == _query.ElementIdProperty.SafeName())
                 {
-                    if (b.Right.Type == typeof(Guid?))
+                    if (b.Right.Type == typeof (Guid?))
                         _query.ElementId = EvaluateExpression<Guid?>(b.Right).ToString();
-                    else if (b.Right.Type == typeof(Guid))
+                    else if (b.Right.Type == typeof (Guid))
                         _query.ElementId = EvaluateExpression<Guid>(b.Right).ToString();
                     return b;
                 }
@@ -169,12 +169,28 @@ namespace XeroApi.Linq
                 }
                 if (mExp.Member.Name == _query.ElementUpdatedDateProperty.SafeName())
                 {
-                    if (b.Right.Type == typeof(DateTime?))
+                    if (b.Right.Type == typeof (DateTime?))
                         _query.UpdatedSinceDate = EvaluateExpression<DateTime?>(b.Right);
-                    else if (b.Right.Type == typeof(DateTime))
+                    else if (b.Right.Type == typeof (DateTime))
                         _query.UpdatedSinceDate = EvaluateExpression<DateTime>(b.Right);
                     return b;
                 }
+            }
+
+
+            // http://answers.xero.com/developer/question/39411/
+            // Check for rogue VB methods that have been slipped into the linq expression..
+            MethodCallExpression leftMethod = b.Left as MethodCallExpression;
+
+            if (leftMethod != null && leftMethod.Method.Name == "CompareString")
+            {
+                var memberExpression = leftMethod.Arguments[0] as MemberExpression;
+                var valueExpression = leftMethod.Arguments[1] as ConstantExpression;
+
+                if (b.NodeType == ExpressionType.NotEqual)
+                    return Visit(Expression.NotEqual(memberExpression, valueExpression));
+                
+                return Visit(Expression.Equal(memberExpression, valueExpression));
             }
 
 
@@ -224,8 +240,6 @@ namespace XeroApi.Linq
             IQueryable q = c.Value as IQueryable;
             if (q != null)
             {
-                // sb.Append("SELECT * FROM ");
-                // sb.Append(q.ElementType.Name);
                 _query.ElementType = q.ElementType;
             }
             else if (c.Value == null)
@@ -319,12 +333,24 @@ namespace XeroApi.Linq
                     return;
 
                 case "String" :
-                    string value = EvaluateExpression<string>(exp);
+                    string stringValue = EvaluateExpression<string>(exp);
 
-                    if (value == null)
+                    if (stringValue == null)
                         Append("null");
                     else
-                        Append(string.Format("\"{0}\"", value));
+                        Append(string.Format("\"{0}\"", stringValue));
+
+                    return;
+
+                case "Int32":
+                    int shortValue = EvaluateExpression<int>(exp);
+                    Append(string.Format("\"{0}\"", shortValue));
+                    
+                    return;
+
+                case "Int64":
+                    long longValue = EvaluateExpression<long>(exp);
+                    Append(string.Format("\"{0}\"", longValue));
 
                     return;
             }
