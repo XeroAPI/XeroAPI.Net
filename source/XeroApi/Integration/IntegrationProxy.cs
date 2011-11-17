@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Net;
@@ -21,20 +22,18 @@ namespace XeroApi.Integration
         {
             _oauthSession = oauthSession;
         }
+        
 
         #region Structured Data Read/Write methods
 
         public string FindElements(IApiQueryDescription apiQueryDescription)
         {
             IConsumerResponse consumerResponse = CallApi(
-                _oauthSession, 
                 "GET", 
                 string.Empty, 
                 _oauthSession.ConsumerContext.BaseEndpointUri,
                 ModelTypeHelper.Pluralize(apiQueryDescription.ElementName),
                 apiQueryDescription.ElementId,
-                /*apiQueryDescription.Where,*/
-                /*apiQueryDescription.Order,*/
                 apiQueryDescription.UpdatedSinceDate,
                 apiQueryDescription.QueryStringParams,
                 null);
@@ -58,14 +57,11 @@ namespace XeroApi.Integration
         public byte[] FindOne(string endpointName, string itemId, string acceptMimeType)
         {
             IConsumerResponse consumerResponse = CallApi(
-                _oauthSession, 
                 "GET", 
                 string.Empty, 
                 _oauthSession.ConsumerContext.BaseEndpointUri,
                 ModelTypeHelper.Pluralize(endpointName), 
                 itemId, 
-                /*null,*/
-                /*null, */
                 null,
                 null,
                 acceptMimeType);
@@ -82,13 +78,10 @@ namespace XeroApi.Integration
         public string UpdateOrCreateElements(string endpointName, string body)
         {
             IConsumerResponse consumerResponse = CallApi(
-                _oauthSession,
                 "POST",
                 body,
                 _oauthSession.ConsumerContext.BaseEndpointUri,
                 ModelTypeHelper.Pluralize(endpointName),
-                /*null,*/
-                /*null,*/
                 null,
                 null,
                 new NameValueCollection { { "summarizeErrors", "false" } }, 
@@ -106,13 +99,10 @@ namespace XeroApi.Integration
         public string CreateElements(string endpointName, string body)
         {
             IConsumerResponse consumerResponse = CallApi(
-                _oauthSession,
                 "PUT",
                 body,
                 _oauthSession.ConsumerContext.BaseEndpointUri,
                 ModelTypeHelper.Pluralize(endpointName),
-                /*null,*/
-                /*null,*/
                 null,
                 null,
                 new NameValueCollection { { "summarizeErrors", "false" } }, 
@@ -214,13 +204,15 @@ namespace XeroApi.Integration
         #endregion
 
 
-        private static IConsumerResponse CallApi(IOAuthSession oauthSession, string method, string body, Uri baseUrl, string endpointName, string itemId, /*string whereClause, string orderBy,*/ DateTime? lastModifiedDate, NameValueCollection additionalQueryParams, string acceptMimeType)
+        private IConsumerResponse CallApi(string method, string body, Uri baseUrl, string endpointName, string itemId, DateTime? lastModifiedDate, NameValueCollection additionalQueryParams, string acceptMimeType)
         {
             method = string.IsNullOrEmpty(method) ? "GET" : method.ToUpper();
 
-            Uri uri = ConstructUri(baseUrl, endpointName, itemId, /*whereClause, orderBy,*/ additionalQueryParams);
+            NameValueCollection allQueryParams = additionalQueryParams ?? new NameValueCollection();
 
-            IConsumerRequest oauthRequest = oauthSession.Request()
+            Uri uri = ConstructUri(baseUrl, endpointName, itemId, allQueryParams);
+
+            IConsumerRequest oauthRequest = _oauthSession.Request()
                 .ForMethod(method)
                 .ForUri(uri)
                 .WithAcceptHeader(acceptMimeType ?? "text/xml")
@@ -236,8 +228,8 @@ namespace XeroApi.Integration
                 oauthRequest.Context.Headers.Add("If-Modified-Since", lastModifiedDate.Value.ToString("yyyy-MM-dd HH:mm:ss"));
             }
 
-            var consumerResponse = oauthRequest.ToConsumerResponse();
-
+            IConsumerResponse consumerResponse = oauthRequest.ToConsumerResponse();
+            
             // Check for <ApiException> response message
             if (consumerResponse.Content.StartsWith("<ApiException"))
             {
@@ -248,7 +240,16 @@ namespace XeroApi.Integration
             return consumerResponse;
         }
 
-        public static Uri ConstructUri(Uri baseUrl, string endpointName, string itemId, /*string whereClause, string orderBy,*/ NameValueCollection additionalQueryParams)
+
+        /// <summary>
+        /// Constructs the URI.
+        /// </summary>
+        /// <param name="baseUrl">The base URL.</param>
+        /// <param name="endpointName">Name of the endpoint.</param>
+        /// <param name="itemId">The item id.</param>
+        /// <param name="additionalQueryParams">The additional query params.</param>
+        /// <returns></returns>
+        public static Uri ConstructUri(Uri baseUrl, string endpointName, string itemId, NameValueCollection additionalQueryParams)
         {
             UriBuilder uriBuilder = new UriBuilder(baseUrl);
 
@@ -264,16 +265,8 @@ namespace XeroApi.Integration
                 uriBuilder.Path += ("/");
                 uriBuilder.Path += (itemId);
             }
-
-            NameValueCollection queryStringParameters = additionalQueryParams ?? new NameValueCollection();
-
-            /*if (!string.IsNullOrEmpty(whereClause))
-                queryStringParameters.Add("WHERE", whereClause.Trim());*/
-
-            /*if (!string.IsNullOrEmpty(orderBy))
-                queryStringParameters.Add("ORDER", orderBy);*/
-
-            string queryString = DevDefined.OAuth.Framework.UriUtility.FormatQueryString(queryStringParameters);
+            
+            string queryString = DevDefined.OAuth.Framework.UriUtility.FormatQueryString(additionalQueryParams);
 
             if (!string.IsNullOrEmpty(queryString))
                 uriBuilder.Query = queryString;
@@ -281,6 +274,16 @@ namespace XeroApi.Integration
             return uriBuilder.Uri;
         }
 
+
+        /// <summary>
+        /// Constructs the child resource URI.
+        /// </summary>
+        /// <param name="baseUrl">The base URL.</param>
+        /// <param name="endpointName">Name of the endpoint.</param>
+        /// <param name="itemId">The item id.</param>
+        /// <param name="childResourceName">Name of the child resource.</param>
+        /// <param name="childResourceId">The child resource id.</param>
+        /// <returns></returns>
         public static Uri ConstructChildResourceUri(Uri baseUrl, string endpointName, string itemId, string childResourceName, string childResourceId)
         {
             if (string.IsNullOrEmpty(endpointName)) throw new ArgumentNullException("endpointName");
