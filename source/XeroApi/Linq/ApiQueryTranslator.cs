@@ -185,8 +185,13 @@ namespace XeroApi.Linq
                 }
                 if (mExp.Member.Name == _query.ElementNumberProperty.SafeName())
                 {
-                    _query.ElementId = EvaluateExpression<object>(b.Right).ToString();
-                    return b;
+                    var rightValue = EvaluateExpression<object>(b.Right);
+                    
+                    if (rightValue != null)
+                    {
+                        _query.ElementId = rightValue.ToString();
+                        return b;
+                    }                    
                 }
                 if (mExp.Member.Name == _query.ElementUpdatedDateProperty.SafeName())
                 {

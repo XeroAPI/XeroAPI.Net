@@ -438,6 +438,33 @@ namespace XeroApi.Tests
             Assert.AreEqual("(Url <> NULL)", queryDesctipion.Where);
         }
 
+        [Test]
+        public void TestApiQueryCanCallContactsEndpointWithContactNumberIsNull()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            repository.Contacts.SingleOrDefault(i => i.ContactNumber == null);
+
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+            Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("SingleOrDefault", queryDesctipion.ClientSideExpression);
+            Assert.AreEqual("(ContactNumber == NULL)", queryDesctipion.Where);
+        }
+
+        [Test]
+        public void TestApiQueryCanCallContactsEndpointWithContactNumberIsNotNull()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            repository.Contacts.SingleOrDefault(i => i.ContactNumber != null);
+
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+            Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("SingleOrDefault", queryDesctipion.ClientSideExpression);
+            Assert.AreEqual("(ContactNumber <> NULL)", queryDesctipion.Where);
+        }
     }
 }
 
