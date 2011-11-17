@@ -425,7 +425,7 @@ namespace XeroApi.Tests
         }
 
         [Test]
-        public void TestApiQueryCanCallEmployeeEndpointWithSingleOrDefaultOperator()
+        public void TestApiQueryCanCallInvoicesEndpointWithUpdatedDateAndUrlFilterCombinedWithAndOperator()
         {
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
