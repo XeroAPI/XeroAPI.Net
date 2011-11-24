@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Net;
 using System.Threading;
 
 namespace XeroApi.Integration
@@ -13,15 +10,38 @@ namespace XeroApi.Integration
         DateTime? GetLastEventDateAndTime();
     }
 
-    public class EventTimeline
+    public class EventTimeline : IEventTimeline
     {
-        
+        private DateTime? _lastEventDate;
+
+        #region Implementation of IEventTimeline
+
+        public void RecordEvent(DateTime eventDate)
+        {
+            if (!_lastEventDate.HasValue || eventDate > _lastEventDate)
+                _lastEventDate = eventDate;
+        }
+
+        public DateTime? GetLastEventDateAndTime()
+        {
+            return _lastEventDate;
+        }
+
+        #endregion
     }
 
 
-    public interface IXXX
+    public interface IPauseTime
     {
-        void PauseBeforeEvent(TimeSpan pauseTime);
+        void Pause(TimeSpan pauseTime);
+    }
+
+    public class PauseTime : IPauseTime
+    {
+        public void Pause(TimeSpan pauseTime)
+        {
+            Thread.Sleep(Convert.ToInt32(pauseTime.TotalMilliseconds));
+        }
     }
 
     /// <summary>
@@ -33,45 +53,58 @@ namespace XeroApi.Integration
     public class TrickleRateLimiter : IRateLimiter
     {
         private IEventTimeline Timeline { get; set; }
-        private readonly IXXX _xxx;
+        private readonly IPauseTime _pauseTime;
 
         public TrickleRateLimiter(IEventTimeline timeline)
         {
             Timeline = timeline;
         }
 
-        public TrickleRateLimiter(IEventTimeline timeline, IXXX xxx)
+        public TrickleRateLimiter(IEventTimeline timeline, IPauseTime pauseTime)
         {
             Timeline = timeline;
-            _xxx = xxx;
+            _pauseTime = pauseTime;
         }
 
-        public void CheckAndEnforceRateLimit(DateTime eventTimestamp)
+        public void CheckAndEnforceRateLimit(DateTime expectedEventTimestamp)
         {
             DateTime? lastEventTimestamp = Timeline.GetLastEventDateAndTime();
 
             if (lastEventTimestamp.HasValue)
             {
-                TimeSpan timeSinceLastEvent = eventTimestamp - lastEventTimestamp.Value;
+                TimeSpan timeSinceLastEvent = expectedEventTimestamp - lastEventTimestamp.Value;
 
-                PauseMaybe(timeSinceLastEvent);
+                TimeSpan pausedTime = PauseMaybe(timeSinceLastEvent);
+                expectedEventTimestamp = expectedEventTimestamp.Add(pausedTime);
             }
 
-            Timeline.RecordEvent(eventTimestamp);
+            Timeline.RecordEvent(expectedEventTimestamp);
         }
 
-        private void PauseMaybe(TimeSpan timeSinceLastEvent)
+        /// <summary>
+        /// Pauses the maybe.
+        /// </summary>
+        /// <param name="timeSinceLastEvent">The time since last event.</param>
+        /// <returns>Returns the timespan that was paused</returns>
+        private TimeSpan PauseMaybe(TimeSpan timeSinceLastEvent)
         {
+            Debug.WriteLine("Time since last event:" + timeSinceLastEvent.TotalMilliseconds + "ms");
+
             if (timeSinceLastEvent < TimeSpan.FromSeconds(1))
             {
                 TimeSpan timeToPause = TimeSpan.FromSeconds(1).Subtract(timeSinceLastEvent);
+                Debug.WriteLine("Pausing for " + timeToPause.TotalMilliseconds + "ms");
                 PauseFor(timeToPause);
+
+                return timeToPause;
             }
+
+            return TimeSpan.Zero;
         }
 
         private void PauseFor(TimeSpan timeToPause)
         {
-            _xxx.PauseBeforeEvent(timeToPause);
+            _pauseTime.Pause(timeToPause);
         }
     }
 

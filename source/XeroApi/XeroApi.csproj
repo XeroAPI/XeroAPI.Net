@@ -44,7 +44,7 @@
     <Compile Include="Integration\IApiQueryDescription.cs" />
     <Compile Include="Integration\IRateLimiter.cs" />
     <Compile Include="Integration\NullRateLimiter.cs" />
-    <Compile Include="Integration\SimpleRateLimiter.cs" />
+    <Compile Include="Integration\TrickleRateLimiter.cs" />
     <Compile Include="Integration\ThrottlingIntegrationProxy.cs" />
     <Compile Include="Linq\ApiQuery.cs" />
     <Compile Include="Linq\LinqQueryDescription.cs" />

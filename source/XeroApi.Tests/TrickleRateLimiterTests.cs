@@ -67,12 +67,12 @@ namespace XeroApi.Tests
             timeline.Stub(it => it.RecordEvent(Arg<DateTime>.Is.Anything));
             timeline.Stub(it => it.GetLastEventDateAndTime()).Return(null);
 
-            IXXX xxx = MockRepository.GenerateMock<IXXX>();
+            IPauseTime pauseTime = MockRepository.GenerateMock<IPauseTime>();
 
-            TrickleRateLimiter rateLimiter = new TrickleRateLimiter(timeline, xxx);
+            TrickleRateLimiter rateLimiter = new TrickleRateLimiter(timeline, pauseTime);
             rateLimiter.CheckAndEnforceRateLimit(DateTime.UtcNow);
             
-            xxx.AssertWasNotCalled(it => it.PauseBeforeEvent(Arg<TimeSpan>.Is.Anything));
+            pauseTime.AssertWasNotCalled(it => it.Pause(Arg<TimeSpan>.Is.Anything));
         }
 
         [Test]
@@ -85,12 +85,12 @@ namespace XeroApi.Tests
             timeline.Stub(it => it.RecordEvent(Arg<DateTime>.Is.Anything));
             timeline.Stub(it => it.GetLastEventDateAndTime()).Return(firstEventDateTime);
 
-            IXXX xxx = MockRepository.GenerateMock<IXXX>();
+            IPauseTime pauseTime = MockRepository.GenerateMock<IPauseTime>();
 
-            TrickleRateLimiter rateLimiter = new TrickleRateLimiter(timeline, xxx);
+            TrickleRateLimiter rateLimiter = new TrickleRateLimiter(timeline, pauseTime);
             rateLimiter.CheckAndEnforceRateLimit(secondEventDateTime);
 
-            xxx.AssertWasNotCalled(it => it.PauseBeforeEvent(Arg<TimeSpan>.Is.Anything));
+            pauseTime.AssertWasNotCalled(it => it.Pause(Arg<TimeSpan>.Is.Anything));
         }
 
         [Test]
@@ -103,12 +103,12 @@ namespace XeroApi.Tests
             timeline.Stub(it => it.RecordEvent(Arg<DateTime>.Is.Anything));
             timeline.Stub(it => it.GetLastEventDateAndTime()).Return(firstEventDateTime);
 
-            IXXX xxx = MockRepository.GenerateMock<IXXX>();
+            IPauseTime pauseTime = MockRepository.GenerateMock<IPauseTime>();
 
-            TrickleRateLimiter rateLimiter = new TrickleRateLimiter(timeline, xxx);
+            TrickleRateLimiter rateLimiter = new TrickleRateLimiter(timeline, pauseTime);
             rateLimiter.CheckAndEnforceRateLimit(secondEventDateTime);
 
-            xxx.AssertWasNotCalled(it => it.PauseBeforeEvent(Arg<TimeSpan>.Is.Anything));
+            pauseTime.AssertWasNotCalled(it => it.Pause(Arg<TimeSpan>.Is.Anything));
         }
 
         [Test]
@@ -121,12 +121,12 @@ namespace XeroApi.Tests
             timeline.Stub(it => it.RecordEvent(Arg<DateTime>.Is.Anything));
             timeline.Stub(it => it.GetLastEventDateAndTime()).Return(firstEventDateTime);
 
-            IXXX xxx = MockRepository.GenerateMock<IXXX>();
+            IPauseTime pauseTime = MockRepository.GenerateMock<IPauseTime>();
 
-            TrickleRateLimiter rateLimiter = new TrickleRateLimiter(timeline, xxx);
+            TrickleRateLimiter rateLimiter = new TrickleRateLimiter(timeline, pauseTime);
             rateLimiter.CheckAndEnforceRateLimit(secondEventDateTime);
 
-            xxx.AssertWasCalled(it => it.PauseBeforeEvent(Arg<TimeSpan>.Is.Anything));
+            pauseTime.AssertWasCalled(it => it.Pause(Arg<TimeSpan>.Is.Anything));
         }
 
         [Test]
@@ -139,12 +139,12 @@ namespace XeroApi.Tests
             timeline.Stub(it => it.RecordEvent(Arg<DateTime>.Is.Anything));
             timeline.Stub(it => it.GetLastEventDateAndTime()).Return(firstEventDateTime);
 
-            IXXX xxx = MockRepository.GenerateMock<IXXX>();
+            IPauseTime pauseTime = MockRepository.GenerateMock<IPauseTime>();
 
-            TrickleRateLimiter rateLimiter = new TrickleRateLimiter(timeline, xxx);
+            TrickleRateLimiter rateLimiter = new TrickleRateLimiter(timeline, pauseTime);
             rateLimiter.CheckAndEnforceRateLimit(secondEventDateTime);
 
-            xxx.AssertWasCalled(it => it.PauseBeforeEvent(Arg<TimeSpan>.Is.Equal(TimeSpan.FromMilliseconds(600))));
+            pauseTime.AssertWasCalled(it => it.Pause(Arg<TimeSpan>.Is.Equal(TimeSpan.FromMilliseconds(600))));
         }
 
         [Test]
@@ -156,12 +156,12 @@ namespace XeroApi.Tests
             var mocks = new MockRepository();
 
             var timeline = mocks.StrictMock<IEventTimeline>();
-            var xxx = mocks.StrictMock<IXXX>();
+            var xxx = mocks.StrictMock<IPauseTime>();
 
             using (mocks.Ordered())
             {
                 Expect.Call(timeline.GetLastEventDateAndTime()).Return(firstEventDateTime);
-                Expect.Call(() => xxx.PauseBeforeEvent(Arg<TimeSpan>.Is.Anything));
+                Expect.Call(() => xxx.Pause(Arg<TimeSpan>.Is.Anything));
                 Expect.Call(() => timeline.RecordEvent(Arg<DateTime>.Is.Anything));
             }
 
@@ -171,6 +171,24 @@ namespace XeroApi.Tests
             rateLimiter.CheckAndEnforceRateLimit(secondEventDateTime);
 
             mocks.VerifyAll();
+        }
+
+        [Test]
+        public void it_records_the_updated_timestamp_when_a_pause_was_done()
+        {
+            DateTime firstEventDateTime = new DateTime(2000, 1, 1, 12, 0, 0);
+            DateTime secondEventDateTime = firstEventDateTime.AddMilliseconds(200);
+
+            var timeline = MockRepository.GenerateStub<IEventTimeline>();
+            timeline.Stub(it => it.GetLastEventDateAndTime()).Return(firstEventDateTime);
+
+            IPauseTime pauseTime = MockRepository.GenerateMock<IPauseTime>();
+
+            TrickleRateLimiter rateLimiter = new TrickleRateLimiter(timeline, pauseTime);
+            rateLimiter.CheckAndEnforceRateLimit(secondEventDateTime);
+
+            timeline.AssertWasCalled(it => it.RecordEvent(Arg<DateTime>.Is.Equal(secondEventDateTime.AddMilliseconds(800))));
+            pauseTime.AssertWasCalled(it => it.Pause(Arg<TimeSpan>.Is.Equal(TimeSpan.FromMilliseconds(800))));
         }
     }
 }
