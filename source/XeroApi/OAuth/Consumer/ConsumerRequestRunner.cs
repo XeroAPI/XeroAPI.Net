@@ -28,7 +28,7 @@ namespace DevDefined.OAuth.Consumer
 
                 if (httpWebResponse == null)
                 {
-                    throw new ApplicationException("An HttpWebResponse could not be obtained from the WebException. Status was " + webEx.Status.ToString());
+                    throw new ApplicationException("An HttpWebResponse could not be obtained from the WebException. Status was " + webEx.Status, webEx);
                 }
 
                 consumerResponse = new ConsumerResponse(httpWebResponse, webEx);
