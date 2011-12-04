@@ -20,7 +20,10 @@ namespace XeroApi.Linq
     {
         private readonly StringBuilder _orderQuery = new StringBuilder();
         private readonly StringBuilder _whereQuery = new StringBuilder();
-        
+
+        private string _lastWhereTerm;
+
+
         public Type ElementType 
         { 
             get; 
@@ -45,7 +48,11 @@ namespace XeroApi.Linq
                 return ModelTypeHelper.GetElementCollectionType(ElementType);
             }
         }
-        
+
+        /// <summary>
+        /// Gets the element name, used to construct the request url
+        /// </summary>
+        /// <value>The name of the element.</value>
         public string ElementName 
         { 
             get 
@@ -54,6 +61,10 @@ namespace XeroApi.Linq
             }
         }
 
+        /// <summary>
+        /// Gets the property from the <c ref="ElementType"/> which is marked as <c ref="ItemIdAttribute"/>.
+        /// </summary>
+        /// <value>The element id property.</value>
         public PropertyInfo ElementIdProperty
         {
             get
@@ -64,6 +75,10 @@ namespace XeroApi.Linq
             }
         }
 
+        /// <summary>
+        /// Gets the property from the <c ref="ElementType"/> which is marked as <c ref="ItemNumberAttribute"/>.
+        /// </summary>
+        /// <value>The element number property.</value>
         public PropertyInfo ElementNumberProperty
         {
             get
@@ -74,6 +89,10 @@ namespace XeroApi.Linq
             }
         }
 
+        /// <summary>
+        /// Gets the property from the <c ref="ElementType"/> which is marked as <c ref="ItemUpdatedDateAttribute"/>.
+        /// </summary>
+        /// <value>The element updated date property.</value>
         public PropertyInfo ElementUpdatedDateProperty
         {
             get
@@ -84,12 +103,20 @@ namespace XeroApi.Linq
             }
         }
 
+        /// <summary>
+        /// Gets the element id, used to construct the request url
+        /// </summary>
+        /// <value>The element id.</value>
         public string ElementId
         {
             get; 
             set;
         }
 
+        /// <summary>
+        /// Gets the date used to populate the If-Modified-Since http header.
+        /// </summary>
+        /// <value>The updated since date.</value>
         public DateTime? UpdatedSinceDate
         {
             get; 
@@ -106,6 +133,10 @@ namespace XeroApi.Linq
             get { return _orderQuery.ToString(); }
         }
 
+        /// <summary>
+        /// Gets the query string parameter collection.
+        /// </summary>
+        /// <value>The query string params.</value>
         public NameValueCollection QueryStringParams
         {
             get 
@@ -145,8 +176,13 @@ namespace XeroApi.Linq
             return sb.ToString().Trim();
         }
 
-        private string _lastWhereTerm;
 
+
+        /// <summary>
+        /// Appends the <c ref="term"/> to either the <c ref="Where"/> or <c ref="Order"/> clause.
+        /// </summary>
+        /// <param name="term">The term.</param>
+        /// <param name="querystringName">Name of the querystring.</param>
         public void AppendTerm(string term, ApiQuerystringName querystringName)
         {
             switch (querystringName)
