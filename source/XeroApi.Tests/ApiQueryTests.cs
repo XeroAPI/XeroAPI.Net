@@ -425,17 +425,45 @@ namespace XeroApi.Tests
         }
 
         [Test]
-        public void TestApiQueryCanCallEmployeeEndpointWithSingleOrDefaultOperator()
+        public void TestApiQueryCanCallInvoicesEndpointWithUpdatedDateAndUrlFilterCombinedWithAndOperator()
         {
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
             
-            repository.Users.SingleOrDefault(u => u.FullName == "Joe Bloggs");
+            repository.Invoices.SingleOrDefault(i => i.UpdatedDateUTC > new DateTime(2010, 1, 1) && i.Url != null);
             
             var queryDesctipion = integrationProxy.LastQueryDescription;
-            Assert.AreEqual("User", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("Invoice", queryDesctipion.ElementType.Name);
             Assert.AreEqual("SingleOrDefault", queryDesctipion.ClientSideExpression);
-            Assert.AreEqual("(FullName == \"Joe Bloggs\")", queryDesctipion.Where);
+            Assert.AreEqual("(Url <> NULL)", queryDesctipion.Where);
+        }
+
+        [Test]
+        public void TestApiQueryCanCallContactsEndpointWithContactNumberIsNull()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            repository.Contacts.SingleOrDefault(i => i.ContactNumber == null);
+
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+            Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("SingleOrDefault", queryDesctipion.ClientSideExpression);
+            Assert.AreEqual("(ContactNumber == NULL)", queryDesctipion.Where);
+        }
+
+        [Test]
+        public void TestApiQueryCanCallContactsEndpointWithContactNumberIsNotNull()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            repository.Contacts.SingleOrDefault(i => i.ContactNumber != null);
+
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+            Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("SingleOrDefault", queryDesctipion.ClientSideExpression);
+            Assert.AreEqual("(ContactNumber <> NULL)", queryDesctipion.Where);
         }
     }
 }

@@ -147,6 +147,27 @@ namespace XeroApi.Linq
             return u;
         }
 
+        bool IsNotRenderedIntoExpression(Expression e)
+        {
+            BinaryExpression b = e as BinaryExpression;
+            if (b == null) return false;
+
+             MemberExpression mExp = b.Left as MemberExpression;
+
+            // Check if the LHS is an ItemId, ItemNumber or UpdatedDate. If so, record away from the main where clause.
+            if (mExp != null && (mExp.Member.DeclaringType.Name == _query.ElementName))
+            {
+                if (mExp.Member.Name == _query.ElementIdProperty.SafeName()
+                || mExp.Member.Name == _query.ElementNumberProperty.SafeName()
+                || mExp.Member.Name == _query.ElementUpdatedDateProperty.SafeName())
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         protected override Expression VisitBinary(BinaryExpression b)
         {
             MemberExpression mExp = b.Left as MemberExpression;
@@ -164,8 +185,13 @@ namespace XeroApi.Linq
                 }
                 if (mExp.Member.Name == _query.ElementNumberProperty.SafeName())
                 {
-                    _query.ElementId = EvaluateExpression<object>(b.Right).ToString();
-                    return b;
+                    var rightValue = EvaluateExpression<object>(b.Right);
+                    
+                    if (rightValue != null)
+                    {
+                        _query.ElementId = rightValue.ToString();
+                        return b;
+                    }                    
                 }
                 if (mExp.Member.Name == _query.ElementUpdatedDateProperty.SafeName())
                 {
@@ -193,47 +219,54 @@ namespace XeroApi.Linq
                 return Visit(Expression.Equal(memberExpression, valueExpression));
             }
 
-
-            // Otherswise, parse as a normal (operand1 operator operand2)
-            Append("(");
-            Visit(b.Left);
-            switch (b.NodeType)
-            {
-                case ExpressionType.And:
-                case ExpressionType.AndAlso:
-                    Append(" AND ");
-                    break;
-                case ExpressionType.Or:
-                case ExpressionType.OrElse:
-                    Append(" OR ");
-                    break;
-                case ExpressionType.Equal:
-                    Append(" == ");
-                    break;
-                case ExpressionType.NotEqual:
-                    Append(" <> ");
-                    break;
-                case ExpressionType.LessThan:
-                    Append(" < ");
-                    break;
-                case ExpressionType.LessThanOrEqual:
-                    Append(" <= ");
-                    break;
-                case ExpressionType.GreaterThan:
-                    Append(" > ");
-                    break;
-                case ExpressionType.GreaterThanOrEqual:
-                    Append(" >= ");
-                    break;
-                default:
-                    throw new NotSupportedException(string.Format("The binary operator '{0}' is not supported", b.NodeType));
+            if (IsNotRenderedIntoExpression(b.Left)) {
+                VisitBinary((BinaryExpression)b.Left);
+                Visit(b.Right);
+                return b.Right;
+            } else if (IsNotRenderedIntoExpression(b.Right)) {
+                Visit(b.Left);
+                VisitBinary((BinaryExpression)b.Right);
+                return b.Left;
+            } else {
+                // Otherswise, parse as a normal (operand1 operator operand2)
+                Append("(");
+                Visit(b.Left);
+                switch (b.NodeType)
+                {
+                    case ExpressionType.And:
+                    case ExpressionType.AndAlso:
+                        Append(" AND ");
+                        break;
+                    case ExpressionType.Or:
+                    case ExpressionType.OrElse:
+                        Append(" OR ");
+                        break;
+                    case ExpressionType.Equal:
+                        Append(" == ");
+                        break;
+                    case ExpressionType.NotEqual:
+                        Append(" <> ");
+                        break;
+                    case ExpressionType.LessThan:
+                        Append(" < ");
+                        break;
+                    case ExpressionType.LessThanOrEqual:
+                        Append(" <= ");
+                        break;
+                    case ExpressionType.GreaterThan:
+                        Append(" > ");
+                        break;
+                    case ExpressionType.GreaterThanOrEqual:
+                        Append(" >= ");
+                        break;
+                    default:
+                        throw new NotSupportedException(string.Format("The binary operator '{0}' is not supported", b.NodeType));
+                }
+                Visit(b.Right);
+                Append(")");
+                return b;
             }
-            Visit(b.Right);
-            Append(")");
-            return b;
         }
-
-
 
         protected override Expression VisitConstant(ConstantExpression c)
         {
