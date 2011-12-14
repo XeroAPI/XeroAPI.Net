@@ -82,7 +82,7 @@ There are 2 ways to install this library:
  **https://github.com/XeroAPI/XeroAPI.Net**
 
 2. Download directly into Visual Studio using the NuGet powershell command:
- **PM&gt; Install XeroAPI.Net**
+ **PM&gt; Install-Package XeroAPI.Net**
 
 
 Usage
