@@ -332,7 +332,7 @@ namespace XeroApi.ConsoleApp
 
             foreach (var expenseClaim in repository.ExpenseClaims.Where(expenseClaim => expenseClaim.Status != "CURRENT"))
             {
-                Console.WriteLine("Expense claim {0} for user {1} for amount {2} with status {3}", expenseClaim.ExpenseClaimID, expenseClaim.User.EmailAddress, expenseClaim.Total, expenseClaim.Status);
+                Console.WriteLine("Expense claim {0} for user {1} for amount {2} with status {3}", expenseClaim.ExpenseClaimID, expenseClaim.User.FullName, expenseClaim.Total, expenseClaim.Status);
             }
 
 

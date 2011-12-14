@@ -7,8 +7,8 @@ namespace XeroApi.Model
         [ItemId]
         public Guid? UserID { get; set; }
 
-        [ItemNumber]
-        public string EmailAddress { get; set; }
+        /*[ItemNumber]
+        public string EmailAddress { get; set; }*/
 
         public string FirstName { get; set; }
 
