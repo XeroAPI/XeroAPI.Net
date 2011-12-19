@@ -12,7 +12,8 @@ namespace XeroApi.Linq
     {
         Unknown,
         Where,
-        OrderBy
+        OrderBy,
+        Skip
     }
 
     
@@ -20,6 +21,7 @@ namespace XeroApi.Linq
     {
         private readonly StringBuilder _orderQuery = new StringBuilder();
         private readonly StringBuilder _whereQuery = new StringBuilder();
+        private readonly StringBuilder _skipQuery = new StringBuilder();
 
         private string _lastWhereTerm;
 
@@ -133,10 +135,16 @@ namespace XeroApi.Linq
             get { return _orderQuery.ToString(); }
         }
 
+        public string Offset
+        {
+            get { return _skipQuery.ToString(); }
+        }
+
         /// <summary>
         /// Gets the query string parameter collection.
         /// </summary>
         /// <value>The query string params.</value>
+
         public NameValueCollection QueryStringParams
         {
             get 
@@ -148,6 +156,9 @@ namespace XeroApi.Linq
 
                 if (!string.IsNullOrEmpty(Order))
                     collectionToReturn.Add("ORDER", Order);
+
+                if (!string.IsNullOrEmpty(Offset))
+                    collectionToReturn.Add("offset", Offset);
 
                 return collectionToReturn; 
             }
@@ -169,6 +180,9 @@ namespace XeroApi.Linq
 
             if (!string.IsNullOrEmpty(Order))
                 sb.Append("Order:" + Order + " ");
+
+            if (!string.IsNullOrEmpty(Offset))
+                sb.Append("Offset:" + Offset + " ");
 
             if (UpdatedSinceDate.HasValue)
                 sb.Append("After:" + UpdatedSinceDate.Value.ToString("yyyy-MM-ddTHH:mm:ss") + " ");
@@ -205,6 +219,11 @@ namespace XeroApi.Linq
 
                     _orderQuery.Append(term);
                     
+                    break;
+
+                case ApiQuerystringName.Skip:
+                    _skipQuery.Remove(0, _skipQuery.Length);
+                    _skipQuery/*.Append("offset=")*/.Append(term);
                     break;
                     
                 case ApiQuerystringName.Unknown:

@@ -87,11 +87,16 @@ namespace XeroApi.Linq
                         Append(" DESC");
                         return expression;
                     }
+                
+                case "Skip":
+                    using (new QuerystringScope(this, ApiQuerystringName.Skip))
+                    {
+                        return base.VisitMethodCall(m);
+                    }
                     
                 case "LongCount":
                 case "Select":
                 case "Take":
-                case "Skip":
                 case "SelectMany":
                 case "Join":
                 case "GroupJoin":
