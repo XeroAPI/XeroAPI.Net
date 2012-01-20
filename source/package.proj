@@ -32,8 +32,14 @@
   
   <Target Name="Publish">
   
-    <!-- NuGet Publish -->
-	<Exec Command="$(BaseDir)\..\tools\nuget.exe push XeroAPI.Net.%(AsmInfo.Version).nupkg $(NuGetApiKey)" />
+    <!-- NuGet Push (Note: don't fail the build if we couldn't publish to NuGet, it could simply be that there is  the same version package up there already -->
+	<Exec Command="$(BaseDir)\..\tools\nuget.exe push XeroAPI.Net.%(AsmInfo.Version).nupkg $(NuGetApiKey)" IgnoreExitCode="true">
+		<Output TaskParameter="ExitCode" PropertyName="ErrorCode"/>
+	</Exec>
+	
+	<!-- Report on the success of 'NuGet push' -->
+	<Message Text="The package was NOT uploaded to NuGet (NuGet.exe exit code was: $(ErrorCode))" Condition="'$(ErrorCode)' > '0'"/>
+	<Message Text="The package was succesfully uploaded to NuGet" Condition="'$(ErrorCode)' = '0'"/>
 	
   </Target>
   
