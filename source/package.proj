@@ -39,7 +39,7 @@
 	
 	<!-- Report on the success of 'NuGet push' -->
 	<Message Text="The package was NOT uploaded to NuGet (NuGet.exe exit code was: $(ErrorCode))" Condition="'$(ErrorCode)' > '0'"/>
-	<Message Text="The package was succesfully uploaded to NuGet" Condition="'$(ErrorCode)' = '0'"/>
+	<Message Text="The package was succesfully uploaded to NuGet" Condition="'$(ErrorCode)' == '0'"/>
 	
   </Target>
   
