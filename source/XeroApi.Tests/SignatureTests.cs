@@ -17,11 +17,11 @@ namespace XeroApi.Tests
         [Test]
         public void TestSignRequestToken()
         {
-            var cert = new X509Certificate2("test-cert.pfx");
+            var cert = new X509Certificate2("XeroApiNet-Sample.pfx", "password");
 
             var consumerContext = new OAuthConsumerContext
             {
-                // Public apps use HMAC-SHA1
+                // Partner and Private apps use RSA-SHA1 signing method
                 SignatureMethod = SignatureMethod.RsaSha1,
                 UseHeaderForOAuthParameters = true,
 
@@ -56,17 +56,18 @@ namespace XeroApi.Tests
                                                    ConsumerSecret = null,
                                                    SignatureBase = signatureBase
                                                });
-            Assert.That(oauthContext.Signature, Is.EqualTo("YpkhJYmKjwAprqQ0JO4sSkpo09F3kc/D12dRoDmi5q/S096krV0B1PpZl5Rb8acP9yvileXFMQaU4lvOya1PJ2g9wUMfewOwRn3Ua7Uudk7VXpaFJhTenktWBEh+2YjxUPEkD3vFPdc+R/n5FEHzYSyQ6b270vrTh+4nyuPUz5RKBzdiccKMfcsEMMrN097Nmpz+Tt6Zpbv2zvxz/TYPT3lfi7CKTtpqD3WSPD+nyAXc+n0n8xgqZdQ+BcoVWcIxUNKZHmxmDhAWoPrMpZmO1krRy1JPq8eHPrLWn0Owqw2LAcPCEmLzF/lwrBCIbIAJcTIoEYMycmM2wE46x9L2ew=="));
+
+            Assert.That(oauthContext.Signature, Is.EqualTo("aIIAFPjD0uavubFeL/Hz4LSV6NsvAbrvfnPF6OcgGfhML5ezO0+E+tofLgp1SHbLyNFM7D1p/SJN1J4MY7T3HzvM8HX+3u5Q+Ui+en0/ewHZ+3ar6BA7r3zOYqDn8rfCGSnweia3fFYmjkeS8NvKShnewUu0jUFbnG4RXw8BiEk="));
         }
 
         [Test]
         public void TestSignAccessToken()
         {
-            var cert = new X509Certificate2("test-cert.pfx");
+            var cert = new X509Certificate2("XeroApiNet-Sample.pfx", "password");
             
             var consumerContext = new OAuthConsumerContext
             {
-                // Public apps use HMAC-SHA1
+                // Partner and Private apps use RSA-SHA1 signing method
                 SignatureMethod = SignatureMethod.RsaSha1,
                 UseHeaderForOAuthParameters = true,
 
@@ -104,7 +105,8 @@ namespace XeroApi.Tests
                                                        ConsumerSecret = null,
                                                        SignatureBase = signatureBase
                                                    });
-            Assert.That(oauthContext.Signature, Is.EqualTo("HSrsfpD8CTgov5d09skqoIo7ovj3tQrvYHpQ/HwrlbTGBcJy7S4Vu4vnGcbrnAZGCUL1+loKIpvQY/Fj72VtVhnuBirDfqmdbSTQNYgDDELmUhacVqLhLoysMNAs9WWWNpmaZkgD7cKbtdLJ6+oMCsGqUGHj1rUqb37fqfgYNkajj47Ai0y1FT3+BaeGXf5d68o56UIIK3jcq1ibCdORd7S0onxPG95cqo4bTxrPejxqJdZGGtYg6q3MlQGEBKm4qVbRjoITTz5VgoIz9sIDYfX9/GWVxk2y6wc3F+D7Ue6RPc3KyorSLqwa92tQ0rXhLnmhHWoC5BcnDB0oYPlJaw=="));
+
+            Assert.That(oauthContext.Signature, Is.EqualTo("32vGleSAIeMbgW9E0pC+PUkyZ1Y05zuEd+FZwg+w4jZzj3E1zldbrGY5SnVpypZfjixWuHMtV4mwGwptwiTZRkrLBudWqJDEddvlwuIMY1j6WkQulz/IXzbGuPNgTya/KTEhQ5IExJXCKE1LZ9bNsMXBDpyi7/ayZe9ONqoVzS8="));
         }
     }
 }
