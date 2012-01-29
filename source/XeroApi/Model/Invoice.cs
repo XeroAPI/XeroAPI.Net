@@ -17,20 +17,27 @@ namespace XeroApi.Model
 
         public string Reference { get; set; }
 
+        [ReadOnly]
         public Payments Payments { get; set; }
 
+        [ReadOnly]
         public CreditNotes CreditNotes { get; set; }
 
+        [ReadOnly]
         public decimal? AmountDue { get; set; }
 
+        [ReadOnly]
         public decimal? AmountPaid { get; set; }
 
+        [ReadOnly]
         public decimal? AmountCredited { get; set; }
         
         public string Url { get; set; }
 
+        [ReadOnly]
         public string ExternalLinkProviderName { get; set; }
 
+        [ReadOnly]
         public bool? SentToContact { get; set; }
 
         public decimal? CurrencyRate { get; set; }
@@ -57,6 +64,7 @@ namespace XeroApi.Model
 
         public virtual string CurrencyCode { get; set; }
 
+        [ReadOnly]
         public DateTime? FullyPaidOnDate { get; set; }
     }
    
