@@ -85,6 +85,30 @@ namespace XeroApi.Model
             return CleanXml(sb.ToString());
         }
 
+        public static string Serialize2<TModel>(TModel itemsToSerialise)
+            where TModel : ModelBase
+        {
+            StringBuilder sb = new StringBuilder();
+            
+            XmlWriterSettings xmlWriterSettings =new XmlWriterSettings
+            {
+                OmitXmlDeclaration = true,
+                Indent = true,
+            };
+
+            using (StringWriter sw = new StringWriter(sb))
+            using (XmlWriter xs = XmlWriter.Create(sw, xmlWriterSettings))
+            using (ModelTreeNavigator navigator = new ModelTreeNavigator(xs))
+            {
+                navigator.Navigate(itemsToSerialise);
+
+                xs.Flush();
+                sw.Flush();
+            }
+
+            return sb.ToString();
+        }
+
         private static string CleanXml(string xml)
         {
             XElement xElement = XElement.Parse(xml);
