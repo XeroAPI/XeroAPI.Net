@@ -417,8 +417,8 @@ namespace XeroApi.Tests
             Repository repository = new Repository(integrationProxy);
 
             Assert.Throws<InvalidOperationException>(() => repository.Users.Single(u => u.FullName == "Joe Bloggs"));
-
             var queryDesctipion = integrationProxy.LastQueryDescription;
+
             Assert.AreEqual("User", queryDesctipion.ElementType.Name);
             Assert.AreEqual("Single", queryDesctipion.ClientSideExpression);
             Assert.AreEqual("(FullName == \"Joe Bloggs\")", queryDesctipion.Where);
@@ -431,11 +431,30 @@ namespace XeroApi.Tests
             Repository repository = new Repository(integrationProxy);
             
             repository.Invoices.SingleOrDefault(i => i.UpdatedDateUTC > new DateTime(2010, 1, 1) && i.Url != null);
-            
             var queryDesctipion = integrationProxy.LastQueryDescription;
+
             Assert.AreEqual("Invoice", queryDesctipion.ElementType.Name);
             Assert.AreEqual("SingleOrDefault", queryDesctipion.ClientSideExpression);
             Assert.AreEqual("(Url <> NULL)", queryDesctipion.Where);
+            Assert.AreEqual(new DateTime(2010, 01, 01), queryDesctipion.UpdatedSinceDate);
+        }
+
+
+        // Test for https://github.com/XeroAPI/XeroAPI.Net/issues/14
+        [Test]
+        public void TestApiQueryCanCallInvoicesEndpointWithUpdatedDateAndTypeFilterCombinedWithAndOperator()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            repository.Invoices.Where(i => i.UpdatedDateUTC > new DateTime(2010, 1, 1) && i.Type == "ACCPAY").ToList();
+
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+
+            Assert.AreEqual("Invoice", queryDesctipion.ElementType.Name);
+            Assert.AreEqual(null, queryDesctipion.ClientSideExpression);
+            Assert.AreEqual("(Type == \"ACCPAY\")", queryDesctipion.Where);
+            Assert.AreEqual(new DateTime(2010, 01, 01), queryDesctipion.UpdatedSinceDate);
         }
 
         [Test]
@@ -445,8 +464,8 @@ namespace XeroApi.Tests
             Repository repository = new Repository(integrationProxy);
 
             repository.Contacts.SingleOrDefault(i => i.ContactNumber == null);
-
             var queryDesctipion = integrationProxy.LastQueryDescription;
+
             Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
             Assert.AreEqual("SingleOrDefault", queryDesctipion.ClientSideExpression);
             Assert.AreEqual("(ContactNumber == NULL)", queryDesctipion.Where);
@@ -459,8 +478,8 @@ namespace XeroApi.Tests
             Repository repository = new Repository(integrationProxy);
 
             repository.Contacts.SingleOrDefault(i => i.ContactNumber != null);
-
             var queryDesctipion = integrationProxy.LastQueryDescription;
+
             Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
             Assert.AreEqual("SingleOrDefault", queryDesctipion.ClientSideExpression);
             Assert.AreEqual("(ContactNumber <> NULL)", queryDesctipion.Where);
