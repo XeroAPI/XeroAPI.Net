@@ -32,6 +32,9 @@ namespace XeroApi.Model
         public string ReportingCode { get; set; }
 
         public string ReportingCodeName { get; set; }
+
+        // Added for v2.14
+        public bool ShowInExpenseClaims { get; set; }
     }
 
     
