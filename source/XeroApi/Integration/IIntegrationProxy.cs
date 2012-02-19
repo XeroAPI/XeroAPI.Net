@@ -27,6 +27,13 @@ namespace XeroApi.Integration
         /// <returns></returns>
         byte[] FindOne(string endpointName, string itemId, string acceptMimeType);
 
+        /// <summary>
+        /// Finds one attachment.
+        /// </summary>
+        /// <param name="endpointName">Name of the endpoint.</param>
+        /// <param name="itemId">The item id.</param>
+        /// <param name="attachmentIdOrFileName">Name of the attachment id or file.</param>
+        /// <returns></returns>
         Stream FindOneAttachment(string endpointName, string itemId, string attachmentIdOrFileName);
 
         /// <summary>

@@ -226,9 +226,9 @@ namespace XeroApi.Linq
 
             if (leftMethod != null && leftMethod.Method.Name == "CompareString")
             {
-                var memberExpression = leftMethod.Arguments[0] as MemberExpression;
-                var valueExpression = leftMethod.Arguments[1] as ConstantExpression;
-
+                var memberExpression = leftMethod.Arguments[0];
+                var valueExpression = leftMethod.Arguments[1];
+                
                 if (b.NodeType == ExpressionType.NotEqual)
                     return Visit(Expression.NotEqual(memberExpression, valueExpression));
                 
