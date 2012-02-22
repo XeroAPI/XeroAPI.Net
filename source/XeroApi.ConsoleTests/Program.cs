@@ -51,6 +51,19 @@ namespace XeroApi.ConsoleApp
             Organisation organisation = repository.Organisation;
             Console.WriteLine(string.Format("You have been authorised against organisation: {0}", organisation.Name));
 
+
+
+
+
+            // API v2.15 Get a list of accounts that can be used when creating expense claims
+            var expenseClaimAccounts = repository.Accounts.Where(a => a.ShowInExpenseClaims == true).ToList();
+            Console.WriteLine("There are {0} accounts that can be used in expense claim line items", expenseClaimAccounts.Count);
+
+            foreach (var account in expenseClaimAccounts)
+                Console.WriteLine("Expense Account, name:{0} code:{1}", account.Name, account.Code);
+
+
+
             
 
             // Make a PUT call to the API - add a dummy contact
@@ -69,7 +82,6 @@ namespace XeroApi.ConsoleApp
             Console.WriteLine(string.Format("The validation status was: {0}", contact.ValidationStatus));
 
             
-
 
             // Try to update the contact that's just been created, but this time use a POST method
             contact.EmailAddress = string.Format("{0}@nowhere.com", contact.Name.ToLower().Replace(" ", "."));
