@@ -28,7 +28,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
-
 using System.Security.Authentication;
 using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Storage.Basic;
@@ -407,12 +406,10 @@ namespace DevDefined.OAuth.Consumer
 
     public IConsumerResponse RunConsumerRequest(IConsumerRequest consumerRequest)
     {
-        IConsumerResponse consumerResponse;
-
         int retryCounter = 2;
         while (retryCounter-- > 0)
         {
-            consumerResponse = ConsumerRequestRunner.Run(consumerRequest);
+            IConsumerResponse consumerResponse = ConsumerRequestRunner.Run(consumerRequest);
             LogMessage(consumerRequest, consumerResponse);
 
             if (consumerResponse.IsForbiddenResponse)
