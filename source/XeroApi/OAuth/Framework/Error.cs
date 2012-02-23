@@ -195,5 +195,12 @@ namespace DevDefined.OAuth.Framework
     {
       throw new OAuthException(context, OAuthProblems.ParameterRejected, "When obtaining a request token, you must not supply the oauth_token parameter");
     }
+
+      public static Exception IfModifiedSinceHeaderOutOfRange(DateTime ifModifiedSince)
+      {
+          return
+              new Exception(string.Format("Supplied value of If-Modified-Since header is too small: {0}",
+                                          ifModifiedSince.ToString()));
+      }
   }
 }

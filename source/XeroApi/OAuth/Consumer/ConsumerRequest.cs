@@ -25,12 +25,14 @@
 #endregion
 
 using System;
+using System.Collections.Specialized;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 
 using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Utility;
+using System.Linq;
 
 namespace DevDefined.OAuth.Consumer
 {
@@ -48,7 +50,7 @@ namespace DevDefined.OAuth.Consumer
         _consumerContext = consumerContext;
         _clientSslCertificateFactory = clientSslCertificateFactory;
     }
-
+    
     public IOAuthContext Context
     {
       get { return _context; }
@@ -56,6 +58,8 @@ namespace DevDefined.OAuth.Consumer
 
     public IConsumerResponse ToConsumerResponse()
     {
+        //TODO: Should move this to a validation object. I didnt want to effect the public API of the object too much. Meboz
+        Validate();
         return _oauthSession.RunConsumerRequest(this);
     }
      
@@ -72,6 +76,7 @@ namespace DevDefined.OAuth.Consumer
           request.Accept = AcceptsType;
       }
 
+        //TODO: Move this logic to the validation, there's some duplication I introduced. Meboz
       try
       {
           if (Context.Headers["If-Modified-Since"] != null)
@@ -234,5 +239,24 @@ namespace DevDefined.OAuth.Consumer
         throw Error.ThisConsumerRequestHasAlreadyBeenSigned();
       }
     }
+
+    public virtual void Validate()
+      {
+        //Chose not to extract to interface until we can decide where to do the vlaidation. Meboz
+        var headers = Context.Headers;
+
+        if (headers["If-Modified-Since"] == null)
+            return;
+
+        var ifModifiedSince = new DateTime();
+              
+        if(DateTime.TryParse(headers["If-Modified-Since"],out ifModifiedSince))
+        {
+            if(ifModifiedSince < DateTime.Parse("01-Jan-1753"))
+            {
+                throw Error.IfModifiedSinceHeaderOutOfRange(ifModifiedSince);
+            }      
+        }
+      }
   }
 }
