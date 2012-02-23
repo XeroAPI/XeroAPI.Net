@@ -484,6 +484,68 @@ namespace XeroApi.Tests
             Assert.AreEqual("SingleOrDefault", queryDesctipion.ClientSideExpression);
             Assert.AreEqual("(ContactNumber <> NULL)", queryDesctipion.Where);
         }
+
+        [Test]
+        public void it_can_filter_string_properties_using_contains_method()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            repository.Contacts.FirstOrDefault(c => c.Name.Contains("Coffee"));
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+
+            Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("Name.Contains(\"Coffee\")", queryDesctipion.Where);
+        }
+
+        [Test]
+        public void it_can_filter_string_properties_using_startswith_method()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            repository.Contacts.FirstOrDefault(c => c.Name.StartsWith("Coffee"));
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+
+            Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("Name.StartsWith(\"Coffee\")", queryDesctipion.Where);
+        }
+
+        [Test]
+        public void it_can_filter_string_properties_using_startswith_method_with_another_filter()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            repository.Contacts.FirstOrDefault(c => c.Name.StartsWith("Coffee") && c.IsCustomer == true);
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+
+            Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("(Name.StartsWith(\"Coffee\") AND (IsCustomer == true))", queryDesctipion.Where);
+        }
+
+        [Test]
+        public void it_does_not_implement_contains_linq_method()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            Assert.Throws<NotImplementedException>(() => repository.Contacts.Contains(new Contact() {Name = "Jason"}));
+        }
+
+        [Test]
+        public void it_can_filter_string_properties_using_static_methods()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            repository.Contacts.Where(c => string.IsNullOrEmpty(c.ContactNumber)).ToList();
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+
+            Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("String.IsNullOrEmpty(ContactNumber)", queryDesctipion.Where);
+        }
+        
     }
 }
 

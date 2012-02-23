@@ -93,45 +93,42 @@ namespace XeroApi.Linq
                     {
                         return base.VisitMethodCall(m);
                     }
-                    
-                case "LongCount":
-                case "Select":
-                case "Take":
-                case "SelectMany":
-                case "Join":
-                case "GroupJoin":
-                case "GroupBy":
-                case "Distinct":
-                case "Min":
-                case "Max":
-                case "Sum":
-                case "Average":
-                case "Aggregate":
-                case "Any":
-                case "All":
-                case "Except":
-                case "Intersect":
-                case "Union":
-                case "OfType":
-                case "ElementAt":
-                case "Reverse":
-                case "WithAggregate":
-                case "IncludeDeleted":
-                case "WithProviderOptions":
-                case "WithHints":
-                case "Concat":
-                case "SequenceEqual":
-                case "TakeWhile":
-                case "SkipWhile":
-                case "DefaultIfEmpty":
-                case "Contains":
-                case "Cast":
+
+                default:
+
+                    // If this is a method from a clr object, as opposed to an extension method,  the API server just might be able to support it.
+                    if (m.Method.DeclaringType == typeof(string) || 
+                        m.Method.DeclaringType == typeof(DateTime) || 
+                        m.Method.DeclaringType == typeof(Guid))
+                    {
+                        return VisitObjectMethodCall(m);
+                    }
+
                     throw new NotImplementedException(string.Format("The method '{0}' can't currently be used in a XeroApi WHERE querystring.", m.Method.Name));
             }
+        }
 
-            // Static method call
-            EvaluateAndAppendSymbol(m);
-            return m;
+
+        protected Expression VisitObjectMethodCall(MethodCallExpression m)
+        {
+            // The .Contains and .StartsWith methods on string objects are supported by the API server
+            // e.g.
+            //      c => c.Name.StartsWith("Jason")
+            //      c => c.Name.Contains("ase")
+
+            if (m.Method.IsStatic)
+            {
+                Append(m.Method.DeclaringType.Name);
+            }
+
+            Expression obj = Visit(m.Object);
+            
+            Append(".");
+            Append(m.Method.Name);
+            Append("(");
+            var args = VisitExpressionList(m.Arguments);
+            Append(")");
+            return UpdateMethodCall(m, obj, m.Method, args);
         }
 
 
