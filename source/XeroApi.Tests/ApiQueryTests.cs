@@ -545,7 +545,32 @@ namespace XeroApi.Tests
             Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
             Assert.AreEqual("String.IsNullOrEmpty(ContactNumber)", queryDesctipion.Where);
         }
-        
+
+        [Test]
+        public void it_can_filter_string_properties_using_static_methods_with_implicit_negation()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            repository.Contacts.Where(c => !string.IsNullOrEmpty(c.ContactNumber)).ToList();
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+
+            Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("(String.IsNullOrEmpty(ContactNumber) == false)", queryDesctipion.Where);
+        }
+
+        [Test]
+        public void it_can_filter_string_properties_using_static_methods_with_implicit_affirmation()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            repository.Contacts.Where(c => string.IsNullOrEmpty(c.ContactNumber)).ToList();
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+
+            Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("(String.IsNullOrEmpty(ContactNumber) == true)", queryDesctipion.Where);
+        }
     }
 }
 
