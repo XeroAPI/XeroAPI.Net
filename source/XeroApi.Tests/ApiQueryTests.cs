@@ -57,13 +57,30 @@ namespace XeroApi.Tests
         }
 
         [Test]
-        public void TestApiQueryCanCallUsersEndpointWithBooleanFilter()
+        public void TestApiQueryCanCallUsersEndpointWith_explicit_BooleanFilter()
         {
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
             // Note: This needs the '== true' but to work correctly
             List<User> invoices = repository.Users.Where(user => user.IsSubscriber == true).ToList();
+
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+            Assert.AreEqual("User", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("(IsSubscriber == true)", queryDesctipion.Where);
+            Assert.AreEqual("", queryDesctipion.Order);
+            Assert.AreEqual(0, invoices.Count);
+        }
+
+        [Test]
+        [Ignore("D4 6-Mar-2012, The implicit boolean predicates are not currently supported by api.xero.com")]
+        public void TestApiQueryCanCallUsersEndpointWith_implicit_BooleanFilter()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            // Note: This needs the '== true' but to work correctly
+            List<User> invoices = repository.Users.Where(user => user.IsSubscriber).ToList();
 
             var queryDesctipion = integrationProxy.LastQueryDescription;
             Assert.AreEqual("User", queryDesctipion.ElementType.Name);
@@ -569,7 +586,7 @@ namespace XeroApi.Tests
             var queryDesctipion = integrationProxy.LastQueryDescription;
 
             Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
-            Assert.AreEqual("(String.IsNullOrEmpty(ContactNumber) == true)", queryDesctipion.Where);
+            Assert.AreEqual("String.IsNullOrEmpty(ContactNumber)", queryDesctipion.Where);
         }
     }
 }
