@@ -207,12 +207,14 @@ namespace DevDefined.OAuth.Consumer
       return SignWithToken(accessToken);
     }
 
-    public IConsumerRequest SignWithToken(IToken token)
-    {
-      EnsureRequestHasNotBeenSignedYet();
-      _consumerContext.SignContextWithToken(_context, token);
-      return this;
-    }
+      public IConsumerRequest SignWithToken(IToken token, bool checkForExistingSignature = true)
+      {
+          if (checkForExistingSignature)
+            EnsureRequestHasNotBeenSignedYet();
+
+          _consumerContext.SignContextWithToken(_context, token);
+          return this; 
+      }
 
     public Uri ProxyServerUri { get; set; }
 

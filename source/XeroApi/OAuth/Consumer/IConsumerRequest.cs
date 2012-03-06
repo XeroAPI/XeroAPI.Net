@@ -19,7 +19,7 @@ namespace DevDefined.OAuth.Consumer
         RequestDescription GetRequestDescription();
         IConsumerRequest SignWithoutToken();
         IConsumerRequest SignWithToken();
-        IConsumerRequest SignWithToken(IToken token);
+        IConsumerRequest SignWithToken(IToken token, bool checkForExistingSignature = true);
 
         Uri ProxyServerUri { get; set; }
         string AcceptsType { get; set; }
