@@ -422,7 +422,7 @@ namespace DevDefined.OAuth.Consumer
             {
                 // Refresh the access token and try again..
                 AccessToken newAccessToken = RenewAccessToken();
-                consumerRequest.SignWithToken(newAccessToken);
+                consumerRequest.SignWithToken(newAccessToken, false);
                 continue;
             }
             
