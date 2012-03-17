@@ -5,7 +5,7 @@ namespace XeroApi.Model
     public class BankTransaction : ModelBase
     {
         [ItemId]
-        public Guid BankTransactionID { get; set; }
+        public Guid? BankTransactionID { get; set; }
 
         public Account BankAccount { get; set; }
 
