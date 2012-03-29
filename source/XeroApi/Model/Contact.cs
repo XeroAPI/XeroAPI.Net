@@ -46,6 +46,11 @@ namespace XeroApi.Model
         public bool IsCustomer { get; set; }
         
         public string DefaultCurrency { get;  set; }
+
+        public override string ToString()
+        {
+            return string.Format("Contact:{0}", Name);
+        }
     }
 
     public class Contacts : ModelList<Contact>
