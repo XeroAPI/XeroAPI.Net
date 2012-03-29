@@ -35,6 +35,11 @@ namespace XeroApi.Model
 
         // Added for v2.14
         public bool ShowInExpenseClaims { get; set; }
+
+        public override string ToString()
+        {
+            return string.Format("Account:{0}", Code);
+        }
     }
 
     
