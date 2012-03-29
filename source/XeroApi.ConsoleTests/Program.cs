@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -54,7 +55,6 @@ namespace XeroApi.ConsoleApp
 
 
 
-
             // API v2.15 Get a list of accounts that can be used when creating expense claims
             var expenseClaimAccounts = repository.Accounts.Where(a => a.ShowInExpenseClaims == true).ToList();
             Console.WriteLine("There are {0} accounts that can be used in expense claim line items", expenseClaimAccounts.Count);
@@ -64,7 +64,24 @@ namespace XeroApi.ConsoleApp
 
 
 
+
+            // Get all journals from the general ledger using the ?offset=xxx parameter
+            List<Journal> allJournals = new List<Journal>();
+            List<Journal> batchOfJournals;
+            int skip = 0;
+
+            while ((batchOfJournals = repository.Journals.Skip(skip).ToList()).Count > 0)
+            {
+                Console.WriteLine("Fetched {0} journals from API using skip={1}", batchOfJournals.Count, skip);
+
+                allJournals.AddRange(batchOfJournals);
+                skip += batchOfJournals.Count;
+            }
+
+            Console.WriteLine("There are {0} journals in the general ledger, starting with #{1} and ending with #{2}", allJournals.Count, allJournals.First().JournalNumber, allJournals.Last().JournalNumber);
+
             
+
 
             // Make a PUT call to the API - add a dummy contact
             Console.WriteLine("Please enter the name of a new contact to add to Xero");
