@@ -18,6 +18,11 @@ namespace XeroApi.Model
         public ItemPrice PurchaseDetails { get; set; }
 
         public ItemPrice SalesDetails { get; set; }
+
+        public override string ToString()
+        {
+            return string.Format("Item:{0}", Code);
+        }
     }
 
 
