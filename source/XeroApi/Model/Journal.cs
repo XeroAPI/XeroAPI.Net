@@ -18,6 +18,11 @@ namespace XeroApi.Model
         public string Reference { get; set; }
 
         public JournalLines JournalLines { get; set; }
+
+        public override string ToString()
+        {
+            return string.Format("Journal:{0}", JournalNumber);
+        }
     }
     
 
