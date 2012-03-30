@@ -33,6 +33,11 @@ namespace XeroApi.Model
         public int FinancialYearEndDay;
 
         public int FinancialYearEndMonth;
+
+        public override string ToString()
+        {
+            return string.Format("Organisation:{0}", Name);
+        }
     }
 
     public class Organisations : ModelList<Organisation>
