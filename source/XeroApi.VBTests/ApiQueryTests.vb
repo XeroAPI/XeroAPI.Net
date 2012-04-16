@@ -95,17 +95,17 @@ Public Class ApiQueryTests
 
         Dim sixMonthsAgo As DateTime = DateAdd(DateInterval.Month, -6, New DateTime(2012, 7, 15))
 
-        'Dim invs = repository.Invoices.Where(Function(i) i.Type = "ACCPAY").Where(Function(i) i.Date < sixMonthsAgo).ToList()
+        Dim invs = repository.Invoices.Where(Function(i) i.Type = "ACCPAY").Where(Function(i) i.Date < sixMonthsAgo).ToList()
 
-        Dim invs = From invoice In repository.Invoices
-                   Where (invoice.Type = "ACCPAY") And (invoice.Date.Value > sixMonthsAgo)
+        'Dim invs = From invoice In repository.Invoices
+        '           Where (invoice.Type = "ACCPAY") And (invoice.Date.Value > sixMonthsAgo)
 
         invs.ToArray()
 
         Dim linqQueryDescription As Linq.LinqQueryDescription = integrationProxy.LastQueryDescription
 
         Assert.AreEqual("Invoice", linqQueryDescription.ElementName)
-        Assert.AreEqual("((Type == ""ACCPAY"") AND (Date < DateTime(2012,1,15)))", linqQueryDescription.Where)
+        Assert.AreEqual("(Type == ""ACCPAY"") AND (Date < DateTime(2012,1,15))", linqQueryDescription.Where)
 
     End Sub
 
