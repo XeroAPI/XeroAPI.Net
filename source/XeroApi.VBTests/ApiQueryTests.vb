@@ -86,4 +86,27 @@ Public Class ApiQueryTests
 
     End Sub
 
+    ' https://community.xero.com/developer/discussion/72511/
+    <Test()>
+    Public Sub it_can_filter_using_date_greater_then_a_calculated_value_Q72511()
+
+        Dim integrationProxy As New StubIntegrationProxy()
+        Dim repository As New Repository(integrationProxy)
+
+        Dim sixMonthsAgo As DateTime = DateAdd(DateInterval.Month, -6, New DateTime(2012, 7, 15))
+
+        'Dim invs = repository.Invoices.Where(Function(i) i.Type = "ACCPAY").Where(Function(i) i.Date < sixMonthsAgo).ToList()
+
+        Dim invs = From invoice In repository.Invoices
+                   Where (invoice.Type = "ACCPAY") And (invoice.Date.Value > sixMonthsAgo)
+
+        invs.ToArray()
+
+        Dim linqQueryDescription As Linq.LinqQueryDescription = integrationProxy.LastQueryDescription
+
+        Assert.AreEqual("Invoice", linqQueryDescription.ElementName)
+        Assert.AreEqual("((Type == ""ACCPAY"") AND (Date < DateTime(2012,1,15)))", linqQueryDescription.Where)
+
+    End Sub
+
 End Class
