@@ -19,6 +19,10 @@ namespace XeroApi.Model
         
         public string Narration { get; set; }
 
+        public string Url { get; set; }
+
+        public bool? ShowOnCashBasisReports { get; set; }
+
         [XmlArrayItem("JournalLine")]
         public ManualJournalLineItems JournalLines { get; set; }
     }
