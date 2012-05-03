@@ -11,6 +11,7 @@ namespace XeroApi.Model
 {
     public class ModelSerializer
     {
+        [Obsolete("This uses an incorrect serializer implemetation", true)]
         internal static IModelList<TModel> Deserialize<TModel>(string xml, Type modelListType)
             where TModel : ModelBase
         {
@@ -24,7 +25,7 @@ namespace XeroApi.Model
             using (TextReader tr = new StringReader(xml))
             using (XmlReader xr = new XmlTextReader(tr))
             {
-                return (IModelList <TModel>)serializer.ReadObject(xr);
+                return (IModelList<TModel>)serializer.ReadObject(xr);
             }
         }
 
@@ -65,7 +66,7 @@ namespace XeroApi.Model
             return CleanXml(sb.ToString());
         }
 
-        public static string Serialize<TModel>(TModel itemsToSerialise)
+        public static string Serialize<TModel>(TModel itemToSerialise)
             where TModel : ModelBase
         {
             // Specify the namespaces to be used for the serializer - rather than using the default ones.
@@ -78,7 +79,7 @@ namespace XeroApi.Model
 
             using (StringWriter sw = new StringWriter(sb))
             {
-                serializer.Serialize(sw, itemsToSerialise, xmlnsEmpty);
+                serializer.Serialize(sw, itemToSerialise, xmlnsEmpty);
                 sw.Flush();
             }
 
@@ -89,8 +90,8 @@ namespace XeroApi.Model
             where TModel : ModelBase
         {
             StringBuilder sb = new StringBuilder();
-            
-            XmlWriterSettings xmlWriterSettings =new XmlWriterSettings
+
+            XmlWriterSettings xmlWriterSettings = new XmlWriterSettings
             {
                 OmitXmlDeclaration = true,
                 Indent = true,
@@ -112,7 +113,10 @@ namespace XeroApi.Model
         private static string CleanXml(string xml)
         {
             XElement xElement = XElement.Parse(xml);
-            xElement.Descendants().Where(el => el.IsEmpty).Remove();
+
+            xElement.Descendants().Where(el => el.Name == "ValidationErrors" || el.Name == "Warnings").Remove();
+            xElement.Descendants().Where(el => el.Attributes().Any(attribute => attribute.Name.LocalName == "nil")).Remove();
+
             return xElement.ToString();
         }
     }
