@@ -12,7 +12,6 @@ namespace XeroApi.Tests
     [TestFixture]
     public class ApiQueryTests
     {
-
         [Test]
         public void TestApiQueryCanCallOrganisationsEndpointWithNoArguments()
         {
@@ -587,6 +586,19 @@ namespace XeroApi.Tests
 
             Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
             Assert.AreEqual("String.IsNullOrEmpty(ContactNumber)", queryDesctipion.Where);
+        }
+
+        [Test]
+        public void it_can_filter_on_a_nullable_date_property_with_an_inline_value()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            repository.Invoices.Where(i => i.Date == new DateTime(2012, 01, 04)).ToList();
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+
+            Assert.AreEqual("Invoice", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("(Date == DateTime(2012,1,4))", queryDesctipion.Where);
         }
     }
 }
