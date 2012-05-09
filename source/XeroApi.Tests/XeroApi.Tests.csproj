@@ -48,6 +48,7 @@
     <Compile Include="EventTimelineTests.cs" />
     <Compile Include="IntegrationProxyHelperTests.cs" />
     <Compile Include="ModelSerializationTests.cs" />
+    <Compile Include="OAuth\Consumer\ConsumerRequestTests.cs" />
     <Compile Include="PauseTimeTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SignatureTests.cs" />
