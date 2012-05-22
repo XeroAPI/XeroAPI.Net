@@ -150,6 +150,19 @@ namespace XeroApi.Linq
         }
 
 
+        protected override Expression VisitLambda(LambdaExpression lambda)
+        {
+            // If there WHERE clause is (user => user.IsSubscriber), this should be translated to (user => user.IsSubscriber == true)
+            // TODO: Need to guard against this being run when parsing an ORDERBY clause
+            if (lambda.Body is MemberExpression && (lambda.Body.Type == typeof(bool)))
+            {
+                return base.Visit(Expression.Equal(lambda.Body, Expression.Constant(true)));
+            }
+
+            return base.VisitLambda(lambda);
+        }
+
+
         /// <summary>
         /// Determines whether the expression is to be rendered into the WHERE or ORDER clause
         /// </summary>

@@ -56,36 +56,25 @@ namespace XeroApi.Tests
         }
 
         [Test]
-        public void TestApiQueryCanCallUsersEndpointWith_explicit_BooleanFilter()
+        public void it_can_parse_explicit_boolean_where_filter()
         {
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            // Note: This needs the '== true' but to work correctly
-            List<User> invoices = repository.Users.Where(user => user.IsSubscriber == true).ToList();
+            var users = repository.Users.Where(user => user.IsSubscriber == true).ToList();
 
-            var queryDesctipion = integrationProxy.LastQueryDescription;
-            Assert.AreEqual("User", queryDesctipion.ElementType.Name);
-            Assert.AreEqual("(IsSubscriber == true)", queryDesctipion.Where);
-            Assert.AreEqual("", queryDesctipion.Order);
-            Assert.AreEqual(0, invoices.Count);
+            Assert.AreEqual("(IsSubscriber == true)", integrationProxy.LastQueryDescription.Where);
         }
 
         [Test]
-        [Ignore("D4 6-Mar-2012, The implicit boolean predicates are not currently supported by api.xero.com")]
-        public void TestApiQueryCanCallUsersEndpointWith_implicit_BooleanFilter()
+        public void it_can_parse_implicit_boolean_where_filter()
         {
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            // Note: This needs the '== true' but to work correctly
-            List<User> invoices = repository.Users.Where(user => user.IsSubscriber).ToList();
+            var users = repository.Users.Where(user => user.IsSubscriber).ToList();
 
-            var queryDesctipion = integrationProxy.LastQueryDescription;
-            Assert.AreEqual("User", queryDesctipion.ElementType.Name);
-            Assert.AreEqual("(IsSubscriber == true)", queryDesctipion.Where);
-            Assert.AreEqual("", queryDesctipion.Order);
-            Assert.AreEqual(0, invoices.Count);
+            Assert.AreEqual("(IsSubscriber == true)", integrationProxy.LastQueryDescription.Where);
         }
 
         [Test]
