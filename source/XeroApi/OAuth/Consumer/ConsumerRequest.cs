@@ -32,7 +32,6 @@ using System.Security.Cryptography.X509Certificates;
 
 using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Utility;
-using System.Linq;
 
 namespace DevDefined.OAuth.Consumer
 {
@@ -58,8 +57,6 @@ namespace DevDefined.OAuth.Consumer
 
     public IConsumerResponse ToConsumerResponse()
     {
-        //TODO: Should move this to a validation object. I didnt want to effect the public API of the object too much. Meboz
-        Validate();
         return _oauthSession.RunConsumerRequest(this);
     }
      
@@ -75,21 +72,12 @@ namespace DevDefined.OAuth.Consumer
       {
           request.Accept = AcceptsType;
       }
+        
+        DateTime? ifModifiedSinceDate = ParseIfModifiedSince(Context.Headers);
 
-        //TODO: Move this logic to the validation, there's some duplication I introduced. Meboz
-      try
-      {
-          if (Context.Headers["If-Modified-Since"] != null)
-          {
-              string modifiedDateString = Context.Headers["If-Modified-Since"];
-              request.IfModifiedSince = DateTime.Parse(modifiedDateString);
-          }
-      }
-      catch (Exception ex)
-      {
-          throw new ApplicationException("If-Modified-Since header could not be parsed as a datetime", ex);
-      }
-
+        if (ifModifiedSinceDate.HasValue)
+            request.IfModifiedSince = ifModifiedSinceDate.Value;
+        
       if (ProxyServerUri != null)
       {
           request.Proxy = new WebProxy(ProxyServerUri, false);
@@ -242,23 +230,21 @@ namespace DevDefined.OAuth.Consumer
       }
     }
 
-    public virtual void Validate()
-      {
-        //Chose not to extract to interface until we can decide where to do the vlaidation. Meboz
-        var headers = Context.Headers;
+    public DateTime? ParseIfModifiedSince(NameValueCollection headerCollection)
+    {
+        string ifModifiedSince = headerCollection["If-Modified-Since"];
 
-        if (headers["If-Modified-Since"] == null)
-            return;
+        if (string.IsNullOrEmpty(ifModifiedSince))
+            return null;
 
-        var ifModifiedSince = new DateTime();
-              
-        if(DateTime.TryParse(headers["If-Modified-Since"],out ifModifiedSince))
+        DateTime ifModifiedSinceDate;
+
+        if (DateTime.TryParse(ifModifiedSince, out ifModifiedSinceDate) && (ifModifiedSinceDate < new DateTime(1753, 01, 01)))
         {
-            if(ifModifiedSince < DateTime.Parse("01-Jan-1753"))
-            {
-                throw Error.IfModifiedSinceHeaderOutOfRange(ifModifiedSince);
-            }      
+            throw Error.IfModifiedSinceHeaderOutOfRange(ifModifiedSinceDate);
         }
-      }
+
+        return ifModifiedSinceDate;
+    }
   }
 }

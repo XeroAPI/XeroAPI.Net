@@ -1,76 +1,129 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
+using System.Net;
 using DevDefined.OAuth.Consumer;
 using DevDefined.OAuth.Framework;
+using DevDefined.OAuth.Storage.Basic;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
+
 using Rhino.Mocks;
 
-namespace XeroApi.Tests.OAuth.Consumer {
-    
+namespace XeroApi.Tests.OAuth.Consumer 
+{
     [TestFixture]
     public class ConsumerRequestTests
     {
-
-        private IOAuthSession _oAuthSession;
-        private IOAuthContext _oAuthContext;
-        private NameValueCollection _headers;
-        private ConsumerRequest _consumerRequest;
-
-        [SetUp]
-        public void setup()
+        [Test]
+        public void to_consumer_response_with_really_old_date_string_should_fail_validation()
         {
-            _headers = new NameValueCollection();
-            _oAuthSession = MockRepository.GenerateMock<IOAuthSession>();
-            _oAuthContext = MockRepository.GenerateMock<IOAuthContext>();
+            const string reallyOldDateString = "1000-01-01T00:00:00";
 
-            _oAuthContext.Expect(x => x.Headers).Return(_headers);
+            var oAuthContext = new OAuthContext
+            {
+                RequestMethod = "GET", 
+                RawUri = new Uri("http://any.uri/"),
+                Headers = new WebHeaderCollection { { "If-Modified-Since", reallyOldDateString } }
+            };
 
-            _consumerRequest = new ConsumerRequest(_oAuthSession, _oAuthContext, null, null);
+            var consumerRequest = NewConsumerRequest(oAuthContext);
 
+            var ex = Assert.Throws<ArgumentOutOfRangeException>(() => consumerRequest.ToWebRequest());
+
+            const string expectedMessage = "Supplied value of If-Modified-Since header is too small";
+            Assert.IsTrue(ex.Message.Contains(expectedMessage), string.Format("Exception message <{0}> is not as expected <{1}>", ex.Message, expectedMessage));
         }
 
         [Test]
-        public void validation_should_check_for_valid_if_modified_since_header()
+        public void to_consumer_response_with_current_date_string_should_pass_validation()
         {
-            var ifModifiedSince = DateTime.MinValue;
-            
-            _headers.Add("If-Modified-Since",ifModifiedSince.ToString());
-            
-            try
-            {
-                _consumerRequest.Validate();                    
-            }
-            catch(Exception ex)
-            {
-                Assert.That(ex, Is.TypeOf(typeof(Exception)));
-                Assert.That(ex.Message, Is.EqualTo(string.Format("Supplied value of If-Modified-Since header is too small: {0}", ifModifiedSince.ToString())));
-            }
+            const string recentDateString = "2012-04-01T00:00:00";
 
-            _consumerRequest.Context.Headers.Clear();
-            _headers.Add("If-Modified-Since", "01-Jan-1753");
-            _consumerRequest.Validate();                    
+            var oAuthContext = new OAuthContext
+            {
+                RequestMethod = "GET",
+                RawUri = new Uri("http://any.uri/"),
+                Headers = new WebHeaderCollection { { "If-Modified-Since", recentDateString } }
+            };
+
+            var consumerRequest = NewConsumerRequest(oAuthContext);
+
+            Assert.DoesNotThrow(() => consumerRequest.ToWebRequest());
         }
         
         [Test]
-        [ExpectedException(typeof(Exception), ExpectedMessage = "Supplied value of If-Modified-Since header is too small: 1/01/0001 12:00:00 AM")]
-        public void to_consumer_response_should_call_validation()
+        public void it_can_parse_unset_IfModifiedSince_date()
         {
-            var ifModifiedSince = DateTime.MinValue;
-            _headers.Add("If-Modified-Since",ifModifiedSince.ToString());
-            _consumerRequest.ToConsumerResponse();                    
+            ConsumerRequest consumerRequest = new ConsumerRequest(null, null, null, null);
+            NameValueCollection headers = new NameValueCollection();
+            
+            Assert.AreEqual(null, consumerRequest.ParseIfModifiedSince(headers));
         }
-        
-        [TestCase("")]
-        [TestCase(null)]
-        [TestCase("invalid date time")]
-        public void validation_should_ignore_invalid_if_modified_since_header(string ifModifiedSince)
+
+        [Test]
+        public void it_can_parse_empty_IfModifiedSince_date()
         {
-            _headers.Add("If-Modified-Since",ifModifiedSince);
-            _consumerRequest.Validate();                    
-        } 
+            var consumerRequest = NewConsumerRequest();
+            var headers = new NameValueCollection { {"If-Modified-Since", ""}};
+
+            Assert.AreEqual(null, consumerRequest.ParseIfModifiedSince(headers));
+        }
+
+        [Test]
+        public void it_can_parse_null_IfModifiedSince_date()
+        {
+            var consumerRequest = NewConsumerRequest();
+            var headers = new NameValueCollection { { "If-Modified-Since", null } };
+            
+            Assert.AreEqual(null, consumerRequest.ParseIfModifiedSince(headers));
+        }
+
+        [Test]
+        public void it_can_parse_valid_IfModifiedSince_date()
+        {
+            var consumerRequest = NewConsumerRequest();
+            var headers = new NameValueCollection { { "If-Modified-Since", "2012-04-01 23:45:00" } };
+
+            Assert.AreEqual(new DateTime(2012, 04, 01, 23, 45, 0), consumerRequest.ParseIfModifiedSince(headers));
+        }
+
+        [Test]
+        public void it_can_parse_too_early_IfModifiedSince_date()
+        {
+            var consumerRequest = NewConsumerRequest();
+            var headers = new NameValueCollection { { "If-Modified-Since", "1752-12-31 23:59:59" } };
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => consumerRequest.ParseIfModifiedSince(headers));
+        }
+
+        [Test]
+        public void it_can_parse_very_early_IfModifiedSince_date()
+        {
+            var consumerRequest = NewConsumerRequest();
+            var headers = new NameValueCollection { { "If-Modified-Since", "1753-01-01 00:00:00" } };
+
+            Assert.AreEqual(new DateTime(1753, 01, 01, 0, 0, 0), consumerRequest.ParseIfModifiedSince(headers));
+        }
+
+
+        private static ConsumerRequest NewConsumerRequest()
+        {
+            return new ConsumerRequest(null, null, null, null);
+        }
+
+        private static ConsumerRequest NewConsumerRequest(OAuthContext oAuthContext)
+        {
+            var consumerRequestRunner = MockRepository.GenerateMock<IConsumerRequestRunner>();
+
+            var consumerContext = new OAuthConsumerContext { ConsumerKey = "xxx", SignatureMethod = "HMAC-SHA1" };
+
+            var tokenRepository = new InMemoryTokenRepository();
+
+            var oAuthSession = new OAuthSession(consumerContext, tokenRepository)
+            {
+                ConsumerRequestRunner = consumerRequestRunner
+            };
+
+            return new ConsumerRequest(oAuthSession, oAuthContext, consumerContext, new NullCertificateFactory());
+        }
     }
 }

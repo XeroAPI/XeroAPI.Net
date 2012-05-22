@@ -198,9 +198,7 @@ namespace DevDefined.OAuth.Framework
 
       public static Exception IfModifiedSinceHeaderOutOfRange(DateTime ifModifiedSince)
       {
-          return
-              new Exception(string.Format("Supplied value of If-Modified-Since header is too small: {0}",
-                                          ifModifiedSince.ToString()));
+          return new ArgumentOutOfRangeException("ifModifiedSince", string.Format("Supplied value of If-Modified-Since header is too small: {0}", ifModifiedSince.ToString("s")));
       }
   }
 }
