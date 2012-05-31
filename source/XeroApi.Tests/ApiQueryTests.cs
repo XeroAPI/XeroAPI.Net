@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Linq.Expressions;
 using NUnit.Framework;
 
 using XeroApi.Model;
@@ -588,6 +588,19 @@ namespace XeroApi.Tests
 
             Assert.AreEqual("Invoice", queryDesctipion.ElementType.Name);
             Assert.AreEqual("(Date == DateTime(2012,1,4))", queryDesctipion.Where);
+        }
+
+        [Test]
+        public void it_can_filter_using_a_predefined_predicate_expression_variable()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            Expression<Func<Invoice, bool>> filterInvoiceByCurrency = i => i.CurrencyCode == "AUD";
+
+            var invoices = repository.Invoices.Where(filterInvoiceByCurrency).ToList();
+            
+            Assert.AreEqual("(CurrencyCode == \"AUD\")", integrationProxy.LastQueryDescription.Where);
         }
     }
 }
