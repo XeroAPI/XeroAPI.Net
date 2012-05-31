@@ -3,6 +3,11 @@ using System.Xml.Serialization;
 
 namespace XeroApi.Model
 {
+    public abstract class EndpointModelBase : ModelBase
+    {
+        
+    }
+
     public abstract class ModelBase
     {
         [XmlAttribute("status")]

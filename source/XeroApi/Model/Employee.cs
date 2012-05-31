@@ -2,7 +2,7 @@
 
 namespace XeroApi.Model
 {
-    public class Employee : ModelBase
+    public class Employee : EndpointModelBase
     {
         [ItemId]
         public Guid EmployeeID { get; set; }

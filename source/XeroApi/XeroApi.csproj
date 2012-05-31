@@ -72,7 +72,7 @@
     <Compile Include="Model\Employee.cs" />
     <Compile Include="Model\ExpenseClaim.cs" />
     <Compile Include="Model\InventoryPrice.cs" />
-    <Compile Include="Model\Inventorytem.cs" />
+    <Compile Include="Model\Item.cs" />
     <Compile Include="Model\LineAmountType.cs" />
     <Compile Include="Model\Journal.cs" />
     <Compile Include="Model\JournalLine.cs" />
@@ -123,7 +123,6 @@
     <Compile Include="Model\ModelList.cs" />
     <Compile Include="Model\ModelTypeHelper.cs" />
     <Compile Include="Model\Organisation.cs" />
-    <Compile Include="Model\Organisations.cs" />
     <Compile Include="Model\Response.cs" />
     <Compile Include="OAuth\Consumer\ConsumerRequest.cs" />
     <Compile Include="OAuth\Consumer\ConsumerRequestExtensions.cs" />

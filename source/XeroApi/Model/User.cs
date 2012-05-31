@@ -2,14 +2,11 @@
 
 namespace XeroApi.Model
 {
-    public class User : ModelBase
+    public class User : EndpointModelBase
     {
         [ItemId]
         public Guid? UserID { get; set; }
-
-        /*[ItemNumber]
-        public string EmailAddress { get; set; }*/
-
+        
         public string FirstName { get; set; }
 
         public string LastName { get; set; }

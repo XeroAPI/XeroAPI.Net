@@ -2,7 +2,7 @@
 
 namespace XeroApi.Model
 {
-    public class Journal : ModelBase
+    public class Journal : EndpointModelBase
     {
 
         [ItemId]

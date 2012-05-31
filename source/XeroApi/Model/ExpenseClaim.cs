@@ -2,7 +2,7 @@
 
 namespace XeroApi.Model
 {
-    public class ExpenseClaim : ModelBase
+    public class ExpenseClaim : EndpointModelBase
     {
         [ItemId]
         public Guid ExpenseClaimID { get; set; }

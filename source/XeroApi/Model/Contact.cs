@@ -2,7 +2,7 @@
 
 namespace XeroApi.Model
 {
-    public class Contact : ModelBase
+    public class Contact : EndpointModelBase
     {
         [ItemId]
         public Guid ContactID { get; set; }

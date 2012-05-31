@@ -2,7 +2,7 @@ using System;
 
 namespace XeroApi.Model
 {
-    public class Account : ModelBase
+    public class Account : EndpointModelBase
     {
         [ItemId]
         public Guid AccountID { get; set; }

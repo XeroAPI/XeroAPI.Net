@@ -2,7 +2,7 @@ using System;
 
 namespace XeroApi.Model
 {
-    public class TrackingCategory : ModelBase
+    public class TrackingCategory : EndpointModelBase
     {
         public string Name { get; set; }
 

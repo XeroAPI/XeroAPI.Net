@@ -2,7 +2,7 @@ using System;
 
 namespace XeroApi.Model
 {
-    public class Currency : ModelBase
+    public class Currency : EndpointModelBase
     {
         public string Code { get; set; }
 

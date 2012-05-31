@@ -1,6 +1,6 @@
 namespace XeroApi.Model
 {
-    public class TaxRate : ModelBase
+    public class TaxRate : EndpointModelBase
     {
         [ItemNumber]
         public string Name { get; set; }

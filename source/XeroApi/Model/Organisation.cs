@@ -2,7 +2,7 @@
 
 namespace XeroApi.Model
 {
-    public class Organisation : ModelBase
+    public class Organisation : EndpointModelBase
     {
         public string Name;
 

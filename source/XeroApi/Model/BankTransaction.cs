@@ -2,7 +2,7 @@ using System;
 
 namespace XeroApi.Model
 {
-    public class BankTransaction : ModelBase
+    public class BankTransaction : EndpointModelBase
     {
         [ItemId]
         public Guid? BankTransactionID { get; set; }

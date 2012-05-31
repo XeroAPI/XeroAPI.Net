@@ -3,7 +3,7 @@ using System.Xml.Serialization;
 
 namespace XeroApi.Model
 {
-    public class ManualJournal : ModelBase
+    public class ManualJournal : EndpointModelBase
     {
         [ItemUpdatedDate]
         public DateTime? UpdatedDateUTC { get; set; }

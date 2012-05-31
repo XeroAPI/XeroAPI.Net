@@ -2,7 +2,7 @@
 
 namespace XeroApi.Model
 {
-    public class BrandingTheme : ModelBase
+    public class BrandingTheme : EndpointModelBase
     {
         [ItemId]
         public Guid BrandingThemeID { get; set; }

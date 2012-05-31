@@ -2,7 +2,7 @@
 
 namespace XeroApi.Model
 {
-    public class Receipt : ModelBase, IAttachmentParent
+    public class Receipt : EndpointModelBase, IAttachmentParent
     {
         [ItemId]
         public Guid ReceiptID { get; set; }
