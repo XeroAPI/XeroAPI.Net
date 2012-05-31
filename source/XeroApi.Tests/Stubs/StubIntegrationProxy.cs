@@ -32,11 +32,13 @@ namespace XeroApi.Tests.Stubs
 
         public string GetElement(string endpointName, string itemId)
         {
+            LastEndpointName = endpointName;
             return GenerateSampleResponseXml(endpointName);
         }
 
         public string UpdateOrCreateElements(string endpointName, string body)
         {
+            LastEndpointName = endpointName;
             return GenerateSampleResponseXml(endpointName);
         }
 
@@ -61,9 +63,24 @@ namespace XeroApi.Tests.Stubs
             private set;
         }
 
+        public string LastEndpointName
+        {
+            get; 
+            private set; 
+        }
+
         private static string GenerateSampleResponseXml(string elementName)
         {
-            return "<Response><Id>" + Guid.NewGuid() + "</Id><Status>OK</Status><ProviderName>NullIntegrationProxy</ProviderName><DateTimeUTC>" + DateTime.UtcNow.ToString("s") + "</DateTimeUTC><" + elementName + "s" + " /></Response>";
+            return @"
+<Response>
+    <Id>" + Guid.NewGuid() + @"</Id>
+    <Status>OK</Status>
+    <ProviderName>NullIntegrationProxy</ProviderName>
+    <DateTimeUTC>" + DateTime.UtcNow.ToString("s") + @"</DateTimeUTC><" + elementName + "s" + @" />
+    <" + elementName + @"s>
+        <" + elementName + @"/>
+    </" +elementName+@"s>
+</Response>";
         }
     }
 
