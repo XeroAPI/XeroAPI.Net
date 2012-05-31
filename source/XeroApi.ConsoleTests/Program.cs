@@ -78,9 +78,18 @@ namespace XeroApi.ConsoleApp
                 skip += batchOfJournals.Count;
             }
 
-            Console.WriteLine("There are {0} journals in the general ledger, starting with #{1} and ending with #{2}", allJournals.Count, allJournals.First().JournalNumber, allJournals.Last().JournalNumber);
+            if (allJournals.Any())
+            {
+                Console.WriteLine(
+                    "There are {0} journals in the general ledger, starting with #{1} and ending with #{2}",
+                    allJournals.Count, allJournals.First().JournalNumber, allJournals.Last().JournalNumber);
+            }
+            else
+            {
+                Console.WriteLine("There are no journals in the general ledger");
+            }
 
-            
+
 
 
             // Make a PUT call to the API - add a dummy contact
