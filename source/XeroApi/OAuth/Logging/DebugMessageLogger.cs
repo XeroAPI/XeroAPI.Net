@@ -7,7 +7,8 @@ namespace DevDefined.OAuth.Logging
         public void LogMessage(IConsumerRequest request, IConsumerResponse response)
         {
             System.Diagnostics.Debug.WriteLine(string.Format("{0} {1}", request.Context.RequestMethod, request.Context.GenerateUrl()));
-            System.Diagnostics.Debug.WriteLine(string.Format("HTTP {0} {1} Content-Type:{2} Content-Length:{3}", (int)response.ResponseCode, response.ResponseCode, response.ContentType, response.ContentLength));
+            System.Diagnostics.Debug.WriteLine(string.Format("HTTP {0} {1} Content-Type:{2} Content-Length:{3} Time-Taken:{4:F2}s",
+                (int)response.ResponseCode, response.ResponseCode, response.ContentType, response.ContentLength, response.TimeTaken.TotalSeconds));
 
             if (!string.IsNullOrEmpty(response.Content))
             {

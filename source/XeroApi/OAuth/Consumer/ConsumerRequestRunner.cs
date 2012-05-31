@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net;
 
 namespace DevDefined.OAuth.Consumer
@@ -17,9 +18,12 @@ namespace DevDefined.OAuth.Consumer
             HttpWebRequest webRequest = consumerRequest.ToWebRequest();
             IConsumerResponse consumerResponse = null;
 
+            var stopwatch = Stopwatch.StartNew();
+
             try
             {
-                consumerResponse = new ConsumerResponse(webRequest.GetResponse() as HttpWebResponse);
+                var httpWebResponse = webRequest.GetResponse() as HttpWebResponse;
+                consumerResponse = new ConsumerResponse(httpWebResponse, GetElapsedTimespan(stopwatch));
             }
             catch (WebException webEx)
             {
@@ -31,12 +35,20 @@ namespace DevDefined.OAuth.Consumer
                     throw new ApplicationException("An HttpWebResponse could not be obtained from the WebException. Status was " + webEx.Status, webEx);
                 }
 
-                consumerResponse = new ConsumerResponse(httpWebResponse, webEx);
+                consumerResponse = new ConsumerResponse(httpWebResponse, webEx, GetElapsedTimespan(stopwatch));
             }
 
             return consumerResponse;
         }
 
-        
+        private TimeSpan GetElapsedTimespan(Stopwatch stopwatch)
+        {
+            if (stopwatch.IsRunning)
+                stopwatch.Stop();
+
+            return stopwatch.Elapsed;
+        }
     }
+
+    
 }

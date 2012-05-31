@@ -23,6 +23,8 @@ namespace DevDefined.OAuth.Consumer
         bool IsOAuthProblemResponse { get; }
         bool IsForbiddenResponse { get; }
 
+        TimeSpan TimeTaken { get; }
+
         Stream Stream { get; }
         byte[] ByteArray { get; }
         string Content { get; }
@@ -42,13 +44,13 @@ namespace DevDefined.OAuth.Consumer
         private readonly WebException _webException = null;
 
 
-        public ConsumerResponse(HttpWebResponse webResponse, WebException webException)
-            : this(webResponse)
+        public ConsumerResponse(HttpWebResponse webResponse, WebException webException, TimeSpan timeTaken = default(TimeSpan))
+            : this(webResponse, timeTaken)
         {
             _webException = webException;
         }
 
-        public ConsumerResponse(HttpWebResponse webResponse)
+        public ConsumerResponse(HttpWebResponse webResponse, TimeSpan timeTaken = default(TimeSpan))
         {
             webResponse.GetResponseStream().CopyTo(_responseContentStream);
 
@@ -58,6 +60,7 @@ namespace DevDefined.OAuth.Consumer
             if (webResponse.Headers["Content-Length"] != string.Empty)
                 ContentLength = int.Parse(webResponse.Headers["Content-Length"]);
 
+            TimeTaken = timeTaken;
             ContentEncoding = webResponse.ContentEncoding;
             ResponseCode = webResponse.StatusCode;
             Headers = webResponse.Headers;
@@ -75,6 +78,12 @@ namespace DevDefined.OAuth.Consumer
             {
                 return _responseContentStream.ToArray();
             }
+        }
+
+        public TimeSpan TimeTaken
+        {
+            get; 
+            private set;
         }
 
         public Stream Stream
