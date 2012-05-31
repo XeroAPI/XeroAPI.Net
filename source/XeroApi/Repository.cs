@@ -54,8 +54,8 @@ namespace XeroApi
         /// <typeparam name="TModel">The type of the model.</typeparam>
         /// <param name="id">The id.</param>
         /// <returns></returns>
-        public TModel FindById<TModel>(Guid id) 
-            where TModel : ModelBase
+        public TModel FindById<TModel>(Guid id)
+            where TModel : EndpointModelBase
         {
             return FindById<TModel>(id.ToString());
         }
@@ -66,16 +66,14 @@ namespace XeroApi
         /// <typeparam name="TModel">The type of the model.</typeparam>
         /// <param name="id">The id.</param>
         /// <returns></returns>
-        public TModel FindById<TModel>(string id) 
-            where TModel : ModelBase
+        public TModel FindById<TModel>(string id)
+            where TModel : EndpointModelBase
         {
             var queryDescription = new LinqQueryDescription { ElementId = id, ElementType=typeof(TModel)  };
             string responseXml = _proxy.FindElements(queryDescription);
 
             Response response = ModelSerializer.DeserializeTo<Response>(responseXml);
             return response.GetTypedProperty<TModel>().FirstOrDefault();
-
-            //return ModelSerializer.Deserialize<TModel>(responseXml, queryDescription.ElementListType).FirstOrDefault();
         }
 
         /// <summary>
@@ -86,7 +84,7 @@ namespace XeroApi
         /// <param name="contentType">The Content-Type to request</param>
         /// <returns></returns>
         public byte[] FindById<TModel>(string id, string contentType)
-            where TModel : ModelBase
+            where TModel : EndpointModelBase
         {
             Type collectionType = ModelTypeHelper.GetElementCollectionType(typeof(TModel));
             return _proxy.FindOne(collectionType.Name, id, contentType);
@@ -99,8 +97,8 @@ namespace XeroApi
         /// </summary>
         /// <typeparam name="TModel">The type of the model.</typeparam>
         /// <returns></returns>
-        public IQueryable<TModel> FindAll<TModel>() 
-            where TModel : ModelBase
+        public IQueryable<TModel> FindAll<TModel>()
+            where TModel : EndpointModelBase
         {
             return new ApiQuery<TModel>(_provider);
         }
@@ -154,8 +152,8 @@ namespace XeroApi
         /// <typeparam name="TModel">The type of the model.</typeparam>
         /// <param name="itemsToCreate">The items to create.</param>
         /// <returns></returns>
-        public IEnumerable<TModel> Create<TModel>(ICollection<TModel> itemsToCreate) 
-            where TModel : ModelBase
+        public IEnumerable<TModel> Create<TModel>(ICollection<TModel> itemsToCreate)
+            where TModel : EndpointModelBase
         {
             string requestXml = ModelSerializer.Serialize(itemsToCreate);
 
@@ -174,7 +172,7 @@ namespace XeroApi
         /// <param name="itemsToCreate">The items to create.</param>
         /// <returns></returns>
         public TModel Create<TModel>(TModel itemsToCreate)
-            where TModel : ModelBase
+            where TModel : EndpointModelBase
         {
             string requestXml = ModelSerializer.Serialize(itemsToCreate);
 
@@ -193,7 +191,7 @@ namespace XeroApi
         /// <param name="itemsToUpdate">The items to update.</param>
         /// <returns></returns>
         public IEnumerable<TModel> UpdateOrCreate<TModel>(ICollection<TModel> itemsToUpdate)
-            where TModel : ModelBase
+            where TModel : EndpointModelBase
         {
             string requestXml = ModelSerializer.Serialize(itemsToUpdate);
 
@@ -212,7 +210,7 @@ namespace XeroApi
         /// <param name="itemToUpdate">The item to update.</param>
         /// <returns></returns>
         public TModel UpdateOrCreate<TModel>(TModel itemToUpdate)
-            where TModel : ModelBase
+            where TModel : EndpointModelBase
         {
             string requestXml = ModelSerializer.Serialize(itemToUpdate);
 
@@ -222,6 +220,8 @@ namespace XeroApi
 
             return response.GetTypedProperty<TModel>().First();
         }
+
+       
     }
 
 }
