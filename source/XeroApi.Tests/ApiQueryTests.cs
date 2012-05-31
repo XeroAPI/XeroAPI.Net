@@ -18,10 +18,11 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            List<Organisation> organisations = repository.Organisations.ToList();
+            var organisations = repository.Organisations.ToList();
 
-            Assert.AreEqual(0, organisations.Count);
             Assert.AreEqual("Organisation", integrationProxy.LastQueryDescription.ElementName);
+            Assert.AreEqual("", integrationProxy.LastQueryDescription.Order);
+            Assert.AreEqual("", integrationProxy.LastQueryDescription.Where);
         }
 
 
@@ -31,13 +32,12 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            List<Organisation> organisations = repository.Organisations.Where(o => o.Name == "Demo Company (NZ)").ToList();
+            var organisations = repository.Organisations.Where(o => o.Name == "Demo Company (NZ)").ToList();
 
             var queryDesctipion = integrationProxy.LastQueryDescription;
             Assert.AreEqual("Organisation", queryDesctipion.ElementType.Name);
             Assert.AreEqual("(Name == \"Demo Company (NZ)\")", queryDesctipion.Where);
             Assert.AreEqual("", queryDesctipion.Order);
-            Assert.AreEqual(0, organisations.Count);
         }
 
         [Test]
@@ -46,13 +46,12 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            List<Invoice> invoices = repository.Invoices.Where(inv => inv.Contact.ContactNumber == "S0029").ToList();
+            var invoices = repository.Invoices.Where(inv => inv.Contact.ContactNumber == "S0029").ToList();
 
             var queryDesctipion = integrationProxy.LastQueryDescription;
             Assert.AreEqual("Invoice", queryDesctipion.ElementType.Name);
             Assert.AreEqual("(Contact.ContactNumber == \"S0029\")", queryDesctipion.Where);
             Assert.AreEqual("", queryDesctipion.Order);
-            Assert.AreEqual(0, invoices.Count);
         }
 
         [Test]
@@ -83,7 +82,7 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            repository.Organisations
+            var response = repository.Organisations
                 .Where(o => o.Name == "Demo Company")
                 .Where(o => o.APIKey == "ABCDEFG")
                 .ToList();
@@ -100,7 +99,7 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            Assert.Throws<InvalidOperationException>(() => repository.Organisations.First());
+            var response = repository.Organisations.First();
 
             var queryDesctipion = integrationProxy.LastQueryDescription;
             Assert.AreEqual("Organisation", queryDesctipion.ElementType.Name);
@@ -114,7 +113,7 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            Assert.Throws<InvalidOperationException>(() => repository.Organisations.First(o => o.Name == "Demo Company"));
+            var response = repository.Organisations.First(o => o.Name == "Demo Company");
 
             var queryDesctipion = integrationProxy.LastQueryDescription;
             Assert.AreEqual("Organisation", queryDesctipion.ElementType.Name);
@@ -134,7 +133,6 @@ namespace XeroApi.Tests
             Assert.AreEqual("Organisation", queryDesctipion.ElementType.Name);
             Assert.AreEqual("", queryDesctipion.Where);
             Assert.AreEqual("", queryDesctipion.Order);
-            Assert.IsNull(organisation);
         }
 
         [Test]
@@ -149,7 +147,6 @@ namespace XeroApi.Tests
             Assert.AreEqual("Organisation", queryDesctipion.ElementType.Name);
             Assert.AreEqual("(Name == \"Demo Company\")", queryDesctipion.Where);
             Assert.AreEqual("", queryDesctipion.Order);
-            Assert.IsNull(organisation);
         }
 
         [Test]
@@ -158,13 +155,12 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            int organisationCount = repository.Organisations.Count();
+            int count = repository.Organisations.Count();
             
             var queryDesctipion = integrationProxy.LastQueryDescription;
             Assert.AreEqual("Organisation", queryDesctipion.ElementType.Name);
             Assert.AreEqual("", queryDesctipion.Where);
             Assert.AreEqual("", queryDesctipion.Order);
-            Assert.AreEqual(0, organisationCount);
         }
 
         [Test]
@@ -173,7 +169,7 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            repository.Organisations.OrderBy(organisation => organisation.CreatedDateUTC).ToList();
+            var response = repository.Organisations.OrderBy(organisation => organisation.CreatedDateUTC).ToList();
 
             var queryDesctipion = integrationProxy.LastQueryDescription;
             Assert.AreEqual("Organisation", queryDesctipion.ElementType.Name);
@@ -187,7 +183,7 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            repository.Organisations
+            var response = repository.Organisations
                 .OrderBy(organisation => organisation.CreatedDateUTC)
                 .OrderBy(organisation => organisation.APIKey)
                 .ToList();
@@ -204,7 +200,7 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            repository.Organisations.OrderByDescending(organisation => organisation.CreatedDateUTC).ToList();
+            var response = repository.Organisations.OrderByDescending(organisation => organisation.CreatedDateUTC).ToList();
 
             var queryDesctipion = integrationProxy.LastQueryDescription;
             Assert.AreEqual("Organisation", queryDesctipion.ElementType.Name);
@@ -218,7 +214,7 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            repository.Organisations
+            var response = repository.Organisations
                 .Where(organisation => organisation.Name == "Demo Company")
                 .OrderBy(organisation => organisation.CreatedDateUTC)
                 .ToList();
@@ -237,7 +233,7 @@ namespace XeroApi.Tests
 
             Guid brandingThemeID = new Guid("071509D6-BADC-4237-9F52-AD2B4CCD9264");
 
-            repository.Invoices
+            var response = repository.Invoices
                 .Where(invoice => invoice.BrandingThemeID == brandingThemeID)
                 .ToList();
 
@@ -255,7 +251,7 @@ namespace XeroApi.Tests
 
             Guid brandingThemeID = new Guid("071509D6-BADC-4237-9F52-AD2B4CCD9264");
 
-            repository.Invoices
+            var response = repository.Invoices
                 .Where(invoice => invoice.BrandingThemeID == brandingThemeID)
                 .ToList();
 
@@ -270,7 +266,7 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            repository.Invoices
+            var response = repository.Invoices
                 .Where(invoice => invoice.Contact.ContactID == new Guid("071509D6-BADC-4237-9F52-AD2B4CCD9264"))
                 .ToList();
 
@@ -292,7 +288,7 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            repository.Invoices
+            var response = repository.Invoices
                 .Where(invoice => invoice.Contact.Name == ContactName)
                 .ToList();
 
@@ -313,7 +309,7 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            repository.Invoices
+            var response = repository.Invoices
                 .Where(invoice => invoice.Contact.Name == Contact.Name)
                 .ToList();
 
@@ -328,7 +324,7 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            repository.Contacts
+            var response = repository.Contacts
                 .Where(c => c.ContactStatus == "ACTIVE" && c.IsCustomer == true)
                 .ToList();
 
@@ -347,7 +343,7 @@ namespace XeroApi.Tests
                       where contact.ContactStatus == "ACTIVE" && contact.IsCustomer == true
                       select contact;
 
-            query.GetEnumerator();
+            var response = query.GetEnumerator();
 
             var queryDesctipion = integrationProxy.LastQueryDescription;
             Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
@@ -360,7 +356,7 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            repository.Contacts
+            var response = repository.Contacts
                 .Where(c => c.ContactStatus == "ACTIVE" || c.IsCustomer == true)
                 .ToList();
 
@@ -374,7 +370,7 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            repository.Contacts
+            var response = repository.Contacts
                 .Where(c => (c.ContactStatus == "ACTIVE" || c.IsCustomer == true) && (c.ContactStatus == "ARCHIVED"))
                 .ToList();
 
@@ -388,7 +384,7 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            repository.Users
+            var response = repository.Users
                 .Where(u => !u.IsSubscriber)
                 .ToList();
 
@@ -407,7 +403,7 @@ namespace XeroApi.Tests
                         where user.IsSubscriber == false
                         select user;
 
-            query.GetEnumerator();
+            var response = query.GetEnumerator();
 
             var queryDesctipion = integrationProxy.LastQueryDescription;
             Assert.AreEqual("User", queryDesctipion.ElementType.Name);
@@ -421,7 +417,8 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            Assert.Throws<InvalidOperationException>(() => repository.Users.Single(u => u.FullName == "Joe Bloggs"));
+            var response = repository.Users.Single(u => u.FullName == "Joe Bloggs");
+            
             var queryDesctipion = integrationProxy.LastQueryDescription;
 
             Assert.AreEqual("User", queryDesctipion.ElementType.Name);
@@ -434,8 +431,9 @@ namespace XeroApi.Tests
         {
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
+
+            var response = repository.Invoices.SingleOrDefault(i => i.UpdatedDateUTC > new DateTime(2010, 1, 1) && i.Url != null);
             
-            repository.Invoices.SingleOrDefault(i => i.UpdatedDateUTC > new DateTime(2010, 1, 1) && i.Url != null);
             var queryDesctipion = integrationProxy.LastQueryDescription;
 
             Assert.AreEqual("Invoice", queryDesctipion.ElementType.Name);
@@ -452,7 +450,7 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            repository.Invoices.Where(i => i.UpdatedDateUTC > new DateTime(2010, 1, 1) && i.Type == "ACCPAY").ToList();
+            var response = repository.Invoices.Where(i => i.UpdatedDateUTC > new DateTime(2010, 1, 1) && i.Type == "ACCPAY").ToList();
 
             var queryDesctipion = integrationProxy.LastQueryDescription;
 
@@ -468,7 +466,8 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            repository.Contacts.SingleOrDefault(i => i.ContactNumber == null);
+            var response = repository.Contacts.SingleOrDefault(i => i.ContactNumber == null);
+
             var queryDesctipion = integrationProxy.LastQueryDescription;
 
             Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
@@ -482,7 +481,8 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            repository.Contacts.SingleOrDefault(i => i.ContactNumber != null);
+            var response = repository.Contacts.SingleOrDefault(i => i.ContactNumber != null);
+
             var queryDesctipion = integrationProxy.LastQueryDescription;
 
             Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
@@ -509,7 +509,8 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            repository.Contacts.FirstOrDefault(c => c.Name.StartsWith("Coffee"));
+            var response = repository.Contacts.FirstOrDefault(c => c.Name.StartsWith("Coffee"));
+
             var queryDesctipion = integrationProxy.LastQueryDescription;
 
             Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
@@ -522,7 +523,8 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            repository.Contacts.FirstOrDefault(c => c.Name.StartsWith("Coffee") && c.IsCustomer == true);
+            var response = repository.Contacts.FirstOrDefault(c => c.Name.StartsWith("Coffee") && c.IsCustomer == true);
+
             var queryDesctipion = integrationProxy.LastQueryDescription;
 
             Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
@@ -544,7 +546,8 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            repository.Contacts.Where(c => string.IsNullOrEmpty(c.ContactNumber)).ToList();
+            var response = repository.Contacts.Where(c => string.IsNullOrEmpty(c.ContactNumber)).ToList();
+
             var queryDesctipion = integrationProxy.LastQueryDescription;
 
             Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
@@ -557,7 +560,8 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            repository.Contacts.Where(c => !string.IsNullOrEmpty(c.ContactNumber)).ToList();
+            var response = repository.Contacts.Where(c => !string.IsNullOrEmpty(c.ContactNumber)).ToList();
+
             var queryDesctipion = integrationProxy.LastQueryDescription;
 
             Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
@@ -570,7 +574,8 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            repository.Contacts.Where(c => string.IsNullOrEmpty(c.ContactNumber)).ToList();
+            var response = repository.Contacts.Where(c => string.IsNullOrEmpty(c.ContactNumber)).ToList();
+
             var queryDesctipion = integrationProxy.LastQueryDescription;
 
             Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
@@ -583,7 +588,8 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            repository.Invoices.Where(i => i.Date == new DateTime(2012, 01, 04)).ToList();
+            var response = repository.Invoices.Where(i => i.Date == new DateTime(2012, 01, 04)).ToList();
+
             var queryDesctipion = integrationProxy.LastQueryDescription;
 
             Assert.AreEqual("Invoice", queryDesctipion.ElementType.Name);
@@ -598,7 +604,7 @@ namespace XeroApi.Tests
 
             Expression<Func<Invoice, bool>> filterInvoiceByCurrency = i => i.CurrencyCode == "AUD";
 
-            var invoices = repository.Invoices.Where(filterInvoiceByCurrency).ToList();
+            var response = repository.Invoices.Where(filterInvoiceByCurrency).ToList();
             
             Assert.AreEqual("(CurrencyCode == \"AUD\")", integrationProxy.LastQueryDescription.Where);
         }
