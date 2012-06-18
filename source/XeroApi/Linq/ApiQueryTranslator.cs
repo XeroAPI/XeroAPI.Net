@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -93,19 +94,30 @@ namespace XeroApi.Linq
                     {
                         return base.VisitMethodCall(m);
                     }
-
-                default:
-
-                    // If this is a method from a clr object, as opposed to an extension method,  the API server just might be able to support it.
-                    if (m.Method.DeclaringType == typeof(string) || 
-                        m.Method.DeclaringType == typeof(DateTime) || 
-                        m.Method.DeclaringType == typeof(Guid))
-                    {
-                        return VisitObjectMethodCall(m);
-                    }
-
-                    throw new NotImplementedException(string.Format("The method '{0}' can't currently be used in a XeroApi WHERE querystring.", m.Method.Name));
             }
+
+            var rootExpressionType = FindRootExpressionType(m);
+
+            switch (rootExpressionType)
+            {
+                case ExpressionType.Constant:
+                    Append(EvaluateToLiteral(m));
+                    return m;
+
+                case ExpressionType.Parameter:
+                    Append(ParseExpression(m));
+                    return m;
+            }
+
+            // If this is a method from a clr object, as opposed to an extension method,  the API server just might be able to support it.
+            if (m.Method.DeclaringType == typeof(string) || 
+                m.Method.DeclaringType == typeof(DateTime) || 
+                m.Method.DeclaringType == typeof(Guid))
+            {
+                return VisitObjectMethodCall(m);
+            }
+
+            throw new NotImplementedException(string.Format("The method '{0}' can't currently be used in a XeroApi WHERE querystring.", m.Method.Name));
         }
 
 
@@ -128,6 +140,7 @@ namespace XeroApi.Linq
             Append("(");
             var args = VisitExpressionList(m.Arguments);
             Append(")");
+
             return UpdateMethodCall(m, obj, m.Method, args);
         }
 
@@ -265,6 +278,7 @@ namespace XeroApi.Linq
             // Parse as a normal binary expression (operand1 operator operand2)
             Append("(");
             Visit(b.Left);
+
             switch (b.NodeType)
             {
                 case ExpressionType.And:
@@ -296,8 +310,10 @@ namespace XeroApi.Linq
                 default:
                     throw new NotSupportedException(string.Format("The binary operator '{0}' is not supported", b.NodeType));
             }
+
             Visit(b.Right);
             Append(")");
+
             return b;
         }
 
@@ -305,6 +321,7 @@ namespace XeroApi.Linq
         protected override Expression VisitConstant(ConstantExpression c)
         {
             IQueryable q = c.Value as IQueryable;
+
             if (q != null)
             {
                 _query.ElementType = q.ElementType;
@@ -328,9 +345,6 @@ namespace XeroApi.Linq
                         break;
 
                     case TypeCode.DateTime:
-                        //DateTime value = (DateTime) c.Value;
-                        //sb.Append(string.Format("DateTime({0},{1},{2})", value.Year, value.Month, value.Day));
-                        //break;
                         return c;
 
                     case TypeCode.Object:
@@ -347,35 +361,116 @@ namespace XeroApi.Linq
 
         protected override NewExpression VisitNew(NewExpression nex)
         {
-            EvaluateAndAppendSymbol(nex);
+            Append(EvaluateToLiteral(nex));
             return nex;
         }
         
         protected override Expression VisitMemberAccess(MemberExpression m)
         {
-            if (m.Expression != null && m.Expression.NodeType == ExpressionType.Parameter)
+            if (m.Expression == null)
             {
-                Append(m.Member.Name);
-                return m;
+                throw new NotSupportedException("The MemberExpression.Expression property is null");
             }
-            if (m.Expression != null && m.Expression.NodeType == ExpressionType.MemberAccess)
+
+            ExpressionType rootExpressionType = FindRootExpressionType(m);
+
+            if (rootExpressionType == ExpressionType.Constant)
             {
-                // TODO: This is just plain wrong and needs to be re-written
-                Append(m.Member.DeclaringType.Name + "." + m.Member.Name);
-                return m;
-            }
-            if (m.Expression != null && m.Expression.NodeType == ExpressionType.Constant)
-            {
-                EvaluateAndAppendSymbol(m);
+                Append(EvaluateToLiteral(m));
                 return m;
             }
 
-            throw new NotSupportedException(string.Format("The member '{0}' is not supported", m.Member.Name));
+            if (rootExpressionType == ExpressionType.Parameter)
+            {
+                Append(ParseExpression(m));
+                return m;
+            }
+            
+            if (m.Expression.NodeType == ExpressionType.MemberAccess)
+            {
+                Append(ParseExpression(m));
+                return m;
+            }
+            
+            throw new NotSupportedException(string.Format("The member '{0}' of type {1} is not supported", m.Expression, m.Expression.NodeType));
         }
 
+        private static ExpressionType FindRootExpressionType(Expression m)
+        {
+            if (m == null)
+                throw new NullReferenceException("Parameter 'm' cannot be null");
 
+            switch (m.NodeType)
+            {
+                case ExpressionType.MemberAccess:
+                    return FindRootExpressionType(((MemberExpression) m).Expression);
 
-        protected void EvaluateAndAppendSymbol(Expression exp)
+                case ExpressionType.Call:
+                    
+                    var methodExpression = (MethodCallExpression) m;
+
+                    // check if this is a static method - i.e. no subject
+                    if (methodExpression.Object == null)
+                        return ExpressionType.Call;
+                    
+                    return FindRootExpressionType(methodExpression.Object);
+
+                case ExpressionType.Parameter:
+                case ExpressionType.Constant:
+                    return m.NodeType;
+
+                default:
+                    throw new NotSupportedException(string.Format("Expression type {0} was not expected in this scenario", m.NodeType));
+            }
+        }
+
+        private string ParseExpression(Expression expression)
+        {
+            switch (expression.NodeType)
+            {
+                case ExpressionType.MemberAccess:
+
+                    var memberExpression = (MemberExpression) expression;
+
+                    string parentExpression = ParseExpression(memberExpression.Expression);
+                    return ApplyDotNotation(parentExpression, memberExpression.Member.Name);
+
+                case ExpressionType.Call:
+
+                    var methodCallExpression = (MethodCallExpression) expression;
+
+                    // When selecting the n-th item in a list, use the [n] notation.
+                    if (methodCallExpression.Method.Name == "get_Item" && typeof(IList).IsAssignableFrom(methodCallExpression.Object.Type))
+                    {
+                        string parentExpressionEx = ParseExpression(methodCallExpression.Object);
+                        var listIndex = EvaluateExpression<int>(methodCallExpression.Arguments[0]);
+
+                        return string.Concat(parentExpressionEx, "[", listIndex, "]");
+                    }
+
+                    var argumentList = methodCallExpression.Arguments
+                        .Select(EvaluateToLiteral)
+                        .Aggregate((a1, a2) => string.Concat(a1, ",", a2));
+
+                    string methodCall = string.Concat(methodCallExpression.Method.Name, "(", argumentList, ")");
+
+                    string parent = (methodCallExpression.Object == null) 
+                        ? methodCallExpression.Type.Name 
+                        : ParseExpression(methodCallExpression.Object);
+
+                    return ApplyDotNotation(parent, methodCall);
+
+                case ExpressionType.Parameter:
+
+                    // If this is a parameter of the base linq query, it doesn't need to be explicitly added to the output
+                    return string.Empty;
+                    
+                default:
+                    throw new NotSupportedException(string.Format("Expression type {0} was not expected in this scenario", expression.NodeType));
+            }
+        }
+      
+        private string EvaluateToLiteral(Expression exp)
         {
             switch (exp.Type.Name)
             {
@@ -383,45 +478,35 @@ namespace XeroApi.Linq
                     DateTime date = EvaluateExpression<DateTime>(exp);
 
                     if (date.Date == date)
-                        Append(string.Format("DateTime({0},{1},{2})", date.Year, date.Month, date.Day));
-                    else
-                        Append(string.Format("DateTime({0},{1},{2},{3},{4},{5})", date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second));
-
-                    return;
+                        return (string.Format("DateTime({0},{1},{2})", date.Year, date.Month, date.Day));
+                        
+                    return (string.Format("DateTime({0},{1},{2},{3},{4},{5})", date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second));
 
                 case "Guid":
                     Guid guid = EvaluateExpression<Guid>(exp);
 
                     if (guid == Guid.Empty)
-                        Append("Guid.Empty");
-                    else
-                        Append(string.Format("Guid(\"{0}\")", guid));
+                        return ("Guid.Empty");
+                    
+                    return (string.Format("Guid(\"{0}\")", guid));
 
-                    return;
-
-                case "String" :
+                case "String":
                     string stringValue = EvaluateExpression<string>(exp);
 
                     if (stringValue == null)
-                        Append("null");
-                    else
-                        Append(string.Format("\"{0}\"", stringValue));
-
-                    return;
+                        return ("null");
+                    
+                    return string.Format("\"{0}\"", stringValue);
 
                 case "Int32":
                     int shortValue = EvaluateExpression<int>(exp);
-                    Append(string.Format("\"{0}\"", shortValue));
-                    
-                    return;
+                    return string.Format("\"{0}\"", shortValue);
 
                 case "Int64":
                     long longValue = EvaluateExpression<long>(exp);
-                    Append(string.Format("\"{0}\"", longValue));
-
-                    return;
+                    return string.Format("\"{0}\"", longValue);
             }
-            
+
             throw new NotSupportedException(string.Format("The Expression return type '{0}' is not supported", exp.Type.Name));
         }
 
@@ -431,12 +516,17 @@ namespace XeroApi.Linq
             Func<T> func = lambda.Compile();
             return (func).Invoke();
         }
-
-
+        
         private void Append(string term)
         {
             _query.AppendTerm(term, _currentQueryStringName);
         }
+
+        private static string ApplyDotNotation(params string[] input)
+        {
+            return input.Where(it => !string.IsNullOrEmpty(it)).Aggregate((s1, s2) => string.Concat(s1, ".", s2));
+        }
+
 
         private class QuerystringScope : IDisposable
         {

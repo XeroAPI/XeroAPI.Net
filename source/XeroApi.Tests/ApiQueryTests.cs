@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using NUnit.Framework;
@@ -274,22 +273,18 @@ namespace XeroApi.Tests
             Assert.AreEqual("Invoice", queryDesctipion.ElementType.Name);
             Assert.AreEqual("(Contact.ContactID == Guid(\"071509d6-badc-4237-9f52-ad2b4ccd9264\"))", queryDesctipion.Where);
         }
-
-
-
-        public string ContactName
-        {
-            get { return "Joe Bloggs"; }
-        }
+       
 
         [Test]
-        public void TestApiQueryCanCallInvoicesEndpointFilteringByThisClassProperty()
+        public void it_can_filter_properties_on_object_properties_not_in_the_linq_definition()
         {
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
+            var invoice = new Invoice {Contact = new Contact { Name = "Joe Bloggs" }};
+
             var response = repository.Invoices
-                .Where(invoice => invoice.Contact.Name == ContactName)
+                .Where(i => i.Contact.Name == invoice.Contact.Name)
                 .ToList();
 
             var queryDesctipion = integrationProxy.LastQueryDescription;
@@ -297,25 +292,21 @@ namespace XeroApi.Tests
             Assert.AreEqual("(Contact.Name == \"Joe Bloggs\")", queryDesctipion.Where);
         }
         
-        internal StubContact Contact
-        {
-            get { return new StubContact(); }
-        }
-
         [Test]
-        [Ignore("There's a known bug in ApiQueryTranslator.VisitMemberAccess that prevents properties from being translated correctly")]
-        public void TestApiQueryCanCallInvoicesEndpointFilteringByNestedClassProperty()
+        public void it_can_filter_on_collections_within_the_linq_definition()
         {
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
+            var contact = new Contact { Addresses = new Addresses { new Address { City = "Moscow" } } };
+
             var response = repository.Invoices
-                .Where(invoice => invoice.Contact.Name == Contact.Name)
+                .Where(i => i.Contact.Addresses[0].City == contact.Addresses[0].City)
                 .ToList();
 
             var queryDesctipion = integrationProxy.LastQueryDescription;
             Assert.AreEqual("Invoice", queryDesctipion.ElementType.Name);
-            Assert.AreEqual("(Contact.Name == \"Joe Bloggs\")", queryDesctipion.Where);
+            Assert.AreEqual("(Contact.Addresses[0].City == \"Moscow\")", queryDesctipion.Where);
         }
 
         [Test]
@@ -491,6 +482,19 @@ namespace XeroApi.Tests
         }
 
         [Test]
+        public void it_can_filter_string_properties_on_methos_of_literal()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            repository.Contacts.FirstOrDefault(c => c.Name == "Jason".ToUpper());
+            var queryDesctipion = integrationProxy.LastQueryDescription;
+
+            Assert.AreEqual("Contact", queryDesctipion.ElementType.Name);
+            Assert.AreEqual("(Name == \"JASON\")", queryDesctipion.Where);
+        }
+
+        [Test]
         public void it_can_filter_string_properties_using_contains_method()
         {
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
@@ -537,7 +541,7 @@ namespace XeroApi.Tests
             StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
             Repository repository = new Repository(integrationProxy);
 
-            Assert.Throws<NotImplementedException>(() => repository.Contacts.Contains(new Contact() {Name = "Jason"}));
+            Assert.Throws<NotImplementedException>(() => repository.Contacts.Contains(new Contact { Name = "Jason" }));
         }
 
         [Test]
