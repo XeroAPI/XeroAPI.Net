@@ -212,23 +212,19 @@ namespace XeroApi.Integration
 
             Uri uri = ConstructUri(baseUrl, endpointName, itemId, allQueryParams);
 
-            IConsumerRequest oauthRequest = _oauthSession.Request()
+            IConsumerRequest request = _oauthSession.Request()
                 .ForMethod(method)
                 .ForUri(uri)
                 .WithAcceptHeader(acceptMimeType ?? "text/xml")
+                .WithIfModifiedSince(lastModifiedDate)
                 .SignWithToken();
 
             if ((method == "PUT" || method == "POST"))
             {
-                oauthRequest = oauthRequest.WithBody(body);
+                request = request.WithBody(body);
             }
 
-            if (lastModifiedDate.HasValue)
-            {
-                oauthRequest.Context.Headers.Add("If-Modified-Since", lastModifiedDate.Value.ToString("yyyy-MM-dd HH:mm:ss"));
-            }
-
-            IConsumerResponse consumerResponse = oauthRequest.ToConsumerResponse();
+            IConsumerResponse consumerResponse = request.ToConsumerResponse();
             
             // Check for <ApiException> response message
             if (consumerResponse.Content.StartsWith("<ApiException"))

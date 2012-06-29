@@ -75,6 +75,12 @@ namespace DevDefined.OAuth.Consumer
       return request;
     }
 
+    public static IConsumerRequest WithIfModifiedSince(this IConsumerRequest request, DateTime? ifModifiedSinceDate)
+    {
+        request.Context.IfModifiedSince = ifModifiedSinceDate;
+        return request;
+    }
+
     public static IConsumerRequest WithBody(this IConsumerRequest request, string requestBody)
     {
         request.RequestBody = requestBody;

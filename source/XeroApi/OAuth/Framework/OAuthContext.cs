@@ -29,7 +29,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
-using System.Web;
 using QueryParameter = System.Collections.Generic.KeyValuePair<string, string>;
 
 namespace DevDefined.OAuth.Framework
@@ -53,6 +52,7 @@ namespace DevDefined.OAuth.Framework
     NameValueCollection _cookies;
     NameValueCollection _formEncodedParameters;
     NameValueCollection _headers;
+    private DateTime? _ifModifiedSince;
     string _normalizedRequestUrl;
     NameValueCollection _queryParameters;
     Uri _rawUri;
@@ -210,6 +210,12 @@ namespace DevDefined.OAuth.Framework
     }
 
     public bool UseAuthorizationHeader { get; set; }
+
+    public DateTime? IfModifiedSince
+    {
+        get { return _ifModifiedSince; }
+        set { _ifModifiedSince = value; }
+    }
 
     public string Realm
     {

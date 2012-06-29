@@ -55,8 +55,9 @@ namespace XeroApi.Tests.OAuth.Consumer
         {
             ConsumerRequest consumerRequest = new ConsumerRequest(null, null, null, null);
             NameValueCollection headers = new NameValueCollection();
-            
-            Assert.AreEqual(null, consumerRequest.ParseIfModifiedSince(headers));
+            OAuthContext oauthContext = new OAuthContext {Headers = headers};
+
+            Assert.AreEqual(null, consumerRequest.ParseIfModifiedSince(oauthContext));
         }
 
         [Test]
@@ -64,8 +65,9 @@ namespace XeroApi.Tests.OAuth.Consumer
         {
             var consumerRequest = NewConsumerRequest();
             var headers = new NameValueCollection { {"If-Modified-Since", ""}};
+            var oauthContext = new OAuthContext { Headers = headers };
 
-            Assert.AreEqual(null, consumerRequest.ParseIfModifiedSince(headers));
+            Assert.AreEqual(null, consumerRequest.ParseIfModifiedSince(oauthContext));
         }
 
         [Test]
@@ -73,8 +75,9 @@ namespace XeroApi.Tests.OAuth.Consumer
         {
             var consumerRequest = NewConsumerRequest();
             var headers = new NameValueCollection { { "If-Modified-Since", null } };
-            
-            Assert.AreEqual(null, consumerRequest.ParseIfModifiedSince(headers));
+            var oauthContext = new OAuthContext { Headers = headers };
+
+            Assert.AreEqual(null, consumerRequest.ParseIfModifiedSince(oauthContext));
         }
 
         [Test]
@@ -82,8 +85,9 @@ namespace XeroApi.Tests.OAuth.Consumer
         {
             var consumerRequest = NewConsumerRequest();
             var headers = new NameValueCollection { { "If-Modified-Since", "2012-04-01 23:45:00" } };
+            var oauthContext = new OAuthContext { Headers = headers };
 
-            Assert.AreEqual(new DateTime(2012, 04, 01, 23, 45, 0), consumerRequest.ParseIfModifiedSince(headers));
+            Assert.AreEqual(new DateTime(2012, 04, 01, 23, 45, 0), consumerRequest.ParseIfModifiedSince(oauthContext));
         }
 
         [Test]
@@ -91,8 +95,9 @@ namespace XeroApi.Tests.OAuth.Consumer
         {
             var consumerRequest = NewConsumerRequest();
             var headers = new NameValueCollection { { "If-Modified-Since", "1752-12-31 23:59:59" } };
+            var oauthContext = new OAuthContext { Headers = headers };
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => consumerRequest.ParseIfModifiedSince(headers));
+            Assert.Throws<ArgumentOutOfRangeException>(() => consumerRequest.ParseIfModifiedSince(oauthContext));
         }
 
         [Test]
@@ -100,10 +105,24 @@ namespace XeroApi.Tests.OAuth.Consumer
         {
             var consumerRequest = NewConsumerRequest();
             var headers = new NameValueCollection { { "If-Modified-Since", "1753-01-01 00:00:00" } };
+            var oauthContext = new OAuthContext { Headers = headers };
 
-            Assert.AreEqual(new DateTime(1753, 01, 01, 0, 0, 0), consumerRequest.ParseIfModifiedSince(headers));
+            Assert.AreEqual(new DateTime(1753, 01, 01, 0, 0, 0), consumerRequest.ParseIfModifiedSince(oauthContext));
         }
 
+        [Test]
+        public void it_can_read_IfModifiedSince_date_from_oauth_context_property()
+        {
+            var consumerRequest = NewConsumerRequest();
+
+            var oauthContext = new OAuthContext
+            {
+                Headers = new NameValueCollection(), 
+                IfModifiedSince = new DateTime(1753,01,02,3,4,5)
+            };
+
+            Assert.AreEqual(new DateTime(1753, 01, 02, 3, 4, 5), consumerRequest.ParseIfModifiedSince(oauthContext));
+        }
 
         private static ConsumerRequest NewConsumerRequest()
         {
