@@ -28,12 +28,18 @@ namespace XeroApi.Validation
 
             if (objectToValidate.LineAmount.HasValue)
             {
-                if (objectToValidate.LineAmount < 0)
+                if (objectToValidate.LineAmount <= 0)
+                {
                     validationResults.AddResult(new ValidationResult("LineAmount must be greater than 0", currentTarget, key, "LineAmount", this));
+                }
             }
 
             if (objectToValidate.UnitAmount.HasValue)
             {
+                if (objectToValidate.UnitAmount <= 0)
+                {
+                    validationResults.AddResult(new ValidationResult("UnitAmount must be greater than 0", currentTarget, key, "UnitAmount", this));
+                }
                 if (!objectToValidate.Quantity.HasValue)
                 {
                     validationResults.AddResult(new ValidationResult("Quantity must be specified if UnitAmount is specified", currentTarget, key, "Quantity", this));

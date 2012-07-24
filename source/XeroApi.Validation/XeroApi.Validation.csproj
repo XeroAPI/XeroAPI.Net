@@ -63,7 +63,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helpers\LineItemHelper.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
+    <Compile Include="InvoiceValidator.cs" />
     <Compile Include="LineItemValidator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
