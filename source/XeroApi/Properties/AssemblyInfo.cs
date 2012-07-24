@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("XeroApi")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription(".Net wrapper library for Xero API. This library allows you to perform GET/PUT/POST methods against the Xero API without needing to know the internals of xml serialisation, oauth signatures or character encodings. See http://developer.xero.com for more information.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Xero")]
 [assembly: AssemblyProduct("XeroApi")]
