@@ -20,6 +20,11 @@ namespace XeroApi.Validation
 
         protected override void DoValidate(Invoice objectToValidate, object currentTarget, string key, ValidationResults validationResults)
         {
+            if (objectToValidate.Contact == null)
+            {
+                validationResults.AddResult(new ValidationResult("The document has no Contact", currentTarget, key, "Contact", this));
+            }
+
             if (objectToValidate.LineItems == null)
             {
                 validationResults.AddResult(new ValidationResult("The document has no LineItems", currentTarget, key, "LineItems", this));
