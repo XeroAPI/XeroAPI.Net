@@ -10,7 +10,7 @@ namespace XeroApi.Validation
 {
     public class InvoiceValidator : Validator<Invoice>
     {
-        Validator<LineItem> lineItemValidator = new LineItemValidator();
+        Validator<LineItem> lineItemValidator = null;
 
         public InvoiceValidator(Validator<LineItem> lineItemValidator)
             : base(null, null)
@@ -20,9 +20,16 @@ namespace XeroApi.Validation
 
         protected override void DoValidate(Invoice objectToValidate, object currentTarget, string key, ValidationResults validationResults)
         {
-            foreach (var item in objectToValidate.LineItems)
+            if (objectToValidate.LineItems == null)
             {
-                lineItemValidator.Validate(item, validationResults);
+                validationResults.AddResult(new ValidationResult("The document has no LineItems", currentTarget, key, "LineItems", this));
+            }
+            else
+            {
+                foreach (var item in objectToValidate.LineItems)
+                {
+                    lineItemValidator.Validate(item, validationResults);
+                }
             }
 
             if (objectToValidate.Total.HasValue)
