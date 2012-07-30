@@ -40,10 +40,11 @@ namespace Xero.ScreencastWeb.Controllers
 
 
             // Determine the callback uri to use - this must match the domain used when the application was registerd on http://api.xero.com
-            Uri callbackUri = new Uri(ConfigurationManager.AppSettings["XeroApiCallbackUrl"]);
+            var callbackUri = new UriBuilder(Request.Url.Scheme, Request.Url.Host, Request.Url.Port, Url.Action("Callback"));
+            
 
             // Call: GET /oauth/RequestToken
-            RequestToken requestToken = oauthSession.GetRequestToken(callbackUri);
+            RequestToken requestToken = oauthSession.GetRequestToken(callbackUri.Uri);
             
             Trace.WriteLine("OAuth Request Token: " + requestToken.Token);
             Trace.WriteLine("OAuth Request Secret: " + requestToken.TokenSecret);
