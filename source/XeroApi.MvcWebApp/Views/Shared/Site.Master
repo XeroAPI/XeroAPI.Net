@@ -34,6 +34,7 @@
                     <%} else { %>
                         <li><%=Html.ActionLink("Invoices", "Index", "Invoices") %></li>
                         <li><%=Html.ActionLink("Contacts", "Index", "Contacts")%></li>
+                        <li><%=Html.ActionLink("Disconnect", "Disconnect", "Connect")%></li>
                     <%}%>            
                                       
                     <li><%= Html.ActionLink("Home", "Index", "Home")%></li>

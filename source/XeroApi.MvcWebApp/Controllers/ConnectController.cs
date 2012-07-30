@@ -1,5 +1,4 @@
 using System;
-using System.Configuration;
 using System.Diagnostics;
 using System.Web.Mvc;
 
@@ -96,6 +95,14 @@ namespace Xero.ScreencastWeb.Controllers
             return new RedirectResult("~/");
         }
 
+        // GET /Connect/Disconnect
+
+        public ActionResult Disconnect()
+        {
+            Session.Clear();
+
+            return RedirectToAction("Index", "Home");
+        }
 
         private void GetAndStoreAuthorisedOrganisationName()
         {
