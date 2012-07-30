@@ -25,20 +25,12 @@
             <td><%=item.Date.HasValue ? item.Date.Value.ToString("dd-MMM-yyyy") : string.Empty %></td>
             <td><%=item.Total.HasValue ? item.Total.Value.ToString("c") : string.Empty %></td>
             <td><%=item.AmountDue.HasValue ? item.AmountDue.Value.ToString("c") : string.Empty %></td>
-            <td>
-                <%= Html.ActionLink("Edit", "Edit", new { id = item.InvoiceID })%> |
-                <%= Html.ActionLink("Details", "Details", new { id = item.InvoiceID })%>
-            </td>
         </tr>
     
     <% }
        } %>
 
     </table>
-
-    <p>
-        <%= Html.ActionLink("Create New", "Create") %>
-    </p>
-
+    
 </asp:Content>
 
