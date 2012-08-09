@@ -450,9 +450,9 @@ namespace XeroApi.Linq
 
                     var argumentList = methodCallExpression.Arguments
                         .Select(EvaluateToLiteral)
-                        .Aggregate((a1, a2) => string.Concat(a1, ",", a2));
+                        .ToArray();
 
-                    string methodCall = string.Concat(methodCallExpression.Method.Name, "(", argumentList, ")");
+                    string methodCall = string.Concat(methodCallExpression.Method.Name, "(", string.Join(",", argumentList), ")");
 
                     string parent = (methodCallExpression.Object == null) 
                         ? methodCallExpression.Type.Name 

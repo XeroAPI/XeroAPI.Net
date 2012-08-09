@@ -612,6 +612,17 @@ namespace XeroApi.Tests
             
             Assert.AreEqual("(CurrencyCode == \"AUD\")", integrationProxy.LastQueryDescription.Where);
         }
+
+        [Test]
+        public void it_can_filter_using_member_method_with_no_arguments()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+            
+            repository.Invoices.Where(i => i.InvoiceNumber.ToLower() == "inv-123").ToList();
+
+            Assert.AreEqual("(InvoiceNumber.ToLower() == \"inv-123\")", integrationProxy.LastQueryDescription.Where);
+        }
     }
 }
 
