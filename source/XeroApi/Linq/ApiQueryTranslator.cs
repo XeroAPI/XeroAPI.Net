@@ -193,7 +193,7 @@ namespace XeroApi.Linq
             MemberExpression mExp = binaryExpression.Left as MemberExpression;
 
             // Check if the LHS is an ItemId, ItemNumber or UpdatedDate. If so, record away from the main where clause.
-            if (mExp != null && (mExp.Member.DeclaringType.Name == _query.ElementName))
+            if (mExp != null && (_query.ElementType.IsSubclassOf(mExp.Member.DeclaringType)))
             {
                 if (mExp.Member.Name == _query.ElementIdProperty.SafeName()
                 || mExp.Member.Name == _query.ElementNumberProperty.SafeName()
@@ -212,7 +212,7 @@ namespace XeroApi.Linq
             MemberExpression mExp = b.Left as MemberExpression;
 
             // Check if the LHS is an ItemId, ItemNumber or UpdatedDate. If so, record away from the main where clause.
-            if (mExp != null && (mExp.Member.DeclaringType.Name == _query.ElementName))
+            if (mExp != null && (_query.ElementType.IsSubclassOf(mExp.Member.DeclaringType)))
             {
                 if (mExp.Member.Name == _query.ElementIdProperty.SafeName())
                 {
