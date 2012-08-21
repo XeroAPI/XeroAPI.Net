@@ -9,23 +9,23 @@ using Microsoft.Practices.Unity;
 
 namespace XeroApi.Validation
 {
-    public class InvoiceValidator : Validator<Invoice>
+    public class CreditNoteValidator : Validator<CreditNote>
     {
         Validator<LineItem> lineItemValidator = null;
 
-        public InvoiceValidator(Validator<LineItem> lineItemValidator)
+        public CreditNoteValidator(Validator<LineItem> lineItemValidator)
             : base(null, null)
         {
             this.lineItemValidator = lineItemValidator;
         }
 
-        public InvoiceValidator()
+        public CreditNoteValidator()
             : base(null, null)
         {
             this.lineItemValidator = ValidationHelper.Container.Resolve<Validator<LineItem>>();
         }
 
-        protected override void DoValidate(Invoice objectToValidate, object currentTarget, string key, ValidationResults validationResults)
+        protected override void DoValidate(CreditNote objectToValidate, object currentTarget, string key, ValidationResults validationResults)
         {
             if (objectToValidate.Contact == null)
             {

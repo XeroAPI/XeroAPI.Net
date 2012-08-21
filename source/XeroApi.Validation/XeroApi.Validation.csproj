@@ -63,11 +63,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BankTransactionValidator.cs" />
+    <Compile Include="CreditNoteValidator.cs" />
     <Compile Include="Helpers\LineItemHelper.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="Helpers\ValidationHelper.cs" />
     <Compile Include="InvoiceValidator.cs" />
     <Compile Include="LineItemValidator.cs" />
+    <Compile Include="PaymentValidator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
