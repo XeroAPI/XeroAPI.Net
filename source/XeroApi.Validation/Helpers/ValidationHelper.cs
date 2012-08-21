@@ -19,18 +19,18 @@ namespace XeroApi.Validation.Helpers
             container.RegisterType(typeof(Validator<Invoice>), typeof(InvoiceValidator));
             container.RegisterType(typeof(Validator<LineItem>), typeof(LineItemValidator));
             container.RegisterType(typeof(Validator<CreditNote>), typeof(CreditNoteValidator));
-            container.RegisterType(typeof(Validator<BankTransaction>), typeof(BankTransaction));
-            container.RegisterType(typeof(Validator<Payment>), typeof(Payment));
+            container.RegisterType(typeof(Validator<BankTransaction>), typeof(BankTransactionValidator));
+            container.RegisterType(typeof(Validator<Payment>), typeof(PaymentValidator));
         }
 
-        public static ValidationResults Validate<T>(this T i) where T : ModelBase
+        public static ValidationResults Validate<T>(this T i) where T : EndpointModelBase
         {
             var val = container.Resolve<Validator<T>>();
             var retVal = val.Validate(i);
             return retVal;
         }
 
-        public static ValidationResults Validate<T>(this IEnumerable<T> i) where T : ModelBase
+        public static ValidationResults ValidateMany<T>(this IEnumerable<T> i) where T : EndpointModelBase
         {
             ValidationResults vr = new ValidationResults();
             foreach (var item in i)
@@ -40,7 +40,7 @@ namespace XeroApi.Validation.Helpers
             return vr;
         }
 
-        public static bool IsValid<T>(this T i) where T : ModelBase
+        public static bool IsValid<T>(this T i) where T : EndpointModelBase
         {
             return !i.Validate().Any();
         }

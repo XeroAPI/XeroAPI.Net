@@ -73,9 +73,9 @@ namespace XeroApi.Validation
                 validationResults.AddResult(new ValidationResult("Document Type must be specified.", currentTarget, key, "Type", this));
             }
 
-            if (string.IsNullOrEmpty(objectToValidate.Reference))
+            if (string.IsNullOrEmpty(objectToValidate.InvoiceNumber))
             {
-                validationResults.AddResult(new ValidationResult("Document Reference must be specified.", currentTarget, key, "Reference", this));
+                validationResults.AddResult(new ValidationResult("Document InvoiceNumber must be specified.", currentTarget, key, "InvoiceNumber", this));
             }
         }
 

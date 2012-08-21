@@ -66,11 +66,6 @@ namespace XeroApi.Validation
             {
                 validationResults.AddResult(new ValidationResult("Document Type must be specified.", currentTarget, key, "Type", this));
             }
-
-            if (string.IsNullOrEmpty(objectToValidate.Reference))
-            {
-                validationResults.AddResult(new ValidationResult("Document Reference must be specified.", currentTarget, key, "Reference", this));
-            }
         }
 
         protected override string DefaultMessageTemplate
