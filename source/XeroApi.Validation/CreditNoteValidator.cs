@@ -38,9 +38,14 @@ namespace XeroApi.Validation
             }
             else
             {
+                ValidationResults vr = new ValidationResults();
                 foreach (var item in objectToValidate.LineItems)
                 {
-                    lineItemValidator.Validate(item, validationResults);
+                    lineItemValidator.Validate(item, vr);
+                }
+                if (vr.Any())
+                {
+                    validationResults.AddResult(new ValidationResult("Invalid LineItems", currentTarget, key, "LineItems", this, vr));
                 }
             }
 
