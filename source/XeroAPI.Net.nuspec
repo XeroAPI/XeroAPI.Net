@@ -7,7 +7,7 @@
     <authors>XeroAPI</authors>
     <owners />
     <projectUrl>https://github.com/XeroAPI/XeroAPI.Net</projectUrl>
-    <iconUrl>https://secure.gravatar.com/avatar/bce33fac862525d5d62d1cda6a4e133d?s=140&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-140.png</iconUrl>
+    <iconUrl>https://secure.gravatar.com/avatar/7fff030fb8040a5157c3fd463858167f.png?s=128</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>.Net wrapper library for Xero API. This library allows you to perform GET/PUT/POST methods against the Xero API without needing to know the internals of xml serialisation, oauth signatures or character encodings. See http://developer.xero.com for more information.</description>
     <summary>.Net wrapper library for Xero API</summary>
