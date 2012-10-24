@@ -21,9 +21,28 @@ namespace XeroApi.Validation
                 validationResults.AddResult(new ValidationResult("The document amount must be greater than 0.", currentTarget, key, "Amount", this));
             }
 
-            if (string.IsNullOrEmpty(objectToValidate.Reference))
+            if (objectToValidate.Invoice == null)
             {
-                validationResults.AddResult(new ValidationResult("Document Reference must be specified.", currentTarget, key, "Reference", this));
+                validationResults.AddResult(new ValidationResult("Invoice element must be included.", currentTarget, key, "Invoice", this));
+            }
+            else
+            {
+                if (objectToValidate.Invoice.InvoiceID == Guid.Empty && string.IsNullOrEmpty(objectToValidate.Invoice.InvoiceNumber))
+                {
+                    validationResults.AddResult(new ValidationResult("Either InvoiceID or InvoiceNumber must be specified.", currentTarget, key, "Invoice", this));
+                }
+            }
+
+            if (objectToValidate.Account == null)
+            {
+                validationResults.AddResult(new ValidationResult("Account element must be included.", currentTarget, key, "Account", this));
+            }
+            else
+            {
+                if (objectToValidate.Account.AccountID == Guid.Empty && string.IsNullOrEmpty(objectToValidate.Account.Code))
+                {
+                    validationResults.AddResult(new ValidationResult("Either AccountID or Code must be specified.", currentTarget, key, "Account", this));
+                }
             }
         }
 
