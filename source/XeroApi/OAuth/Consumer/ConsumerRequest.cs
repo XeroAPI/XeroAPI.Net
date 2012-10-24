@@ -66,6 +66,7 @@ namespace DevDefined.OAuth.Consumer
             RequestDescription description = GetRequestDescription();
 
             var request = (HttpWebRequest) WebRequest.Create(description.Url);
+            request.Timeout = (int) TimeSpan.FromMinutes(3).TotalMilliseconds; 
             request.Method = description.Method;
             request.UserAgent = _consumerContext.UserAgent;
 
