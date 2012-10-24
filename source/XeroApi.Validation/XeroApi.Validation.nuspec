@@ -1,17 +1,25 @@
-<?xml version="1.0"?>
-<package >
-  <metadata>
-    <id>$id$</id>
-    <version>$version$</version>
-    <title>$title$</title>
-    <authors>$author$</authors>
-    <owners>$author$</owners>
-    <projectUrl>https://github.com/XeroAPI/XeroAPI.Net</projectUrl>
-    <iconUrl>https://secure.gravatar.com/avatar/bce33fac862525d5d62d1cda6a4e133d</iconUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>$description$</description>
-    <releaseNotes>Initial Release.</releaseNotes>
-    <copyright>Copyright 2012</copyright>
-    <tags>Xero</tags>
-  </metadata>
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>XeroApi.Validation</id>
+        <version>1.1.25.0</version>
+        <title>XeroApi.Validation</title>
+        <authors>matthewsteeples</authors>
+        <owners>matthewsteeples</owners>
+        <projectUrl>https://github.com/XeroAPI/XeroAPI.Net</projectUrl>
+        <iconUrl>https://secure.gravatar.com/avatar/7fff030fb8040a5157c3fd463858167f.png?s=128</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Client side validation methods for XeroAPI.Net</description>
+        <releaseNotes>Update to fix some payment validation sections</releaseNotes>
+        <copyright>Copyright 2012</copyright>
+        <tags>Xero</tags>
+        <dependencies>
+            <dependency id="EnterpriseLibrary.Validation" version="5.0.505.0" />
+            <dependency id="XeroAPI.Net" version="1.1.0.25" />
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="bin\Debug\XeroApi.Validation.dll" target="lib\net35\XeroApi.Validation.dll" />
+        <file src="bin\Debug\XeroApi.Validation.pdb" target="lib\net35\XeroApi.Validation.pdb" />
+    </files>
 </package>
