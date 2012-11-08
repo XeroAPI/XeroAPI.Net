@@ -67,24 +67,26 @@ namespace XeroApi
             where TModel : ModelBase, IAttachmentParent
         {
             // List the attachments against this model.
-            string xml = _integrationProxy.FindAttachments(
-                typeof(TModel).Name,
-                ModelTypeHelper.GetModelItemId(model));
+            var modelItemId = ModelTypeHelper.GetModelItemId(model);
 
-            Attachments attachments = ModelSerializer.DeserializeTo<Response>(xml).Attachments;
+            var allAttachmentsXml = _integrationProxy.FindAttachments(typeof(TModel).Name, modelItemId);
 
-            if (attachments == null || attachments.Count == 0)
+            var allAttachments = ModelSerializer.DeserializeTo<Response>(allAttachmentsXml).Attachments;
+
+            if (allAttachments == null || allAttachments.Count == 0)
             {
                 return null;
             }
 
-            // Get the attachment content
-            Stream content = _integrationProxy.FindOneAttachment(
-                typeof (TModel).Name,
-                ModelTypeHelper.GetModelItemId(model),
-                attachments.First().AttachmentID.ToString());
+            var theFirstAttachment = allAttachments.First();
 
-            return attachments[0].WithContent(content);
+            // Get the attachment content
+            var content = _integrationProxy.FindOneAttachment(
+                typeof (TModel).Name,
+                modelItemId,
+                theFirstAttachment.AttachmentID.ToString());
+
+            return theFirstAttachment.WithContent(content);
         }
     }
 }
