@@ -10,6 +10,9 @@ namespace XeroApi.ConsoleApp
 {
     class Program
     {
+        private static readonly string AnyAttachmentFilename = @".\Attachments\Receipt.png";
+        private const string TestContactName = "Joe Bloggs (Test)";
+
         static void Main(string[] args)
         {
             Console.WriteLine("Do you want to run as a public or private application?");
@@ -53,9 +56,7 @@ namespace XeroApi.ConsoleApp
 
             Console.WriteLine("You have been authorised against organisation: {0}", organisation.Name);
 
-            
             TestGetAccountsByFilter(repository);
-            
             TestCreatingAndUpdatingContacts(repository);
             TestGetContactsUsingLinq(repository);
             TestFindingCustumersThatAreContacts(repository);
@@ -64,12 +65,14 @@ namespace XeroApi.ConsoleApp
             TestFindingTrackingCategories(repository);
             TestFindingItemsUsingLinqSyntax(repository, organisation);
             TestCreatingInvoiceWithValidationErrors(repository);
+            TestAttachmentsAgainstPurchaseInvoice(repository);
             
             // Download a PDF of the first AR invoice in the system
             var anySalesInvoice = repository.Invoices.First(invoice => invoice.Type == "ACCREC");
             
             TestDownloadingPrintedInvoicePdf(repository, anySalesInvoice);
             TestFindingInvoicesByContactName(repository, anySalesInvoice.Contact);
+            
             TestFindingTheSubscriberUser(repository);
             TestCreatingReceiptsForAUser(repository);
             TestGettingAListOfExpenseClaims(repository);
@@ -78,6 +81,40 @@ namespace XeroApi.ConsoleApp
             TestGettingAListOfReports(repository);
 
             Console.WriteLine("All done!");
+        }
+
+        private static void TestAttachmentsAgainstPurchaseInvoice(Repository repository)
+        {
+            var anyPurchasesInvoice = repository.Invoices.FirstOrDefault(it => it.Type == "ACCPAY" && it.Status == "DRAFT") 
+                ?? CreateAnyPurchasesInvoice(repository);
+            
+            // Upload an attachment against the invoice
+            var newAttachment = repository.Attachments.Create(anyPurchasesInvoice, new FileInfo(AnyAttachmentFilename));
+
+            Console.WriteLine("Attachment {0} was added to invoice {1}", newAttachment.FileName, anyPurchasesInvoice.InvoiceID);
+        }
+
+        private static Invoice CreateAnyPurchasesInvoice(Repository repository)
+        {
+            var invoice = new Invoice
+                {
+                    Type = "ACCPAY",
+                    Contact = new Contact {Name = TestContactName},
+                    Date = DateTime.Today,
+                    DueDate = DateTime.Today.AddDays(14),
+                    Status = "DRAFT",
+                    LineItems = new LineItems
+                        {
+                            new LineItem
+                                {
+                                    Description = "Services Rendered",
+                                    Quantity = 1,
+                                    UnitAmount = 1,
+                                }
+                        }
+                };
+
+            return repository.Create(invoice);
         }
 
         private static void TesGettingATrialBalance(Repository repository)
@@ -179,7 +216,7 @@ namespace XeroApi.ConsoleApp
 
 
             // Upload an attachment against the newly creacted receipt
-            FileInfo attachmentFileInfo = new FileInfo(@".\Attachments\Receipt.png");
+            FileInfo attachmentFileInfo = new FileInfo(AnyAttachmentFilename);
 
             if (!attachmentFileInfo.Exists)
             {
@@ -274,7 +311,7 @@ namespace XeroApi.ConsoleApp
                 {
                     Contact = new Contact
                         {
-                            Name = "Joe Bloggs (Test)"
+                            Name = TestContactName
                         },
                     Type = "ACCREC",
                     Date = DateTime.Today,
@@ -377,7 +414,7 @@ namespace XeroApi.ConsoleApp
         private static void TestCreatingAndUpdatingContacts(Repository repository)
         {
             // Make a PUT call to the API - add a dummy contact
-            var contact = new Contact { Name = "Joe Bloggs (Test)" };
+            var contact = new Contact { Name = TestContactName };
 
             contact = repository.UpdateOrCreate(contact);
             Console.WriteLine(string.Format("The contact '{0}' was created with id: {1}", contact.Name, contact.ContactID));
