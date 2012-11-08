@@ -24,10 +24,16 @@ namespace XeroApi
         public Attachment UpdateOrCreate<TModel>(TModel model, FileInfo fileInfo)
             where TModel : ModelBase, IAttachmentParent
         {
+            return UpdateOrCreate(model, new Attachment(fileInfo));
+        }
+
+        public Attachment UpdateOrCreate<TModel>(TModel model, Attachment attachment)
+            where TModel : ModelBase, IAttachmentParent
+        {
             string xml = _integrationProxy.UpdateOrCreateAttachment(
                 typeof(TModel).Name,
-                ModelTypeHelper.GetModelItemId(model), 
-                new Attachment(fileInfo));
+                ModelTypeHelper.GetModelItemId(model),
+                attachment);
 
             Response response = ModelSerializer.DeserializeTo<Response>(xml);
 
@@ -40,10 +46,16 @@ namespace XeroApi
         public Attachment Create<TModel>(TModel model, FileInfo fileInfo)
             where TModel : ModelBase, IAttachmentParent
         {
+            return Create(model, new Attachment(fileInfo));
+        }
+
+        public Attachment Create<TModel>(TModel model, Attachment attachment)
+            where TModel : ModelBase, IAttachmentParent
+        {
             string xml = _integrationProxy.CreateAttachment(
                 typeof(TModel).Name,
                 ModelTypeHelper.GetModelItemId(model),
-                new Attachment(fileInfo));
+                attachment);
 
             return ModelSerializer.DeserializeTo<Response>(xml).Attachments.First();
         }
