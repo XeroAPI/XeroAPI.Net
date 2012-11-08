@@ -47,6 +47,7 @@
     <Compile Include="ApiQueryTests.cs" />
     <Compile Include="EventTimelineTests.cs" />
     <Compile Include="IntegrationProxyHelperTests.cs" />
+    <Compile Include="MimeTypesTests.cs" />
     <Compile Include="ModelSerializationTests.cs" />
     <Compile Include="OAuth\Consumer\ConsumerRequestTests.cs" />
     <Compile Include="PauseTimeTests.cs" />

@@ -37,5 +37,10 @@ namespace XeroApi
 
             return mimeType;
         }
+
+        public static string GetMimeType(string fileName)
+        {
+            return GetMimeType(new FileInfo(fileName));
+        }
     }
 }
