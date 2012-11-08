@@ -8,9 +8,9 @@ namespace XeroApi.Tests
         [Test]
         public void it_can_return_the_mime_type_for_a_filename()
         {
-            string mimeType = MimeTypes.GetMimeType("anyFilename.pdf");
+            string mimeType = MimeTypes.GetMimeType("anyFilename.png");
 
-            Assert.AreEqual("application/pdf", mimeType);
+            Assert.AreEqual("image/png", mimeType);
         }
 
         [Test]
@@ -24,9 +24,9 @@ namespace XeroApi.Tests
         [Test]
         public void it_can_return_the_mime_type_for_a_fileinfo()
         {
-            var mimeType = MimeTypes.GetMimeType(new FileInfo("anyFilename.docx"));
+            var mimeType = MimeTypes.GetMimeType(new FileInfo("anyFilename.txt"));
 
-            Assert.AreEqual("application/vnd.openxmlformats-officedocument.wordprocessingml.document", mimeType);
+            Assert.AreEqual("text/plain", mimeType);
         }
     }
 }
