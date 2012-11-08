@@ -22,6 +22,16 @@ namespace XeroApi.Model
             ContentStream = fileInfo.OpenRead();
         }
 
+        public Attachment(Stream content, string filename)
+        {
+            if (content == null) { throw new ArgumentNullException("content"); }
+            if (string.IsNullOrEmpty(filename)) { throw new ArgumentNullException("filename"); }
+
+            Filename = filename;
+            MimeType = MimeTypes.GetMimeType(filename);
+            ContentStream = content;
+        }
+
 
         [ItemId]
         public Guid? AttachmentID { get; set; }
