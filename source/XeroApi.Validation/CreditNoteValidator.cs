@@ -32,7 +32,7 @@ namespace XeroApi.Validation
                 validationResults.AddResult(new ValidationResult("The document has no Contact", currentTarget, key, "Contact", this));
             }
 
-            if (objectToValidate.LineItems == null)
+            if (objectToValidate.LineItems == null || !objectToValidate.LineItems.Any())
             {
                 validationResults.AddResult(new ValidationResult("The document has no LineItems", currentTarget, key, "LineItems", this));
             }
