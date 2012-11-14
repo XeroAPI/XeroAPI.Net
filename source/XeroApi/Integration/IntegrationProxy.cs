@@ -123,7 +123,7 @@ namespace XeroApi.Integration
 
         public string UpdateOrCreateAttachment(string endpointName, string itemId, Attachment attachment)
         {
-            Uri uri = ConstructChildResourceUri(_oauthSession.ConsumerContext.BaseEndpointUri, endpointName, itemId, "Attachments", attachment.Filename);
+            Uri uri = ConstructChildResourceUri(_oauthSession.ConsumerContext.BaseEndpointUri, endpointName, itemId, "Attachments", attachment.FileName);
 
             IConsumerRequest oauthRequest = _oauthSession.Request()
                 .ForMethod("POST")
@@ -144,7 +144,7 @@ namespace XeroApi.Integration
 
         public string CreateAttachment(string endpointName, string itemId, Attachment attachment)
         {
-            Uri uri = ConstructChildResourceUri(_oauthSession.ConsumerContext.BaseEndpointUri, endpointName, itemId, "Attachments", attachment.Filename);
+            Uri uri = ConstructChildResourceUri(_oauthSession.ConsumerContext.BaseEndpointUri, endpointName, itemId, "Attachments", attachment.FileName);
 
             IConsumerRequest oauthRequest = _oauthSession.Request()
                 .ForMethod("PUT")

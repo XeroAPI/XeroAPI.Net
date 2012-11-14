@@ -623,6 +623,19 @@ namespace XeroApi.Tests
 
             Assert.AreEqual("(InvoiceNumber.ToLower() == \"inv-123\")", integrationProxy.LastQueryDescription.Where);
         }
+
+        [Ignore("This is a known defect")]
+        [Test]
+        public void it_can_filter_on_inequality_of_the_model_id()
+        {
+            StubIntegrationProxy integrationProxy = new StubIntegrationProxy();
+            Repository repository = new Repository(integrationProxy);
+
+            repository.Invoices.Where(i => i.InvoiceID != Guid.Empty).ToList();
+
+            Assert.AreEqual("", integrationProxy.LastQueryDescription.ElementId);
+            Assert.AreEqual("(InvoiceID != Guid('00000000-0000-0000-0000-000000000000'))", integrationProxy.LastQueryDescription.Where);
+        }
     }
 }
 

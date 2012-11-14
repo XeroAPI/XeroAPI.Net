@@ -16,10 +16,20 @@ namespace XeroApi.Model
             if (fileInfo == null) { throw new ArgumentNullException("fileInfo");}
             if (!fileInfo.Exists) { throw new FileNotFoundException("The file could not be found", fileInfo.FullName);}
 
-            Filename = fileInfo.Name;
+            FileName = fileInfo.Name;
             ContentLength = (int)fileInfo.Length;
             MimeType = MimeTypes.GetMimeType(fileInfo);
             ContentStream = fileInfo.OpenRead();
+        }
+
+        public Attachment(Stream content, string filename)
+        {
+            if (content == null) { throw new ArgumentNullException("content"); }
+            if (string.IsNullOrEmpty(filename)) { throw new ArgumentNullException("filename"); }
+
+            FileName = filename;
+            MimeType = MimeTypes.GetMimeType(filename);
+            ContentStream = content;
         }
 
 
@@ -27,7 +37,14 @@ namespace XeroApi.Model
         public Guid? AttachmentID { get; set; }
 
         [ItemNumber]
-        public string Filename { get; set; }
+        public string FileName { get; set; }
+        
+        [Obsolete("Use FileName instead (different case)")]
+        public string Filename
+        {
+            get { return FileName; }
+            set { FileName = value; }
+        }
 
         public string MimeType { get; set; }
 

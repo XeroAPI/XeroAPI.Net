@@ -2,7 +2,7 @@
 
 namespace XeroApi.Model
 {
-    public class Invoice : EndpointModelBase
+    public class Invoice : EndpointModelBase, IAttachmentParent
     {
         [ItemId]
         public virtual Guid InvoiceID { get; set; }

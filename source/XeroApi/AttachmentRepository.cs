@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using XeroApi.Integration;
 using XeroApi.Model;
 
@@ -28,10 +24,16 @@ namespace XeroApi
         public Attachment UpdateOrCreate<TModel>(TModel model, FileInfo fileInfo)
             where TModel : ModelBase, IAttachmentParent
         {
+            return UpdateOrCreate(model, new Attachment(fileInfo));
+        }
+
+        public Attachment UpdateOrCreate<TModel>(TModel model, Attachment attachment)
+            where TModel : ModelBase, IAttachmentParent
+        {
             string xml = _integrationProxy.UpdateOrCreateAttachment(
                 typeof(TModel).Name,
-                ModelTypeHelper.GetModelItemId(model), 
-                new Attachment(fileInfo));
+                ModelTypeHelper.GetModelItemId(model),
+                attachment);
 
             Response response = ModelSerializer.DeserializeTo<Response>(xml);
 
@@ -44,10 +46,16 @@ namespace XeroApi
         public Attachment Create<TModel>(TModel model, FileInfo fileInfo)
             where TModel : ModelBase, IAttachmentParent
         {
+            return Create(model, new Attachment(fileInfo));
+        }
+
+        public Attachment Create<TModel>(TModel model, Attachment attachment)
+            where TModel : ModelBase, IAttachmentParent
+        {
             string xml = _integrationProxy.CreateAttachment(
                 typeof(TModel).Name,
                 ModelTypeHelper.GetModelItemId(model),
-                new Attachment(fileInfo));
+                attachment);
 
             return ModelSerializer.DeserializeTo<Response>(xml).Attachments.First();
         }
@@ -59,24 +67,26 @@ namespace XeroApi
             where TModel : ModelBase, IAttachmentParent
         {
             // List the attachments against this model.
-            string xml = _integrationProxy.FindAttachments(
-                typeof(TModel).Name,
-                ModelTypeHelper.GetModelItemId(model));
+            var modelItemId = ModelTypeHelper.GetModelItemId(model);
 
-            Attachments attachments = ModelSerializer.DeserializeTo<Response>(xml).Attachments;
+            var allAttachmentsXml = _integrationProxy.FindAttachments(typeof(TModel).Name, modelItemId);
 
-            if (attachments == null || attachments.Count == 0)
+            var allAttachments = ModelSerializer.DeserializeTo<Response>(allAttachmentsXml).Attachments;
+
+            if (allAttachments == null || allAttachments.Count == 0)
             {
                 return null;
             }
 
-            // Get the attachment content
-            Stream content = _integrationProxy.FindOneAttachment(
-                typeof (TModel).Name,
-                ModelTypeHelper.GetModelItemId(model),
-                attachments.First().AttachmentID.ToString());
+            var theFirstAttachment = allAttachments.First();
 
-            return attachments[0].WithContent(content);
+            // Get the attachment content
+            var content = _integrationProxy.FindOneAttachment(
+                typeof (TModel).Name,
+                modelItemId,
+                theFirstAttachment.AttachmentID.ToString());
+
+            return theFirstAttachment.WithContent(content);
         }
     }
 }
