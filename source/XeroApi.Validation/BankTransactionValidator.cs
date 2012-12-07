@@ -41,6 +41,11 @@ namespace XeroApi.Validation
                 {
                     validationResults.AddResult(new ValidationResult("Invalid LineItems", currentTarget, key, "LineItems", this, vr));
                 }
+
+                if (objectToValidate.LineItems.GetTotal() <= 0)
+                {
+                    validationResults.AddResult(new ValidationResult("The LineItems total must be greater than 0.", currentTarget, key, "LineItems", this));
+                }
             }
 
             if (objectToValidate.Total.HasValue)

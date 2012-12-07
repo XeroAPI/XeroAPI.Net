@@ -19,5 +19,10 @@ namespace XeroApi.Validation.Helpers
                 return li.UnitAmount.GetValueOrDefault() * li.Quantity.GetValueOrDefault();
             }
         }
+
+        public static decimal GetTotal(this IEnumerable<LineItem> li)
+        {
+            return li.Sum(a => a.GetTotal());
+        }
     }
 }
