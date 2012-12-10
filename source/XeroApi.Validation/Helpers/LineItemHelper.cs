@@ -10,6 +10,11 @@ namespace XeroApi.Validation.Helpers
     {
         public static decimal GetTotal(this LineItem li)
         {
+            return GetSubTotal(li) + li.TaxAmount.GetValueOrDefault();
+        }
+
+        public static decimal GetSubTotal(this LineItem li)
+        {
             if (li.LineAmount.HasValue)
             {
                 return li.LineAmount.Value;
@@ -18,6 +23,11 @@ namespace XeroApi.Validation.Helpers
             {
                 return li.UnitAmount.GetValueOrDefault() * li.Quantity.GetValueOrDefault();
             }
+        }
+
+        public static decimal GetSubTotal(this IEnumerable<LineItem> li)
+        {
+            return li.Sum(a => a.GetSubTotal());
         }
 
         public static decimal GetTotal(this IEnumerable<LineItem> li)
