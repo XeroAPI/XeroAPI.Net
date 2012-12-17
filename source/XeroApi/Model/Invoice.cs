@@ -58,6 +58,8 @@ namespace XeroApi.Model
 
         public virtual decimal? SubTotal { get; set; }
 
+        public virtual decimal? TotalDiscount { get; set; }
+
         public virtual decimal? TotalTax { get; set; }
 
         public virtual decimal? Total { get; set; }
