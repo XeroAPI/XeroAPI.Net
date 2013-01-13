@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
+using DevDefined.OAuth.Utility;
 using XeroApi.Model;
 using XeroApi.Model.Reporting;
 
@@ -10,7 +10,7 @@ namespace XeroApi.ConsoleApp
 {
     class Program
     {
-        private static readonly string AnyAttachmentFilename = @".\Attachments\Receipt.png";
+        private const string AnyAttachmentFilename = @".\Attachments\Receipt.png";
         private const string TestContactName = "Joe Bloggs (Test)";
 
         static void Main(string[] args)
@@ -38,10 +38,6 @@ namespace XeroApi.ConsoleApp
                 Console.WriteLine("Running as a partner application...");
                 ExerciseOrganisation(PartnerApplicationRunner.CreateRepository());
             }
-
-            Console.WriteLine("");
-            Console.WriteLine(" Press Enter to Exit");
-            Console.ReadLine();
         }
 
         static void ExerciseOrganisation(Repository repository)
@@ -65,19 +61,20 @@ namespace XeroApi.ConsoleApp
             TestFindingTrackingCategories(repository);
             TestFindingItemsUsingLinqSyntax(repository, organisation);
             TestCreatingInvoiceWithValidationErrors(repository);
+            TestAttachmentFromByteArray(repository);
             TestAttachmentsAgainstPurchaseInvoice(repository);
             
             // Download a PDF of the first AR invoice in the system
             var anySalesInvoice = repository.Invoices.First(invoice => invoice.Type == "ACCREC");
-            
+
             TestDownloadingPrintedInvoicePdf(repository, anySalesInvoice);
             TestFindingInvoicesByContactName(repository, anySalesInvoice.Contact);
-            
+
             TestFindingTheSubscriberUser(repository);
             TestCreatingReceiptsForAUser(repository);
             TestGettingAListOfExpenseClaims(repository);
             TestGetAllJournalsWithPagination(repository);
-            TesGettingATrialBalance(repository);
+            TestGettingATrialBalance(repository);
             TestGettingAListOfReports(repository);
 
             Console.WriteLine("All done!");
@@ -85,13 +82,68 @@ namespace XeroApi.ConsoleApp
 
         private static void TestAttachmentsAgainstPurchaseInvoice(Repository repository)
         {
-            var anyPurchasesInvoice = repository.Invoices.FirstOrDefault(it => it.Type == "ACCPAY" && it.Status == "DRAFT") 
+            Console.WriteLine("Creating an invoice and loading attachment...");
+
+            var anyPurchasesInvoice = repository.Invoices.FirstOrDefault(it => it.Type == "ACCPAY" && it.Status == "DRAFT")
                 ?? CreateAnyPurchasesInvoice(repository);
-            
+
             // Upload an attachment against the invoice
             var newAttachment = repository.Attachments.Create(anyPurchasesInvoice, new FileInfo(AnyAttachmentFilename));
 
             Console.WriteLine("Attachment {0} was added to invoice {1}", newAttachment.FileName, anyPurchasesInvoice.InvoiceID);
+        }
+
+        private static void TestAttachmentFromByteArray(Repository repository)
+        {
+            Console.WriteLine("Creating an invoice and loading attachment...");
+
+            var anyPurchasesInvoice = CreateAnyPurchasesInvoice(repository);
+
+            byte[] image;
+
+            //create a byte array from the file and use that to upload
+            using (var stream = new FileStream(AnyAttachmentFilename, FileMode.Open))
+            using (var ms = new MemoryStream())
+            {
+                stream.CopyTo(ms);
+                image = ms.ToArray();
+            }
+
+            var info = new FileInfo(AnyAttachmentFilename);
+            var mimeType = MimeTypes.GetMimeType(info);
+
+            var newAttachment = repository.Attachments.Create(anyPurchasesInvoice, new Attachment
+            {
+                Content = image,
+                ContentLength = image.Length,
+                FileName = info.Name,
+                MimeType = mimeType
+            });
+
+            Console.WriteLine("Attachment {0} was added to invoice {1}", newAttachment.FileName,
+                              anyPurchasesInvoice.InvoiceID);
+
+            Console.WriteLine("Finding invoice and saving attachment...");
+
+            var invoice = repository.FindById<Invoice>(anyPurchasesInvoice.InvoiceID.ToString());
+            Attachment attachment = repository.Attachments.GetAttachmentFor(invoice);            
+            string attachmentPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                                              attachment.FileName);
+
+            var file = new FileInfo(attachmentPath);
+
+            if (file.Exists)
+            {
+                file.Delete();
+            }
+
+            using (FileStream fs = file.OpenWrite())
+            {
+                fs.Write(attachment.Content, 0, attachment.ContentLength);
+            }
+
+            Console.WriteLine("Attachment {0} was retrieved for invoice {1}", newAttachment.FileName,
+                anyPurchasesInvoice.InvoiceID);
         }
 
         private static Invoice CreateAnyPurchasesInvoice(Repository repository)
@@ -117,7 +169,7 @@ namespace XeroApi.ConsoleApp
             return repository.Create(invoice);
         }
 
-        private static void TesGettingATrialBalance(Repository repository)
+        private static void TestGettingATrialBalance(Repository repository)
         {
             // Get a trial balance report (as per http://answers.xero.com/developer/question/36201/)
             Console.WriteLine("Running Trial Balance Report...");
