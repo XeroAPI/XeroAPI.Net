@@ -16,7 +16,7 @@ namespace XeroApi.Validation
 
         protected override void DoValidate(Payment objectToValidate, object currentTarget, string key, ValidationResults validationResults)
         {
-            if (objectToValidate.Amount < 0)
+            if (objectToValidate.Amount <= 0)
             {
                 validationResults.AddResult(new ValidationResult("The document amount must be greater than 0.", currentTarget, key, "Amount", this));
             }

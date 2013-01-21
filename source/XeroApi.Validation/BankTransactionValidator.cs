@@ -54,7 +54,7 @@ namespace XeroApi.Validation
                 {
                     validationResults.AddResult(new ValidationResult("The document total does not equal the sum of the lines.", currentTarget, key, "Total", this));
                 }
-                if (objectToValidate.Total.Value < 0)
+                if (objectToValidate.Total.Value <= 0)
                 {
                     validationResults.AddResult(new ValidationResult("The document total must be greater than 0.", currentTarget, key, "Total", this));
                 }
@@ -68,7 +68,7 @@ namespace XeroApi.Validation
                 }
                 if (objectToValidate.TotalTax.Value < 0)
                 {
-                    validationResults.AddResult(new ValidationResult("The document totaltax must be greater than 0.", currentTarget, key, "TotalTax", this));
+                    validationResults.AddResult(new ValidationResult("The document totaltax must be greater than or equal to 0.", currentTarget, key, "TotalTax", this));
                 }
             }
 
