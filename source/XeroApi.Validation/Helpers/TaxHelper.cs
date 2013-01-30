@@ -14,7 +14,8 @@ namespace XeroApi.Validation.Helpers
             var taxAmount = CalculateTaxAmount(li);
             if (taxAmount != null)
             {
-                return (taxAmount == li.TaxAmount);
+                var diff = Math.Abs(taxAmount.GetValueOrDefault() - li.TaxAmount.GetValueOrDefault());
+                return (diff < 0.01m);
             }
 
             return null;
