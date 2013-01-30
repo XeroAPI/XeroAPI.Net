@@ -68,11 +68,15 @@
     <Compile Include="CreditNoteValidator.cs" />
     <Compile Include="Helpers\LineItemHelper.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
+    <Compile Include="Helpers\TaxHelper.cs" />
     <Compile Include="Helpers\ValidationHelper.cs" />
     <Compile Include="InvoiceValidator.cs" />
     <Compile Include="LineItemValidator.cs" />
     <Compile Include="ManualJournalLineItemValidator.cs" />
     <Compile Include="ManualJournalValidator.cs" />
+    <Compile Include="Model\Country.cs" />
+    <Compile Include="Model\TaxcodeData.cs" />
+    <Compile Include="Model\TaxType.cs" />
     <Compile Include="PaymentValidator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

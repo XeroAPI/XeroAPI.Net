@@ -36,6 +36,12 @@ namespace XeroApi.Validation
                 foreach (var item in objectToValidate.LineItems)
                 {
                     lineItemValidator.Validate(item, vr);
+
+                    bool? isValidTax = item.IsValidTax();
+                    if (isValidTax.HasValue && !isValidTax.Value)
+                    {
+                        vr.AddResult(new ValidationResult("Invalid Tax Amount", currentTarget, key, "TaxAmount", this));
+                    }
                 }
                 if (vr.Any())
                 {
