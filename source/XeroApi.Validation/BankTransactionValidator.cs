@@ -40,7 +40,8 @@ namespace XeroApi.Validation
                     bool? isValidTax = item.IsValidTax();
                     if (isValidTax.HasValue && !isValidTax.Value)
                     {
-                        vr.AddResult(new ValidationResult("Invalid Tax Amount", currentTarget, key, "TaxAmount", this));
+                        var msg = string.Format("Invalid Tax Amount ({0} expected: {1})", item.TaxAmount, item.CalculateTaxAmount());
+                        vr.AddResult(new ValidationResult(msg, currentTarget, key, "TaxAmount", this));
                     }
                 }
                 if (vr.Any())
