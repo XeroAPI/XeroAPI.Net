@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>XeroApi.Validation</id>
-        <version>1.1.27.0</version>
+        <version>1.1.27.3</version>
         <title>XeroApi.Validation</title>
         <authors>matthewsteeples</authors>
         <owners>matthewsteeples</owners>
@@ -10,7 +10,7 @@
         <iconUrl>https://secure.gravatar.com/avatar/7fff030fb8040a5157c3fd463858167f.png?s=128</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>Client side validation methods for XeroAPI.Net</description>
-        <releaseNotes>Update to fix some payment validation sections</releaseNotes>
+        <releaseNotes></releaseNotes>
         <copyright>Copyright 2012</copyright>
         <tags>Xero</tags>
         <dependencies>
