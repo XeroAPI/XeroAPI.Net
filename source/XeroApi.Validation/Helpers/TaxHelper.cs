@@ -7,7 +7,7 @@ using XeroApi.Validation.Model;
 
 namespace XeroApi.Validation.Helpers
 {
-    static class TaxHelper
+    public static class TaxHelper
     {
         public static bool? IsValidTax(this LineItem li)
         {

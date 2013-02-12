@@ -6,7 +6,7 @@ using XeroApi.Model;
 
 namespace XeroApi.Validation.Helpers
 {
-    static class LineItemHelper
+    public static class LineItemHelper
     {
         public static decimal GetTotal(this LineItem li)
         {
