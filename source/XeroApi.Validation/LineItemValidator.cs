@@ -69,6 +69,19 @@ namespace XeroApi.Validation
                     validationResults.AddResult(new ValidationResult("UnitAmount must be specified if Quantity is specified", currentTarget, key, "UnitAmount", this));
                 }
             }
+
+            if (objectToValidate.TaxAmount.HasValue)
+            {
+                if (objectToValidate.TaxAmount.Value < 0)
+                {
+                    validationResults.AddResult(new ValidationResult("TaxAmount must be greater than 0", currentTarget, key, "TaxAmount", this));
+                }
+
+                if (objectToValidate.TaxAmount > objectToValidate.GetSubTotal())
+                {
+                    validationResults.AddResult(new ValidationResult("TaxAmount cannot be greater than the LineAmount", currentTarget, key, "TaxAmount", this));
+                }
+            }
         }
 
         protected override string DefaultMessageTemplate
