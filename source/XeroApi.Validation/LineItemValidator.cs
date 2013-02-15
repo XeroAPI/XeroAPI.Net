@@ -72,14 +72,16 @@ namespace XeroApi.Validation
 
             if (objectToValidate.TaxAmount.HasValue)
             {
-                if (objectToValidate.TaxAmount.Value < 0)
+                if (Math.Sign(objectToValidate.TaxAmount.Value * objectToValidate.GetSubTotal()) == -1)
                 {
-                    validationResults.AddResult(new ValidationResult("TaxAmount must be greater than 0", currentTarget, key, "TaxAmount", this));
+                    validationResults.AddResult(new ValidationResult("TaxAmount must be same sign as LineAmount", currentTarget, key, "TaxAmount", this));
                 }
-
-                if (objectToValidate.TaxAmount > objectToValidate.GetSubTotal())
+                else
                 {
-                    validationResults.AddResult(new ValidationResult("TaxAmount cannot be greater than the LineAmount", currentTarget, key, "TaxAmount", this));
+                    if (Math.Abs(objectToValidate.TaxAmount.GetValueOrDefault()) > Math.Abs(objectToValidate.GetSubTotal()))
+                    {
+                        validationResults.AddResult(new ValidationResult("TaxAmount cannot be greater than the LineAmount", currentTarget, key, "TaxAmount", this));
+                    }
                 }
             }
         }
