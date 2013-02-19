@@ -33,6 +33,8 @@ namespace XeroApi.Model
         public int FinancialYearEndDay;
 
         public int FinancialYearEndMonth;
+        
+        public string Timezone;
 
         public override string ToString()
         {
