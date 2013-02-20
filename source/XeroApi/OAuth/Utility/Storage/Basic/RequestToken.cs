@@ -36,10 +36,10 @@ namespace DevDefined.OAuth.Storage.Basic
     /// </summary>
     public class RequestToken : TokenBase
     {
-        [Obsolete]
+        [Obsolete("This parameter is not used", true)]
         public bool AccessDenied { get; set; }
 
-        [Obsolete]
+		[Obsolete("This parameter is not used", true)]
         public bool UsedUp { get; set; }
 
         public AccessToken AccessToken { get; set; }

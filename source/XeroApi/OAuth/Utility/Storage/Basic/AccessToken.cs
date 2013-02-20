@@ -25,7 +25,6 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using DevDefined.OAuth.Framework;
 
 namespace DevDefined.OAuth.Storage.Basic
@@ -36,10 +35,10 @@ namespace DevDefined.OAuth.Storage.Basic
   /// </summary>
   public class AccessToken : TokenBase
   {
-    [Obsolete]
+	[Obsolete("This parameter is not used", true)]
     public string UserName { get; set; }
 
-    [Obsolete]
+	[Obsolete("This parameter is not used", true)]
     public string[] Roles { get; set; }
 
     public string ExpiresIn { get; set; }
