@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>XeroApi.Validation</id>
-        <version>1.1.27.10</version>
+        <version>1.1.28.0</version>
         <title>XeroApi.Validation</title>
         <authors>matthewsteeples</authors>
         <owners>matthewsteeples</owners>
@@ -15,7 +15,7 @@
         <tags>Xero</tags>
         <dependencies>
             <dependency id="EnterpriseLibrary.Validation" version="5.0.505.0" />
-            <dependency id="XeroAPI.Net" version="1.1.0.27" />
+            <dependency id="XeroAPI.Net" version="1.1.0.28" />
         </dependencies>
     </metadata>
     <files>
