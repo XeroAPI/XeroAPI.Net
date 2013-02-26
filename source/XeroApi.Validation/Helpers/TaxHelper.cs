@@ -9,8 +9,6 @@ namespace XeroApi.Validation.Helpers
 {
     public static class TaxHelper
     {
-        static readonly decimal tolerance = 0.005m;
-
         public static bool? IsValidTax(this LineItem li)
         {
             var taxAmount = CalculateTaxAmount(li);
@@ -18,11 +16,7 @@ namespace XeroApi.Validation.Helpers
             {
                 var calculated = taxAmount.GetValueOrDefault();
                 var liTax = li.TaxAmount.GetValueOrDefault();
-                var diff = Math.Abs(calculated - liTax);
-                if (calculated < liTax)
-                    return (diff <= tolerance);
-                else
-                    return (diff < tolerance);
+                return calculated.NearlyEqualTo(liTax);                                
             }
 
             return null;
