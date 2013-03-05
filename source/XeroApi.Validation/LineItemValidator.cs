@@ -55,7 +55,7 @@ namespace XeroApi.Validation
                 }
                 else if (objectToValidate.LineAmount.HasValue)
                 {
-                    if ((objectToValidate.UnitAmount.Value * objectToValidate.Quantity.Value).NearlyEqualTo(objectToValidate.LineAmount.Value))
+                    if (!(objectToValidate.UnitAmount.Value * objectToValidate.Quantity.Value).NearlyEqualTo(objectToValidate.LineAmount.Value))
                     {
                         validationResults.AddResult(new ValidationResult("LineAmount must be equal to Quantity * UnitAmount", currentTarget, key, "LineAmount", this));
                     }
