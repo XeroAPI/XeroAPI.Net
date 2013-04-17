@@ -15,7 +15,6 @@ Note: Unless you're looking to debug the library, you don't need to download the
 
 If you have any questions or problems using this library, have a look at the Xero API Answers site (https://community.xero.com/developer/).
 
-
 Features
 --------
 
@@ -108,4 +107,12 @@ In fact, here's one I wrote earlier:
             Console.ReadLine();
         }
 
+Payroll
+-------
+
+There is now prelimiary support for the payroll API. This is accessed via the PayrollRepository. See PublicApplicationRunner for an example of setting up the permissions for payroll. The organisation will need to have payroll set up from within the UI. Only Austrailian organisations are supported.
+
+There is a known issue with with LINQ WHERE statement on the PayRollCalendars, if used from VB.
+
+The example console applicaiton has been extended to show use of the payroll endpoints. This covers the GET statements. There is also an example of creating a new employee. This will added to to give more post examples.
 .
