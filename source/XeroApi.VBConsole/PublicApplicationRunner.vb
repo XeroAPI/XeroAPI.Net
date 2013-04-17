@@ -6,7 +6,7 @@ Imports DevDefined.OAuth.Framework
 
 Public Class PublicApplicationRunner
 
-    Const UserAgent As String = "Xero.API.ScreenCast v1.0 (Public App Testing)"
+    Const UserAgent As String = "Xero.API.Console.VB (Public App Testing)"
     Const ConsumerKey As String = "ZGIXM2M1Y2RIZJGYNGY1Y2EWZGYZMW"
     Const ConsumerSecret As String = "RZRCMBRPK57EAG6GRO4GPLYDH9REPX"
 

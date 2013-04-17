@@ -20,10 +20,10 @@ namespace Xero.ScreencastWeb.Services
                 return null;
             }
 
-            X509FindType x509FindType = (X509FindType)Enum.Parse(typeof(X509FindType), oauthCertificateFindType);
+            var x509FindType = (X509FindType)Enum.Parse(typeof(X509FindType), oauthCertificateFindType);
 
             // Search the LocalMachine certificate store for matching X509 certificates.
-            X509Store certStore = new X509Store("My", StoreLocation.LocalMachine);
+            var certStore = new X509Store("My", StoreLocation.LocalMachine);
             certStore.Open(OpenFlags.ReadOnly | OpenFlags.OpenExistingOnly);
             X509Certificate2Collection certificateCollection = certStore.Certificates.Find(x509FindType, oauthCertificateFindValue, false);
             certStore.Close();
@@ -77,7 +77,7 @@ namespace Xero.ScreencastWeb.Services
                 return new NullCertificateFactory();
             }
 
-            X509FindType x509FindType = (X509FindType)Enum.Parse(typeof(X509FindType), oauthCertificateFindType);
+            var x509FindType = (X509FindType)Enum.Parse(typeof(X509FindType), oauthCertificateFindType);
             ICertificateFactory certificateFactory = new LocalMachineCertificateFactory(oauthCertificateFindValue, x509FindType);
 
             if (certificateFactory.CreateCertificate() == null)

@@ -44,7 +44,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiApplicationRunner.cs" />
+    <Compile Include="PayrollApi.cs" />
+    <Compile Include="CoreApi.cs" />
     <Compile Include="PartnerApplicationRunner.cs" />
+    <Compile Include="Payroll\PayrollApiRead.cs" />
+    <Compile Include="Payroll\PayrollPrinter.cs" />
+    <Compile Include="Payroll\PayrollApiWrite.cs" />
     <Compile Include="PrivateApplicationRunner.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

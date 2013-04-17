@@ -29,12 +29,12 @@ namespace XeroApi.Linq
 
         T IQueryProvider.Execute<T>(Expression expression)
         {
-            return (T)this.Execute(expression);
+            return (T)Execute(expression);
         }
 
         object IQueryProvider.Execute(Expression expression)
         {
-            return this.Execute(expression);
+            return Execute(expression);
         }
 
         public abstract string GetQueryText(Expression expression);

@@ -12,7 +12,8 @@ namespace XeroApi.Linq
         internal virtual Expression Visit(Expression exp)
         {
             if (exp == null)
-                return exp;
+                return null;
+
             switch (exp.NodeType)
             {
                 case ExpressionType.Negate:
@@ -24,7 +25,7 @@ namespace XeroApi.Linq
                 case ExpressionType.Quote:
                 case ExpressionType.TypeAs:
                 case ExpressionType.UnaryPlus:
-                    return this.VisitUnary((UnaryExpression)exp);
+                    return VisitUnary((UnaryExpression)exp);
                 case ExpressionType.Add:
                 case ExpressionType.AddChecked:
                 case ExpressionType.Subtract:
@@ -49,34 +50,34 @@ namespace XeroApi.Linq
                 case ExpressionType.LeftShift:
                 case ExpressionType.ExclusiveOr:
                 case ExpressionType.Power:
-                    return this.VisitBinary((BinaryExpression)exp);
+                    return VisitBinary((BinaryExpression)exp);
                 case ExpressionType.TypeIs:
-                    return this.VisitTypeIs((TypeBinaryExpression)exp);
+                    return VisitTypeIs((TypeBinaryExpression)exp);
                 case ExpressionType.Conditional:
-                    return this.VisitConditional((ConditionalExpression)exp);
+                    return VisitConditional((ConditionalExpression)exp);
                 case ExpressionType.Constant:
-                    return this.VisitConstant((ConstantExpression)exp);
+                    return VisitConstant((ConstantExpression)exp);
                 case ExpressionType.Parameter:
-                    return this.VisitParameter((ParameterExpression)exp);
+                    return VisitParameter((ParameterExpression)exp);
                 case ExpressionType.MemberAccess:
-                    return this.VisitMemberAccess((MemberExpression)exp);
+                    return VisitMemberAccess((MemberExpression)exp);
                 case ExpressionType.Call:
-                    return this.VisitMethodCall((MethodCallExpression)exp);
+                    return VisitMethodCall((MethodCallExpression)exp);
                 case ExpressionType.Lambda:
-                    return this.VisitLambda((LambdaExpression)exp);
+                    return VisitLambda((LambdaExpression)exp);
                 case ExpressionType.New:
-                    return this.VisitNew((NewExpression)exp);
+                    return VisitNew((NewExpression)exp);
                 case ExpressionType.NewArrayInit:
                 case ExpressionType.NewArrayBounds:
-                    return this.VisitNewArray((NewArrayExpression)exp);
+                    return VisitNewArray((NewArrayExpression)exp);
                 case ExpressionType.Invoke:
-                    return this.VisitInvocation((InvocationExpression)exp);
+                    return VisitInvocation((InvocationExpression)exp);
                 case ExpressionType.MemberInit:
-                    return this.VisitMemberInit((MemberInitExpression)exp);
+                    return VisitMemberInit((MemberInitExpression)exp);
                 case ExpressionType.ListInit:
-                    return this.VisitListInit((ListInitExpression)exp);
+                    return VisitListInit((ListInitExpression)exp);
                 default:
-                    return this.VisitUnknown(exp);
+                    return VisitUnknown(exp);
             }
         }
         
@@ -90,11 +91,11 @@ namespace XeroApi.Linq
             switch (binding.BindingType)
             {
                 case MemberBindingType.Assignment:
-                    return this.VisitMemberAssignment((MemberAssignment)binding);
+                    return VisitMemberAssignment((MemberAssignment)binding);
                 case MemberBindingType.MemberBinding:
-                    return this.VisitMemberMemberBinding((MemberMemberBinding)binding);
+                    return VisitMemberMemberBinding((MemberMemberBinding)binding);
                 case MemberBindingType.ListBinding:
-                    return this.VisitMemberListBinding((MemberListBinding)binding);
+                    return VisitMemberListBinding((MemberListBinding)binding);
                 default:
                     throw new Exception(string.Format("Unhandled binding type '{0}'", binding.BindingType));
             }
@@ -102,7 +103,7 @@ namespace XeroApi.Linq
 
         protected virtual ElementInit VisitElementInitializer(ElementInit initializer)
         {
-            ReadOnlyCollection<Expression> arguments = this.VisitExpressionList(initializer.Arguments);
+            ReadOnlyCollection<Expression> arguments = VisitExpressionList(initializer.Arguments);
             if (arguments != initializer.Arguments)
             {
                 return Expression.ElementInit(initializer.AddMethod, arguments);
@@ -112,8 +113,8 @@ namespace XeroApi.Linq
 
         protected virtual Expression VisitUnary(UnaryExpression unary)
         {
-            Expression operand = this.Visit(unary.Operand);
-            return this.UpdateUnary(unary, operand, unary.Type, unary.Method);
+            Expression operand = Visit(unary.Operand);
+            return UpdateUnary(unary, operand, unary.Type, unary.Method);
         }
         
         protected UnaryExpression UpdateUnary(UnaryExpression unary, Expression operand, Type resultType, MethodInfo method)
@@ -127,32 +128,30 @@ namespace XeroApi.Linq
 
         protected virtual Expression VisitBinary(BinaryExpression binary)
         {
-            Expression left = this.Visit(binary.Left);
-            Expression right = this.Visit(binary.Right);
-            Expression conversion = this.Visit(binary.Conversion);
-            return this.UpdateBinary(binary, left, right, conversion, binary.IsLiftedToNull, binary.Method);
+            Expression left = Visit(binary.Left);
+            Expression right = Visit(binary.Right);
+            Expression conversion = Visit(binary.Conversion);
+            return UpdateBinary(binary, left, right, conversion, binary.IsLiftedToNull, binary.Method);
         }
 
         protected BinaryExpression UpdateBinary(BinaryExpression binary, Expression left, Expression right, Expression conversion, bool isLiftedToNull, MethodInfo method)
         {
             if (left != binary.Left || right != binary.Right || conversion != binary.Conversion || method != binary.Method || isLiftedToNull != binary.IsLiftedToNull)
             {
-                if (binary.NodeType == ExpressionType.Coalesce && binary.Conversion != null)
+                if (binary.NodeType == ExpressionType.Coalesce)
                 {
                     return Expression.Coalesce(left, right, conversion as LambdaExpression);
                 }
-                else
-                {
-                    return Expression.MakeBinary(binary.NodeType, left, right, isLiftedToNull, method);
-                }
+                
+                return Expression.MakeBinary(binary.NodeType, left, right, isLiftedToNull, method);                
             }
             return binary;
         }
 
         protected virtual Expression VisitTypeIs(TypeBinaryExpression binary)
         {
-            Expression expr = this.Visit(binary.Expression);
-            return this.UpdateTypeIs(binary, expr, binary.TypeOperand);
+            Expression expr = Visit(binary.Expression);
+            return UpdateTypeIs(binary, expr, binary.TypeOperand);
         }
         
         protected TypeBinaryExpression UpdateTypeIs(TypeBinaryExpression binary, Expression expression, Type typeOperand)
@@ -171,10 +170,10 @@ namespace XeroApi.Linq
 
         protected virtual Expression VisitConditional(ConditionalExpression conditional)
         {
-            Expression test = this.Visit(conditional.Test);
-            Expression ifTrue = this.Visit(conditional.IfTrue);
-            Expression ifFalse = this.Visit(conditional.IfFalse);
-            return this.UpdateConditional(conditional, test, ifTrue, ifFalse);
+            Expression test = Visit(conditional.Test);
+            Expression ifTrue = Visit(conditional.IfTrue);
+            Expression ifFalse = Visit(conditional.IfFalse);
+            return UpdateConditional(conditional, test, ifTrue, ifFalse);
         }
         
         protected ConditionalExpression UpdateConditional(ConditionalExpression conditional, Expression test, Expression ifTrue, Expression ifFalse)
@@ -193,8 +192,8 @@ namespace XeroApi.Linq
 
         protected virtual Expression VisitMemberAccess(MemberExpression member)
         {
-            Expression exp = this.Visit(member.Expression);
-            return this.UpdateMemberAccess(member, exp, member.Member);
+            Expression exp = Visit(member.Expression);
+            return UpdateMemberAccess(member, exp, member.Member);
         }
         
         protected MemberExpression UpdateMemberAccess(MemberExpression memberExpression, Expression expression, MemberInfo member)
@@ -208,14 +207,14 @@ namespace XeroApi.Linq
 
         protected virtual Expression VisitMethodCall(MethodCallExpression methodCall)
         {
-            Expression obj = this.Visit(methodCall.Object);
-            IEnumerable<Expression> args = this.VisitExpressionList(methodCall.Arguments);
-            return this.UpdateMethodCall(methodCall, obj, methodCall.Method, args);
+            Expression obj = Visit(methodCall.Object);
+            IEnumerable<Expression> args = VisitExpressionList(methodCall.Arguments);
+            return UpdateMethodCall(methodCall, obj, methodCall.Method, args);
         }
         
         protected MethodCallExpression UpdateMethodCall(MethodCallExpression methodCall, Expression obj, MethodInfo method, IEnumerable<Expression> args)
         {
-            if (obj != methodCall.Object || method != methodCall.Method || args != methodCall.Arguments)
+            if (obj != methodCall.Object || method != methodCall.Method || !Equals(args, methodCall.Arguments))
             {
                 return Expression.Call(obj, method, args);
             }
@@ -229,7 +228,7 @@ namespace XeroApi.Linq
                 List<Expression> list = null;
                 for (int i = 0, n = expressions.Count; i < n; i++)
                 {
-                    Expression p = this.Visit(expressions[i]);
+                    Expression p = Visit(expressions[i]);
 
                     if (list != null)
                     {
@@ -253,14 +252,10 @@ namespace XeroApi.Linq
             return expressions;
         }
 
-        /*protected virtual void JoinRootExpressions()
-        {
-        }*/
-
         protected virtual MemberAssignment VisitMemberAssignment(MemberAssignment assignment)
         {
-            Expression e = this.Visit(assignment.Expression);
-            return this.UpdateMemberAssignment(assignment, assignment.Member, e);
+            Expression e = Visit(assignment.Expression);
+            return UpdateMemberAssignment(assignment, assignment.Member, e);
         }
         
         protected MemberAssignment UpdateMemberAssignment(MemberAssignment assignment, MemberInfo member, Expression expression)
@@ -274,13 +269,13 @@ namespace XeroApi.Linq
 
         protected virtual MemberMemberBinding VisitMemberMemberBinding(MemberMemberBinding binding)
         {
-            IEnumerable<MemberBinding> bindings = this.VisitBindingList(binding.Bindings);
-            return this.UpdateMemberMemberBinding(binding, binding.Member, bindings);
+            IEnumerable<MemberBinding> bindings = VisitBindingList(binding.Bindings);
+            return UpdateMemberMemberBinding(binding, binding.Member, bindings);
         }
 
         protected MemberMemberBinding UpdateMemberMemberBinding(MemberMemberBinding binding, MemberInfo member, IEnumerable<MemberBinding> bindings)
         {
-            if (bindings != binding.Bindings || member != binding.Member)
+            if (!Equals(bindings, binding.Bindings) || member != binding.Member)
             {
                 return Expression.MemberBind(member, bindings);
             }
@@ -289,13 +284,13 @@ namespace XeroApi.Linq
 
         protected virtual MemberListBinding VisitMemberListBinding(MemberListBinding binding)
         {
-            IEnumerable<ElementInit> initializers = this.VisitElementInitializerList(binding.Initializers);
-            return this.UpdateMemberListBinding(binding, binding.Member, initializers);
+            IEnumerable<ElementInit> initializers = VisitElementInitializerList(binding.Initializers);
+            return UpdateMemberListBinding(binding, binding.Member, initializers);
         }
 
         protected MemberListBinding UpdateMemberListBinding(MemberListBinding binding, MemberInfo member, IEnumerable<ElementInit> initializers)
         {
-            if (initializers != binding.Initializers || member != binding.Member)
+            if (!Equals(initializers, binding.Initializers) || member != binding.Member)
             {
                 return Expression.ListBind(member, initializers);
             }
@@ -308,7 +303,7 @@ namespace XeroApi.Linq
 
             for (int i = 0, n = original.Count; i < n; i++)
             {
-                MemberBinding b = this.VisitBinding(original[i]);
+                MemberBinding b = VisitBinding(original[i]);
                 if (list != null)
                 {
                     list.Add(b);
@@ -335,7 +330,7 @@ namespace XeroApi.Linq
 
             for (int i = 0, n = original.Count; i < n; i++)
             {
-                ElementInit init = this.VisitElementInitializer(original[i]);
+                ElementInit init = VisitElementInitializer(original[i]);
                 if (list != null)
                 {
                     list.Add(init);
@@ -358,13 +353,13 @@ namespace XeroApi.Linq
 
         protected virtual Expression VisitLambda(LambdaExpression lambda)
         {
-            Expression body = this.Visit(lambda.Body);
-            return this.UpdateLambda(lambda, lambda.Type, body, lambda.Parameters);
+            Expression body = Visit(lambda.Body);
+            return UpdateLambda(lambda, lambda.Type, body, lambda.Parameters);
         }
 
         protected LambdaExpression UpdateLambda(LambdaExpression lambda, Type delegateType, Expression body, IEnumerable<ParameterExpression> parameters)
         {
-            if (body != lambda.Body || parameters != lambda.Parameters || delegateType != lambda.Type)
+            if (body != lambda.Body || !Equals(parameters, lambda.Parameters) || delegateType != lambda.Type)
             {
                 return Expression.Lambda(delegateType, body, parameters);
             }
@@ -373,36 +368,30 @@ namespace XeroApi.Linq
 
         protected virtual NewExpression VisitNew(NewExpression nex)
         {
-            IEnumerable<Expression> args = this.VisitExpressionList(nex.Arguments);
-            return this.UpdateNew(nex, nex.Constructor, args, nex.Members);
+            IEnumerable<Expression> args = VisitExpressionList(nex.Arguments);
+            return UpdateNew(nex, nex.Constructor, args, nex.Members);
         }
 
         protected NewExpression UpdateNew(NewExpression nex, ConstructorInfo constructor, IEnumerable<Expression> args, IEnumerable<MemberInfo> members)
         {
-            if (args != nex.Arguments || constructor != nex.Constructor || members != nex.Members)
+            if (!Equals(args, nex.Arguments) || constructor != nex.Constructor || !Equals(members, nex.Members))
             {
-                if (nex.Members != null)
-                {
-                    return Expression.New(constructor, args, members);
-                }
-                else
-                {
-                    return Expression.New(constructor, args);
-                }
+                return Expression.New(constructor, args, members);                
             }
+
             return nex;
         }
 
         protected virtual Expression VisitMemberInit(MemberInitExpression init)
         {
-            NewExpression n = this.VisitNew(init.NewExpression);
-            IEnumerable<MemberBinding> bindings = this.VisitBindingList(init.Bindings);
-            return this.UpdateMemberInit(init, n, bindings);
+            NewExpression n = VisitNew(init.NewExpression);
+            IEnumerable<MemberBinding> bindings = VisitBindingList(init.Bindings);
+            return UpdateMemberInit(init, n, bindings);
         }
 
         protected MemberInitExpression UpdateMemberInit(MemberInitExpression init, NewExpression nex, IEnumerable<MemberBinding> bindings)
         {
-            if (nex != init.NewExpression || bindings != init.Bindings)
+            if (nex != init.NewExpression || !Equals(bindings, init.Bindings))
             {
                 return Expression.MemberInit(nex, bindings);
             }
@@ -411,14 +400,14 @@ namespace XeroApi.Linq
 
         protected virtual Expression VisitListInit(ListInitExpression init)
         {
-            NewExpression n = this.VisitNew(init.NewExpression);
-            IEnumerable<ElementInit> initializers = this.VisitElementInitializerList(init.Initializers);
-            return this.UpdateListInit(init, n, initializers);
+            NewExpression n = VisitNew(init.NewExpression);
+            IEnumerable<ElementInit> initializers = VisitElementInitializerList(init.Initializers);
+            return UpdateListInit(init, n, initializers);
         }
 
         protected ListInitExpression UpdateListInit(ListInitExpression init, NewExpression nex, IEnumerable<ElementInit> initializers)
         {
-            if (nex != init.NewExpression || initializers != init.Initializers)
+            if (nex != init.NewExpression || !Equals(initializers, init.Initializers))
             {
                 return Expression.ListInit(nex, initializers);
             }
@@ -427,36 +416,34 @@ namespace XeroApi.Linq
 
         protected virtual Expression VisitNewArray(NewArrayExpression na)
         {
-            IEnumerable<Expression> exprs = this.VisitExpressionList(na.Expressions);
-            return this.UpdateNewArray(na, na.Type, exprs);
+            IEnumerable<Expression> exprs = VisitExpressionList(na.Expressions);
+            return UpdateNewArray(na, na.Type, exprs);
         }
 
         protected NewArrayExpression UpdateNewArray(NewArrayExpression na, Type arrayType, IEnumerable<Expression> expressions)
         {
-            if (expressions != na.Expressions || na.Type != arrayType)
+            if (!Equals(expressions, na.Expressions) || na.Type != arrayType)
             {
                 if (na.NodeType == ExpressionType.NewArrayInit)
                 {
                     return Expression.NewArrayInit(arrayType.GetElementType(), expressions);
                 }
-                else
-                {
-                    return Expression.NewArrayBounds(arrayType.GetElementType(), expressions);
-                }
+                
+                return Expression.NewArrayBounds(arrayType.GetElementType(), expressions);                
             }
             return na;
         }
 
         protected virtual Expression VisitInvocation(InvocationExpression iv)
         {
-            IEnumerable<Expression> args = this.VisitExpressionList(iv.Arguments);
-            Expression expr = this.Visit(iv.Expression);
-            return this.UpdateInvocation(iv, expr, args);
+            IEnumerable<Expression> args = VisitExpressionList(iv.Arguments);
+            Expression expr = Visit(iv.Expression);
+            return UpdateInvocation(iv, expr, args);
         }
 
         protected InvocationExpression UpdateInvocation(InvocationExpression iv, Expression expression, IEnumerable<Expression> args)
         {
-            if (args != iv.Arguments || expression != iv.Expression)
+            if (!Equals(args, iv.Arguments) || expression != iv.Expression)
             {
                 return Expression.Invoke(expression, args);
             }

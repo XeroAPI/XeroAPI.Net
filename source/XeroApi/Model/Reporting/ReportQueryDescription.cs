@@ -33,6 +33,8 @@ namespace XeroApi.Model.Reporting
             get;
             set;
         }
+
+        public string EndpointSuffix { get; set; }
         
     }
 }

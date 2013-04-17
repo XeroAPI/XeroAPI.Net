@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Configuration;
-
 using DevDefined.OAuth.Consumer;
 using DevDefined.OAuth.Storage.Basic;
 
 using XeroApi;
+using XeroApi.Integration;
+using XeroApi.Model.Serialize;
 using XeroApi.OAuth;
 
 namespace Xero.ScreencastWeb.Services
@@ -21,13 +22,18 @@ namespace Xero.ScreencastWeb.Services
         /// Gets the current instance of Repository (used for getting data from the Xero API)
         /// </summary>
         /// <returns></returns>
-        public static Repository GetCurrentRepository()
+        public static CoreRepository GetCurrentRepository()
         {
             var session = GetCurrentSession();
 
-            return (session != null)
-                ? new Repository(session) 
-                : null;
+            if (session != null)
+            {
+                IModelSerializer serializer = new JsonModelSerializer();
+                // Wrap the authenticated consumerSession in the repository...            
+                return new CoreRepository(new CoreIntegrationProxy(session, serializer.MimeType), serializer);
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -60,7 +66,7 @@ namespace Xero.ScreencastWeb.Services
 
             if (ConfigurationManager.AppSettings["XeroApiSignatureMethod"] == "RSA-SHA1")
             {
-                if (ConfigurationManager.AppSettings["XeroApiBaseUrl"].ToLower().IndexOf("partner") > 0)
+                if (ConfigurationManager.AppSettings["XeroApiBaseUrl"].ToLower().IndexOf("partner", StringComparison.Ordinal) > 0)
                 {
                     // Partner App
                     return new XeroApiPartnerSession(
@@ -70,14 +76,13 @@ namespace Xero.ScreencastWeb.Services
                         CertificateRepository.GetClientSslCertificate(),                // Client SSL Certificate
                         CurrentTokenRepository);                                        // Token Repository
                 }
-                else
-                {
-                    // Private App
-                    return new XeroApiPrivateSession(
-                        userAgent,
-                        ConfigurationManager.AppSettings["XeroApiConsumerKey"],         // Consumer Key
-                        CertificateRepository.GetOAuthSigningCertificate());            // OAuth Signing Certificate
-                }
+
+                // Private App
+                return new XeroApiPrivateSession(
+                    userAgent,
+                    ConfigurationManager.AppSettings["XeroApiConsumerKey"],         // Consumer Key
+                    CertificateRepository.GetOAuthSigningCertificate());            // OAuth Signing Certificate
+
             }
 
             throw new ConfigurationErrorsException("The configuration for a Public/Private/Partner app cannot be determined.");

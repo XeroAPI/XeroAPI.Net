@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.Web.Mvc;
-
 using DevDefined.OAuth.Consumer;
 using DevDefined.OAuth.Storage.Basic;
 
@@ -24,7 +23,7 @@ namespace Xero.ScreencastWeb.Controllers
             Debug.Write("Processing: /Connect/Index");
             
             IOAuthSession oauthSession = ServiceProvider.GetCurrentSession();
-            Repository repository = ServiceProvider.GetCurrentRepository();
+            CoreRepository repository = ServiceProvider.GetCurrentRepository();
             
             // Can we already access an organisation??
             if (oauthSession.HasValidAccessToken && repository != null && repository.Organisation != null)

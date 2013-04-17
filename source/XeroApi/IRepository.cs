@@ -12,8 +12,9 @@ namespace XeroApi
         /// </summary>
         /// <typeparam name="TModel">The type of the model.</typeparam>
         /// <param name="id">The id.</param>
+        /// <param name="single">Is this a single item not from a collection?</param>
         /// <returns></returns>
-        TModel FindById<TModel>(Guid id)
+        TModel FindById<TModel>(Guid id, bool single = false)
             where TModel : EndpointModelBase;
 
         /// <summary>
@@ -21,8 +22,9 @@ namespace XeroApi
         /// </summary>
         /// <typeparam name="TModel">The type of the model.</typeparam>
         /// <param name="id">The id.</param>
+        /// <param name="single">Is this a single item not from a collection?</param>
         /// <returns></returns>
-        TModel FindById<TModel>(string id)
+        TModel FindById<TModel>(string id, bool single = false)
             where TModel : EndpointModelBase;
 
         /// <summary>
@@ -31,8 +33,9 @@ namespace XeroApi
         /// <typeparam name="TModel">The type of the model.</typeparam>
         /// <param name="id">The id.</param>
         /// <param name="contentType">The Content-Type to request</param>
+        /// <param name="single">Is this a single item not from a collection?</param>
         /// <returns></returns>
-        byte[] FindById<TModel>(string id, string contentType)
+        byte[] FindById<TModel>(string id, string contentType, bool single = false)
             where TModel : EndpointModelBase;
 
         /// <summary>

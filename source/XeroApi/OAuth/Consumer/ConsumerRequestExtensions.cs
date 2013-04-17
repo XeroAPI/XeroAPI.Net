@@ -75,6 +75,12 @@ namespace DevDefined.OAuth.Consumer
       return request;
     }
 
+    public static IConsumerRequest WithAcceptEncodingHeader(this IConsumerRequest request, string acceptsEncoding)
+    {
+        request.AcceptsEncoding = acceptsEncoding;
+        return request;
+    }
+
     public static IConsumerRequest WithIfModifiedSince(this IConsumerRequest request, DateTime? ifModifiedSinceDate)
     {
         request.Context.IfModifiedSince = ifModifiedSinceDate;

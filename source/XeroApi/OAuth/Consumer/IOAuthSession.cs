@@ -26,7 +26,6 @@
 
 using System;
 using System.Collections.Generic;
-using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Storage.Basic;
 
 namespace DevDefined.OAuth.Consumer
@@ -36,13 +35,7 @@ namespace DevDefined.OAuth.Consumer
         IOAuthConsumerContext ConsumerContext { get; set; }
         ITokenRepository TokenRepository { get; }
 
-        [Obsolete("All tokens should be stored in a ITokenRepository", true)]
-        IToken AccessToken { get; set; }
-
         IConsumerRequest Request();
-
-        [Obsolete("Use the overloaded method without using an access token")]
-        IConsumerRequest Request(IToken accessToken);
 
         RequestToken GetRequestToken();
         RequestToken GetRequestToken(Uri callbackUri);
@@ -53,19 +46,7 @@ namespace DevDefined.OAuth.Consumer
         IMessageLogger MessageLogger { get; set; }
         IConsumerResponse LogMessage(IConsumerRequest request, IConsumerResponse response);
 
-        [Obsolete("The request token is stored in the TokenRepository, use the overloaded method that only uses a verificationCode parameter")]
-        AccessToken ExchangeRequestTokenForAccessToken(IToken requestToken);
-
-        [Obsolete("The request token is stored in the TokenRepository, use the overloaded method that only uses a verificationCode parameter")]
-        AccessToken ExchangeRequestTokenForAccessToken(IToken requestToken, string verificationCode);
-
         AccessToken ExchangeRequestTokenForAccessToken(string verificationCode);
-
-        [Obsolete("Use the GetUserAuthorizationUrl method instead")]
-        string GetUserAuthorizationUrlForToken(IToken token, string callbackUrl);
-
-        [Obsolete("Use the GetUserAuthorizationUrl method instead")]
-        string GetUserAuthorizationUrlForToken(IToken token);
 
         string GetUserAuthorizationUrl();
 
@@ -74,9 +55,6 @@ namespace DevDefined.OAuth.Consumer
         IOAuthSession WithCookies(IDictionary<string, string> dictionary);
         IOAuthSession WithHeaders(IDictionary<string, string> dictionary);
 
-        // http://oauth.googlecode.com/svn/spec/ext/session/1.0/drafts/1/spec.html
-        [Obsolete("Use the overloaded method that gets the current access token and session handle from the token repository")]
-        AccessToken RenewAccessToken(IToken accessToken, string sessionHandle);
         AccessToken RenewAccessToken();
 
         IConsumerResponse RunConsumerRequest(IConsumerRequest consumerRequest);

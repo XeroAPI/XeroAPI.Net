@@ -3,23 +3,26 @@ using System.Linq.Expressions;
 
 using XeroApi.Integration;
 using XeroApi.Model;
+using XeroApi.Model.Serialize;
 
 namespace XeroApi.Linq
 {
-    public class ApiQueryProvider : QueryProvider
+    public class ApiQueryProvider<TResponse> : QueryProvider
+        where TResponse : ResponseBase
     {
         private readonly IIntegrationProxy _proxy;
-
-
+        private readonly IModelSerializer _serializer;
+        
         /// <summary>
-        /// Initializes a new instance of the <see cref="ApiQueryProvider"/> class.
+        /// Initializes a new instance of the <see cref="ApiQueryProvider{TResponse}"/> class.
         /// </summary>
         /// <param name="proxy">The integration proxy to use.</param>
-        public ApiQueryProvider(IIntegrationProxy proxy)
+        /// <param name="serializer"></param>
+        public ApiQueryProvider(IIntegrationProxy proxy, IModelSerializer serializer)
         {
             _proxy = proxy;
+            _serializer = serializer;
         }
-
 
         public override string GetQueryText(Expression expression)
         {
@@ -31,16 +34,27 @@ namespace XeroApi.Linq
             LinqQueryDescription queryDescription = Translate(expression);
 
             // Call the API..
-            string xml = _proxy.FindElements(queryDescription);
+            string data = _proxy.FindElements(queryDescription);
 
-            Response response = ModelSerializer.DeserializeTo<Response>(xml);
+            if (string.IsNullOrEmpty(data))
+            {
+                return null;
+            }
 
+            var response = _serializer.DeserializeTo<TResponse>(data);
+
+            // The payroll API has some return types which are not collections
+            if (queryDescription.ElementListType == queryDescription.ElementType)
+            {
+                return response == null
+                    ? Activator.CreateInstance(queryDescription.ElementType)
+                    : response.GetSingleTypedProperty(queryDescription.ElementType);
+            }
 
             // Guard against an empty response..
             IModelList elementCollection = (response == null)
                 ? (IModelList)Activator.CreateInstance(queryDescription.ElementListType)        // TODO: too much going on here, needs tidying up
                 : response.GetTypedProperty(queryDescription.ElementListType);
-
 
             if (queryDescription.ClientSideExpression == null)
             {

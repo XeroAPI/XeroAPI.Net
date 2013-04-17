@@ -7,7 +7,7 @@ Imports System.Security.Cryptography.X509Certificates
 
 Public Class PrivateApplicationRunner
 
-    Const UserAgent As String = "Xero.API.ScreenCast v1.0 (Private App Testing)"
+    Const UserAgent As String = "Xero.API.Console.VB (Private App Testing)"
     Const ConsumerKey As String = "A34K6MSHPFUKVVMLLFLBB7VAJ5MBH6"
 
     Public Shared Function CreateRepository() As Repository

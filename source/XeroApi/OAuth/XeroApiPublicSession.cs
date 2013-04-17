@@ -1,5 +1,4 @@
-﻿using System;
-using DevDefined.OAuth.Consumer;
+﻿using DevDefined.OAuth.Consumer;
 using DevDefined.OAuth.Framework;
 using DevDefined.OAuth.Storage.Basic;
 
@@ -7,13 +6,6 @@ namespace XeroApi.OAuth
 {
     public class XeroApiPublicSession : OAuthSession   
     {
-        [Obsolete("Use the constructor with ITokenRepository")]
-        public XeroApiPublicSession(string userAgent, string consumerKey, string consumerSecret)
-            : base(CreateConsumerContext(userAgent, consumerKey, consumerSecret))
-        {
-        }
-
-
         public XeroApiPublicSession(string userAgent, string consumerKey, string consumerSecret, ITokenRepository tokenRepository)
             : base(CreateConsumerContext(userAgent, consumerKey, consumerSecret), tokenRepository)
         {

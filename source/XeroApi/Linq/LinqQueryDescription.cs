@@ -149,7 +149,7 @@ namespace XeroApi.Linq
         {
             get 
             {
-                NameValueCollection collectionToReturn = new NameValueCollection();
+                var collectionToReturn = new NameValueCollection();
                 
                 if (!string.IsNullOrEmpty(Where))
                     collectionToReturn.Add("WHERE", Where);
@@ -167,7 +167,7 @@ namespace XeroApi.Linq
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             if (!string.IsNullOrEmpty(ElementName))
                 sb.Append("Name:" + ElementName + " ");

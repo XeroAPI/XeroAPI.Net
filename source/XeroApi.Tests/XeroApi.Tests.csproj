@@ -45,10 +45,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApiQueryTests.cs" />
+    <Compile Include="JsonModelSerializationTests.cs" />
     <Compile Include="EventTimelineTests.cs" />
     <Compile Include="IntegrationProxyHelperTests.cs" />
     <Compile Include="MimeTypesTests.cs" />
-    <Compile Include="ModelSerializationTests.cs" />
+    <Compile Include="Stubs\JsonStubIntegrationProxy.cs" />
+    <Compile Include="Stubs\StubIntegrationProxyBase.cs" />
+    <Compile Include="XmlModelSerializationTests.cs" />
     <Compile Include="OAuth\Consumer\ConsumerRequestTests.cs" />
     <Compile Include="PauseTimeTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -56,7 +59,7 @@
     <Compile Include="SignatureTests.cs" />
     <Compile Include="TrickleRateLimiterTests.cs" />
     <Compile Include="Stubs\StubContact.cs" />
-    <Compile Include="Stubs\StubIntegrationProxy.cs" />
+    <Compile Include="Stubs\XmlStubIntegrationProxy.cs" />
     <Compile Include="ThrottlingIntegrationProxyTests.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace XeroApi.Linq
 {
@@ -37,12 +38,11 @@ namespace XeroApi.Linq
 
             Type[] ifaces = seqType.GetInterfaces();
 
-            if (ifaces != null && ifaces.Length > 0)
+            if (ifaces.Length > 0)
             {
-                foreach (Type iface in ifaces)
+                foreach (var ienum in ifaces.Select(FindIEnumerable).Where(ienum => ienum != null))
                 {
-                    Type ienum = FindIEnumerable(iface);
-                    if (ienum != null) return ienum;
+                    return ienum;
                 }
             }
 

@@ -128,7 +128,7 @@ namespace XeroApi.Linq
             //      c => c.Name.StartsWith("Jason")
             //      c => c.Name.Contains("ase")
 
-            if (m.Method.IsStatic)
+            if (m.Method.IsStatic && m.Method.DeclaringType != null)
             {
                 Append(m.Method.DeclaringType.Name);
             }
@@ -172,6 +172,11 @@ namespace XeroApi.Linq
                 return base.Visit(Expression.Equal(lambda.Body, Expression.Constant(true)));
             }
 
+            if (lambda.Body is MemberExpression && (lambda.Body.Type == typeof(Enum)))
+            {
+                System.Diagnostics.Debug.WriteLine("We have an place to do something!");
+            }
+
             return base.VisitLambda(lambda);
         }
 
@@ -185,15 +190,15 @@ namespace XeroApi.Linq
         /// </returns>
         private bool IsNotRenderedIntoExpression(Expression expression)
         {
-            BinaryExpression binaryExpression = expression as BinaryExpression;
+            var binaryExpression = expression as BinaryExpression;
 
             if (binaryExpression == null) 
                 return false;
 
-            MemberExpression mExp = binaryExpression.Left as MemberExpression;
+            var mExp = binaryExpression.Left as MemberExpression;
 
             // Check if the LHS is an ItemId, ItemNumber or UpdatedDate. If so, record away from the main where clause.
-            if (mExp != null && (mExp.Member.DeclaringType.Name == _query.ElementName))
+            if (mExp != null && mExp.Member.DeclaringType != null && mExp.Member.DeclaringType.Name == _query.ElementName)
             {
                 if (mExp.Member.Name == _query.ElementIdProperty.SafeName()
                 || mExp.Member.Name == _query.ElementNumberProperty.SafeName()
@@ -209,10 +214,10 @@ namespace XeroApi.Linq
 
         protected override Expression VisitBinary(BinaryExpression b)
         {
-            MemberExpression mExp = b.Left as MemberExpression;
+            var mExp = b.Left as MemberExpression;
 
             // Check if the LHS is an ItemId, ItemNumber or UpdatedDate. If so, record away from the main where clause.
-            if (mExp != null && (mExp.Member.DeclaringType.Name == _query.ElementName))
+            if (mExp != null && mExp.Member.DeclaringType != null && mExp.Member.DeclaringType.Name == _query.ElementName)
             {
                 if (mExp.Member.Name == _query.ElementIdProperty.SafeName())
                 {
@@ -242,10 +247,38 @@ namespace XeroApi.Linq
                 }
             }
 
+            if (b.Left.NodeType == ExpressionType.Convert)
+            {
+                var expression = b.Left as UnaryExpression;
 
+                if (expression != null)
+                {
+                    var member = expression.Operand as MemberExpression;
+
+                    if (member != null)
+                    {
+                        if (member.Type.IsEnum)
+                        {
+                            // The enum needs to be treated as a string
+                            var enumInt = EvaluateExpression<int>(b.Right);
+                            object enumValue = Enum.ToObject(member.Type, enumInt);
+                            string enumString = Enum.GetName(member.Type, enumInt);
+
+                            Append("(");
+                            VisitMemberAccess(member);
+                            AppendOperator(b);
+                            VisitConstant(Expression.Constant(enumString));
+                            Append(")");
+
+                            return Expression.Equal(member, Expression.Constant(enumValue));
+                        }
+                    }
+                }
+            }
+            
             // http://answers.xero.com/developer/question/39411/
             // Check for rogue VB methods that have been slipped into the linq expression..
-            MethodCallExpression leftMethod = b.Left as MethodCallExpression;
+            var leftMethod = b.Left as MethodCallExpression;
 
             if (leftMethod != null && leftMethod.Method.Name == "CompareString")
             {
@@ -257,8 +290,7 @@ namespace XeroApi.Linq
                 
                 return Visit(Expression.Equal(memberExpression, valueExpression));
             }
-
-
+            
             // Check if either the left or right hand side of the expression is a ItemId, ItemNumber or ElementUpdatedDate
             // binary expression. If so, visit the left and right hand sides separately.
             if (IsNotRenderedIntoExpression(b.Left))
@@ -274,11 +306,20 @@ namespace XeroApi.Linq
                 return b.Left;
             } 
 
-
             // Parse as a normal binary expression (operand1 operator operand2)
             Append("(");
             Visit(b.Left);
 
+            AppendOperator(b);
+
+            Visit(b.Right);
+            Append(")");
+
+            return b;
+        }
+
+        private void AppendOperator(BinaryExpression b)
+        {
             switch (b.NodeType)
             {
                 case ExpressionType.And:
@@ -310,17 +351,11 @@ namespace XeroApi.Linq
                 default:
                     throw new NotSupportedException(string.Format("The binary operator '{0}' is not supported", b.NodeType));
             }
-
-            Visit(b.Right);
-            Append(")");
-
-            return b;
         }
 
-         
         protected override Expression VisitConstant(ConstantExpression c)
         {
-            IQueryable q = c.Value as IQueryable;
+            var q = c.Value as IQueryable;
 
             if (q != null)
             {
@@ -330,12 +365,16 @@ namespace XeroApi.Linq
             {
                 Append("NULL");
             }
+            else if (c.Value.GetType().IsEnum)
+            {
+                Append(c.Value.GetType().Name + "." + c.Value);
+            }
             else
             {
                 switch (Type.GetTypeCode(c.Value.GetType()))
                 {
                     case TypeCode.Boolean:
-                        Append(((bool)c.Value) ? "true" : "false");
+                        Append(((bool) c.Value) ? "true" : "false");
                         break;
 
                     case TypeCode.String:
@@ -351,8 +390,10 @@ namespace XeroApi.Linq
                         throw new NotSupportedException(string.Format("The constant for '{0}' is not supported", c.Value));
 
                     default:
+                    {
                         Append(c.Value.ToString());
                         break;
+                    }
                 }
             }
 
@@ -475,7 +516,7 @@ namespace XeroApi.Linq
             switch (exp.Type.Name)
             {
                 case "DateTime":
-                    DateTime date = EvaluateExpression<DateTime>(exp);
+                    var date = EvaluateExpression<DateTime>(exp);
 
                     if (date.Date == date)
                         return (string.Format("DateTime({0},{1},{2})", date.Year, date.Month, date.Day));
@@ -483,7 +524,7 @@ namespace XeroApi.Linq
                     return (string.Format("DateTime({0},{1},{2},{3},{4},{5})", date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second));
 
                 case "Guid":
-                    Guid guid = EvaluateExpression<Guid>(exp);
+                    var guid = EvaluateExpression<Guid>(exp);
 
                     if (guid == Guid.Empty)
                         return ("Guid.Empty");
@@ -491,7 +532,7 @@ namespace XeroApi.Linq
                     return (string.Format("Guid(\"{0}\")", guid));
 
                 case "String":
-                    string stringValue = EvaluateExpression<string>(exp);
+                    var stringValue = EvaluateExpression<string>(exp);
 
                     if (stringValue == null)
                         return ("null");
@@ -499,12 +540,12 @@ namespace XeroApi.Linq
                     return string.Format("\"{0}\"", stringValue);
 
                 case "Int32":
-                    int shortValue = EvaluateExpression<int>(exp);
+                    var shortValue = EvaluateExpression<int>(exp);
                     return string.Format("\"{0}\"", shortValue);
 
                 case "Int64":
-                    long longValue = EvaluateExpression<long>(exp);
-                    return string.Format("\"{0}\"", longValue);
+                    var longValue = EvaluateExpression<long>(exp);
+                    return string.Format("\"{0}\"", longValue);                               
             }
 
             throw new NotSupportedException(string.Format("The Expression return type '{0}' is not supported", exp.Type.Name));

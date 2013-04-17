@@ -1,5 +1,7 @@
 ﻿Imports NUnit.Framework
 Imports XeroApi.Model
+Imports XeroApi.Integration
+Imports XeroApi.Model.Serialize
 
 <TestFixture()>
 Public Class ApiQueryTests
@@ -12,7 +14,6 @@ Public Class ApiQueryTests
 
         Dim organisations As List(Of Organisation) = repository.Organisations.ToList()
 
-
         Assert.AreEqual("Organisation", integrationProxy.LastQueryDescription.ElementName)
 
     End Sub
@@ -23,6 +24,7 @@ Public Class ApiQueryTests
     Public Sub it_can_filter_using_inline_string_equals_comparison_Q39411()
 
         Dim integrationProxy As New StubIntegrationProxy()
+
         Dim repository As New Repository(integrationProxy)
 
         Dim organisations As List(Of Organisation) = repository.Organisations.Where(Function(o) o.Name = "Demo Company").ToList()
@@ -108,5 +110,29 @@ Public Class ApiQueryTests
         Assert.AreEqual("(Type == ""ACCPAY"") AND (Date < DateTime(2012,1,15))", linqQueryDescription.Where)
 
     End Sub
+
+    '<Test()>
+    'Public Sub it_can_filter_using_enum_values_equal_to()
+
+    '    Dim integrationProxy As New JsonStubIntegrationProxy()
+    '    Dim repository As New PayrollRepository(integrationProxy, New JsonModelSerializer())
+
+    '    repository.PayrollCalendars.Where(Function(i) i.CalendarType = Payroll.Enums.CalendarType.MONTHLY).ToList()
+
+    '    Dim linqQueryDescription As Linq.LinqQueryDescription = integrationProxy.LastQueryDescription
+
+    '    Assert.AreEqual("(CalendarType == ""MONTHLY"")", linqQueryDescription.Where)
+    'End Sub
+
+    '<Test()>
+    'Public Sub it_can_filter_using_enum_values_not_equal_to()
+
+    '    Dim integrationProxy As New JsonStubIntegrationProxy()
+    '    Dim repository As New PayrollRepository(integrationProxy, New JsonModelSerializer())
+
+    '    repository.PayrollCalendars.Where(Function(i) i.CalendarType <> Payroll.Enums.CalendarType.MONTHLY).ToList()
+
+    '    Assert.AreEqual("(CalendarType <> ""MONTHLY"")", integrationProxy.LastQueryDescription)
+    'End Sub
 
 End Class

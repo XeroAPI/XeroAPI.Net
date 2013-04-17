@@ -2,22 +2,25 @@
 using System.Linq;
 using XeroApi.Integration;
 using XeroApi.Model;
+using XeroApi.Model.Serialize;
 
 namespace XeroApi
 {
     public class AttachmentRepository
     {
         private readonly IIntegrationProxy _integrationProxy;
+        private readonly IModelSerializer _serializer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AttachmentRepository"/> class.
         /// </summary>
         /// <param name="integrationProxy">The integration proxy.</param>
-        internal AttachmentRepository(IIntegrationProxy integrationProxy)
+        /// <param name="serializer"></param>
+        internal AttachmentRepository(IIntegrationProxy integrationProxy, IModelSerializer serializer)
         {
-            _integrationProxy = integrationProxy;    
+            _integrationProxy = integrationProxy;
+            _serializer = serializer;
         }
-
 
         // POST
 
@@ -30,12 +33,12 @@ namespace XeroApi
         public Attachment UpdateOrCreate<TModel>(TModel model, Attachment attachment)
             where TModel : ModelBase, IAttachmentParent
         {
-            string xml = _integrationProxy.UpdateOrCreateAttachment(
+            string data = _integrationProxy.UpdateOrCreateAttachment(
                 typeof(TModel).Name,
                 ModelTypeHelper.GetModelItemId(model),
                 attachment);
 
-            Response response = ModelSerializer.DeserializeTo<Response>(xml);
+            var response = _serializer.DeserializeTo<Response>(data);
 
             return response.Attachments.First();
         }
@@ -52,12 +55,12 @@ namespace XeroApi
         public Attachment Create<TModel>(TModel model, Attachment attachment)
             where TModel : ModelBase, IAttachmentParent
         {
-            string xml = _integrationProxy.CreateAttachment(
+            string data = _integrationProxy.CreateAttachment(
                 typeof(TModel).Name,
                 ModelTypeHelper.GetModelItemId(model),
                 attachment);
 
-            return ModelSerializer.DeserializeTo<Response>(xml).Attachments.First();
+            return _serializer.DeserializeTo<Response>(data).Attachments.First();
         }
 
 
@@ -71,7 +74,7 @@ namespace XeroApi
 
             var allAttachmentsXml = _integrationProxy.FindAttachments(typeof(TModel).Name, modelItemId);
 
-            var allAttachments = ModelSerializer.DeserializeTo<Response>(allAttachmentsXml).Attachments;
+            var allAttachments = _serializer.DeserializeTo<Response>(allAttachmentsXml).Attachments;
 
             if (allAttachments == null || allAttachments.Count == 0)
             {

@@ -6,41 +6,50 @@ using System.Net;
 using DevDefined.OAuth.Consumer;
 using XeroApi.Exceptions;
 using XeroApi.Model;
+using XeroApi.Model.Serialize;
 
 namespace XeroApi.Integration
 {
-    public class IntegrationProxy : IIntegrationProxy
+    public abstract class IntegrationProxy : IIntegrationProxy
     {
         private readonly IOAuthSession _oauthSession;
+        private readonly string _acceptType;
+        private readonly string _endpointSuffix;
 
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="IntegrationProxy"/> class.
-        /// </summary>
-        /// <param name="oauthSession">The oauth session.</param>
-        public IntegrationProxy (IOAuthSession oauthSession)
+        protected IntegrationProxy(IOAuthSession oauthSession, string endpointSuffix, string acceptType)
         {
             _oauthSession = oauthSession;
+            _endpointSuffix = endpointSuffix;
+            _acceptType = acceptType;
         }
-        
+
+        protected Uri GetUrl(Uri baseUri)
+        {
+            return new Uri(_oauthSession.ConsumerContext.BaseEndpointUri, _endpointSuffix);
+        }
 
         #region Structured Data Read/Write methods
 
         public string FindElements(IApiQueryDescription apiQueryDescription)
         {
             IConsumerResponse consumerResponse = CallApi(
-                "GET", 
-                string.Empty, 
-                _oauthSession.ConsumerContext.BaseEndpointUri,
-                ModelTypeHelper.Pluralize(apiQueryDescription.ElementName),
+                "GET",
+                string.Empty,
+                GetUrl(_oauthSession.ConsumerContext.BaseEndpointUri),
+                GetEndpointName(apiQueryDescription.ElementName),
                 apiQueryDescription.ElementId,
                 apiQueryDescription.UpdatedSinceDate,
                 apiQueryDescription.QueryStringParams,
-                null);
+                _acceptType);
 
             if (consumerResponse.ResponseCode == HttpStatusCode.NotFound)
             {
                 return string.Empty;
+            }
+
+            if (consumerResponse.ResponseCode == HttpStatusCode.Unauthorized)
+            {
+                throw new ApiResponseException(consumerResponse);
             }
 
             if (consumerResponse.IsGoodResponse || consumerResponse.IsClientError)
@@ -48,20 +57,17 @@ namespace XeroApi.Integration
                 return consumerResponse.Content;
             }
 
-            // TODO: trap http 404 responses
-
             throw new ApiResponseException(consumerResponse);
         }
-        
 
         public byte[] FindOne(string endpointName, string itemId, string acceptMimeType)
         {
             IConsumerResponse consumerResponse = CallApi(
-                "GET", 
-                string.Empty, 
-                _oauthSession.ConsumerContext.BaseEndpointUri,
-                ModelTypeHelper.Pluralize(endpointName), 
-                itemId, 
+                "GET",
+                string.Empty,
+                GetUrl(_oauthSession.ConsumerContext.BaseEndpointUri),
+                GetEndpointName(endpointName),
+                itemId,
                 null,
                 null,
                 acceptMimeType);
@@ -73,19 +79,19 @@ namespace XeroApi.Integration
 
             throw new ApiResponseException(consumerResponse);
         }
-        
+
 
         public string UpdateOrCreateElements(string endpointName, string body)
         {
             IConsumerResponse consumerResponse = CallApi(
                 "POST",
                 body,
-                _oauthSession.ConsumerContext.BaseEndpointUri,
-                ModelTypeHelper.Pluralize(endpointName),
+                GetUrl(_oauthSession.ConsumerContext.BaseEndpointUri),
+                GetEndpointName(endpointName),
                 null,
                 null,
-                new NameValueCollection { { "summarizeErrors", "false" } }, 
-                null);
+                new NameValueCollection { { "summarizeErrors", "false" } },
+                _acceptType);
 
             if (consumerResponse.IsGoodResponse || consumerResponse.IsClientError)
             {
@@ -95,18 +101,17 @@ namespace XeroApi.Integration
             throw new ApiResponseException(consumerResponse);
         }
 
-
         public string CreateElements(string endpointName, string body)
         {
             IConsumerResponse consumerResponse = CallApi(
                 "PUT",
                 body,
-                _oauthSession.ConsumerContext.BaseEndpointUri,
-                ModelTypeHelper.Pluralize(endpointName),
+                GetUrl(_oauthSession.ConsumerContext.BaseEndpointUri),
+                GetEndpointName(endpointName),
                 null,
                 null,
-                new NameValueCollection { { "summarizeErrors", "false" } }, 
-                null);
+                new NameValueCollection { { "summarizeErrors", "false" } },
+                _acceptType);
 
             if (consumerResponse.IsGoodResponse || consumerResponse.IsClientError)
             {
@@ -123,15 +128,15 @@ namespace XeroApi.Integration
 
         public string UpdateOrCreateAttachment(string endpointName, string itemId, Attachment attachment)
         {
-            Uri uri = ConstructChildResourceUri(_oauthSession.ConsumerContext.BaseEndpointUri, endpointName, itemId, "Attachments", attachment.FileName);
+            Uri uri = ConstructChildResourceUri(GetUrl(_oauthSession.ConsumerContext.BaseEndpointUri), endpointName, itemId, "Attachments", attachment.FileName);
 
             IConsumerRequest oauthRequest = _oauthSession.Request()
                 .ForMethod("POST")
-                .WithAcceptHeader(MimeTypes.TextXml)
+                .WithAcceptHeader(_acceptType)
                 .ForUri(uri)
                 .WithRequestStream(attachment.ContentStream)
                 .SignWithToken();
-            
+
             var consumerResponse = oauthRequest.ToConsumerResponse();
 
             if (consumerResponse.IsGoodResponse || consumerResponse.IsClientError)
@@ -144,10 +149,11 @@ namespace XeroApi.Integration
 
         public string CreateAttachment(string endpointName, string itemId, Attachment attachment)
         {
-            Uri uri = ConstructChildResourceUri(_oauthSession.ConsumerContext.BaseEndpointUri, endpointName, itemId, "Attachments", attachment.FileName);
+            Uri uri = ConstructChildResourceUri(GetUrl(_oauthSession.ConsumerContext.BaseEndpointUri), endpointName, itemId, "Attachments", attachment.FileName);
 
             IConsumerRequest oauthRequest = _oauthSession.Request()
                 .ForMethod("PUT")
+                .WithAcceptHeader(_acceptType)
                 .ForUri(uri)
                 .WithRequestStream(attachment.ContentStream)
                 .SignWithToken();
@@ -164,11 +170,11 @@ namespace XeroApi.Integration
 
         public string FindAttachments(string endpointName, string itemId)
         {
-            Uri uri = ConstructChildResourceUri(_oauthSession.ConsumerContext.BaseEndpointUri, endpointName, itemId, "Attachments", null);
+            Uri uri = ConstructChildResourceUri(GetUrl(_oauthSession.ConsumerContext.BaseEndpointUri), endpointName, itemId, "Attachments", null);
 
             IConsumerRequest oauthRequest = _oauthSession.Request()
                 .ForMethod("GET")
-                .WithAcceptHeader(MimeTypes.TextXml)
+                .WithAcceptHeader(MimeTypes.Unknown)
                 .ForUri(uri)
                 .SignWithToken();
 
@@ -181,9 +187,10 @@ namespace XeroApi.Integration
 
             throw new ApiResponseException(consumerResponse);
         }
+
         public Stream FindOneAttachment(string endpointName, string itemId, string attachmentIdOrFileName)
         {
-            Uri uri = ConstructChildResourceUri(_oauthSession.ConsumerContext.BaseEndpointUri, endpointName, itemId, "Attachments", attachmentIdOrFileName);
+            Uri uri = ConstructChildResourceUri(GetUrl(_oauthSession.ConsumerContext.BaseEndpointUri), endpointName, itemId, "Attachments", attachmentIdOrFileName);
 
             IConsumerRequest oauthRequest = _oauthSession.Request()
                 .ForMethod("GET")
@@ -221,15 +228,23 @@ namespace XeroApi.Integration
 
             if ((method == "PUT" || method == "POST"))
             {
-                request = request.WithBody(body);
+                request = request.WithBody(body);                
+            }
+
+            if (method == "GET")
+            {
+                request = request.WithAcceptEncodingHeader("gzip");
             }
 
             IConsumerResponse consumerResponse = request.ToConsumerResponse();
-            
+
             // Check for <ApiException> response message
-            if (consumerResponse.Content.StartsWith("<ApiException"))
+            if (consumerResponse.Content.StartsWith("<ApiException") || consumerResponse.Content.Contains("ApiException"))
             {
-                ApiExceptionDetails details = ModelSerializer.DeserializeTo<ApiExceptionDetails>(consumerResponse.Content);
+                ApiExceptionDetails details = consumerResponse.Content.StartsWith("<ApiException") ?
+                                                  new XmlModelSerializer().DeserializeTo<ApiExceptionDetails>(consumerResponse.Content) :
+                                                  new JsonModelSerializer().DeserializeTo<ApiExceptionDetails>(consumerResponse.Content);
+
                 throw new ApiException(details);
             }
 
@@ -247,7 +262,7 @@ namespace XeroApi.Integration
         /// <returns></returns>
         public static Uri ConstructUri(Uri baseUrl, string endpointName, string itemId, NameValueCollection additionalQueryParams)
         {
-            UriBuilder uriBuilder = new UriBuilder(baseUrl);
+            var uriBuilder = new UriBuilder(baseUrl);
 
             if (!baseUrl.AbsoluteUri.EndsWith("/"))
             {
@@ -261,12 +276,12 @@ namespace XeroApi.Integration
                 uriBuilder.Path += ("/");
                 uriBuilder.Path += (itemId);
             }
-            
+
             string queryString = DevDefined.OAuth.Framework.UriUtility.FormatQueryString(additionalQueryParams);
 
             if (!string.IsNullOrEmpty(queryString))
                 uriBuilder.Query = queryString;
-            
+
             return uriBuilder.Uri;
         }
 
@@ -286,7 +301,7 @@ namespace XeroApi.Integration
             if (string.IsNullOrEmpty(itemId)) throw new ArgumentNullException("itemId");
             if (string.IsNullOrEmpty(childResourceName)) throw new ArgumentNullException("childResourceName");
 
-            UriBuilder uriBuilder = new UriBuilder(baseUrl);
+            var uriBuilder = new UriBuilder(baseUrl);
 
             if (!baseUrl.AbsoluteUri.EndsWith("/"))
             {
@@ -307,6 +322,10 @@ namespace XeroApi.Integration
 
             return uriBuilder.Uri;
         }
-        
+
+        protected virtual string GetEndpointName(string elementName)
+        {
+            return ModelTypeHelper.Pluralize(elementName);
+        }
     }
 }

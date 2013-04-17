@@ -10,10 +10,7 @@ namespace DevDefined.OAuth.Consumer
     {
         IOAuthContext Context { get; }
 
-        [Obsolete("Prefer ToConsumerResponse instead as this has more error handling built in")]
-        HttpWebResponse ToWebResponse();
         HttpWebRequest ToWebRequest();
-
         IConsumerResponse ToConsumerResponse();
         
         RequestDescription GetRequestDescription();
@@ -23,6 +20,7 @@ namespace DevDefined.OAuth.Consumer
 
         Uri ProxyServerUri { get; set; }
         string AcceptsType { get; set; }
+        string AcceptsEncoding { get; set; }
         string RequestBody { get; set; }
         Stream RequestStream { get; set; }
     }

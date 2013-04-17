@@ -4,7 +4,6 @@ using System.Net;
 
 namespace DevDefined.OAuth.Consumer
 {
-
     public interface IConsumerRequestRunner
     {
         IConsumerResponse Run(IConsumerRequest consumerRequest);

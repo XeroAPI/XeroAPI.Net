@@ -20,7 +20,7 @@ namespace XeroApi.Linq
         public static bool HasAttribute(this PropertyInfo input, Type attributeType)
         {
             var attributes = input.GetCustomAttributes(attributeType, false);
-            return attributes.Count() > 0;
+            return attributes.Any();
         }
 
     }

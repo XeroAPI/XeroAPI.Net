@@ -4,6 +4,7 @@ using XeroApi.Integration;
 using XeroApi.Linq;
 using XeroApi.Model;
 using XeroApi.Model.Reporting;
+using XeroApi.Model.Serialize;
 
 namespace XeroApi
 {
@@ -11,6 +12,7 @@ namespace XeroApi
     {
         private readonly IIntegrationProxy _integrationProxy;
         private readonly QueryProvider _queryProvider;
+        private readonly IModelSerializer _serializer;
 
 
         /// <summary>
@@ -18,10 +20,12 @@ namespace XeroApi
         /// </summary>
         /// <param name="integrationProxy">The integration proxy.</param>
         /// <param name="queryProvider">The query provider.</param>
-        internal ReportRepository(IIntegrationProxy integrationProxy, QueryProvider queryProvider)
+        /// <param name="serializer"></param>
+        internal ReportRepository(IIntegrationProxy integrationProxy, QueryProvider queryProvider, IModelSerializer serializer)
         {
             _integrationProxy = integrationProxy;
             _queryProvider = queryProvider;
+            _serializer = serializer;
         }
 
 
@@ -43,7 +47,7 @@ namespace XeroApi
 
             string xml = _integrationProxy.FindElements(queryDescription);
 
-            Response response = ModelSerializer.DeserializeTo<Response>(xml);
+            Response response = _serializer.DeserializeTo<Response>(xml);
 
             return response.Reports[0];
         }
@@ -64,7 +68,7 @@ namespace XeroApi
 
             string xml = _integrationProxy.FindElements(queryDescription);
 
-            Response response = ModelSerializer.DeserializeTo<Response>(xml);
+            Response response = _serializer.DeserializeTo<Response>(xml);
 
             return response.Reports[0];
         }

@@ -45,14 +45,6 @@ namespace DevDefined.OAuth.Consumer
     readonly NameValueCollection _queryParameters = new NameValueCollection();
     readonly ITokenRepository _tokenRepository;
     
-
-    [Obsolete("Use the constructor with ITokenReposiory parameter")]
-    public OAuthSession(IOAuthConsumerContext consumerContext)
-        : this(consumerContext, new InMemoryTokenRepository())
-    {
-    }
-
-
     public OAuthSession(IOAuthConsumerContext consumerContext, ITokenRepository tokenRepository)
     {
         ConsumerContext = consumerContext;
@@ -70,9 +62,6 @@ namespace DevDefined.OAuth.Consumer
     public IOAuthConsumerContext ConsumerContext { get; set; }
 
     public ITokenRepository TokenRepository { get { return _tokenRepository; } }
-
-    [Obsolete("All tokens should be stored in a ITokenRepository these days", true)]
-    public IToken AccessToken { get; set; }
 
     public IMessageLogger MessageLogger { get; set; }
 
@@ -110,22 +99,6 @@ namespace DevDefined.OAuth.Consumer
         {
             return (TokenRepository != null) && (TokenRepository.GetAccessToken() != null) && (!TokenRepository.GetAccessToken().HasExpired() ?? false);
         }
-    }
-
-    [Obsolete("Use the overloaded method without using an access token")]
-    public virtual IConsumerRequest Request(IToken accessToken)
-    {
-      var context = new OAuthContext
-        {
-          UseAuthorizationHeader = ConsumerContext.UseHeaderForOAuthParameters
-        };
-
-      context.Cookies.Add(_cookies);
-      context.FormEncodedParameters.Add(_formParameters);
-      context.Headers.Add(_headers);
-      context.QueryParameters.Add(_queryParameters);
-
-      return ConsumerRequestFactory.CreateConsumerRequest(this, context, ConsumerContext);
     }
 
     public virtual IConsumerRequest Request()
@@ -181,34 +154,6 @@ namespace DevDefined.OAuth.Consumer
         TokenRepository.SaveRequestToken(requestToken);
 
         return requestToken;
-    }
-
-    [Obsolete("The request token is stored in the TokenRepository, use the overloaded method that only uses a verificationCode parameter")]
-    public AccessToken ExchangeRequestTokenForAccessToken(IToken requestToken)
-    {
-      return ExchangeRequestTokenForAccessToken(requestToken, null);
-    }
-
-    [Obsolete("The request token is stored in the TokenRepository, use the overloaded method that only uses a verificationCode parameter")]
-    public AccessToken ExchangeRequestTokenForAccessToken(IToken requestToken, string verificationCode)
-    {
-      AccessToken token = BuildExchangeRequestTokenForAccessTokenContext(requestToken, verificationCode)
-        .Select(collection =>
-                new AccessToken
-                  {
-                    ConsumerKey = requestToken.ConsumerKey,
-                    Token = ParseResponseParameter(collection,Parameters.OAuth_Token),
-                    TokenSecret = ParseResponseParameter(collection,Parameters.OAuth_Token_Secret),
-                    SessionHandle = ParseResponseParameter(collection, Parameters.OAuth_Session_Handle),
-                    SessionExpiresIn = ParseResponseParameter(collection, Parameters.OAuth_Authorization_Expires_In),
-                    ExpiresIn = ParseResponseParameter(collection, Parameters.OAuth_Expires_In),
-                    CreatedDateUtc = DateTime.UtcNow
-                  });
-
-      AssertValidAccessToken(token);
-      TokenRepository.SaveAccessToken(token);
-
-      return token;
     }
 
     public AccessToken ExchangeRequestTokenForAccessToken(string verificationCode)
@@ -298,18 +243,6 @@ namespace DevDefined.OAuth.Consumer
           .SignWithToken(requestToken);
     }
 
-    [Obsolete("Use the GetUserAuthorizationUrl method instead")]
-    public string GetUserAuthorizationUrlForToken(IToken token)
-    {
-        return GetUserAuthorizationUrl(token);
-    }
-
-    [Obsolete("Use the GetUserAuthorizationUrl method instead")]
-    public string GetUserAuthorizationUrlForToken(IToken token, string callbackUrl)
-    {
-        return GetUserAuthorizationUrl(token);
-    }
-      
     public string GetUserAuthorizationUrl()
     {
         var requestToken = TokenRepository.GetRequestToken();

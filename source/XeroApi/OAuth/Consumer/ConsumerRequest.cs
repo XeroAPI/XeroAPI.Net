@@ -25,7 +25,6 @@
 #endregion
 
 using System;
-using System.Collections.Specialized;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
@@ -73,6 +72,20 @@ namespace DevDefined.OAuth.Consumer
             if (!string.IsNullOrEmpty(AcceptsType))
             {
                 request.Accept = AcceptsType;
+            }
+
+            if (!string.IsNullOrEmpty(AcceptsEncoding))
+            {
+                request.Headers["Accepts-Encoding"] = AcceptsEncoding;
+
+                if (AcceptsEncoding.ToLower().Contains("gzip"))
+                {
+                    request.AutomaticDecompression |= DecompressionMethods.GZip;
+                }
+                if (AcceptsEncoding.ToLower().Contains("deflate"))
+                {
+                    request.AutomaticDecompression |= DecompressionMethods.Deflate;
+                }                
             }
 
             DateTime? ifModifiedSinceDate = ParseIfModifiedSince(Context);
@@ -169,27 +182,6 @@ namespace DevDefined.OAuth.Consumer
             return description;
         }
 
-        [Obsolete("Prefer ToConsumerResponse instead as this has more error handling built in")]
-        public HttpWebResponse ToWebResponse()
-        {
-            try
-            {
-                HttpWebRequest request = ToWebRequest();
-                return (HttpWebResponse) request.GetResponse();
-            }
-            catch (WebException webEx)
-            {
-                OAuthException authException;
-
-                if (WebExceptionHelper.TryWrapException(Context, webEx, out authException))
-                {
-                    throw authException;
-                }
-
-                throw;
-            }
-        }
-
         public IConsumerRequest SignWithoutToken()
         {
             EnsureRequestHasNotBeenSignedYet();
@@ -215,6 +207,7 @@ namespace DevDefined.OAuth.Consumer
         public Uri ProxyServerUri { get; set; }
 
         public string AcceptsType { get; set; }
+        public string AcceptsEncoding { get; set; }
 
         public string RequestBody { get; set; }
 
