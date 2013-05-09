@@ -20,6 +20,8 @@ namespace XeroApi.Model
         public bool? SentToContact { get; set; }
 
         public decimal? AppliedAmount { get; set; }
+        
+        public decimal RemainingCredit { get; set; }
 
         public decimal? CurrencyRate { get; set; }
 
