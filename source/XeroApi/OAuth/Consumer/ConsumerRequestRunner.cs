@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Net;
+using System.Security.Cryptography.X509Certificates;
 
 namespace DevDefined.OAuth.Consumer
 {
@@ -12,7 +13,7 @@ namespace DevDefined.OAuth.Consumer
 
     public class DefaultConsumerRequestRunner : IConsumerRequestRunner
     {
-        
+
         public IConsumerResponse Run(IConsumerRequest consumerRequest)
         {
             HttpWebRequest webRequest = consumerRequest.ToWebRequest();
@@ -32,6 +33,41 @@ namespace DevDefined.OAuth.Consumer
 
                 if (httpWebResponse == null)
                 {
+                    //Generate a more helpful error message, hopefully this will save someone else hours in "the abyss"
+                    if (webEx.Message.ToLower().Contains("could not create ssl/tls secure channel"))
+                    {
+                        //Find out what certificates were in the web request
+                        var clientCerts = webRequest.ClientCertificates;
+                        var certString = "";
+                        foreach (var clientCert in clientCerts)
+                        {
+                            var thumbprint = "unknown";
+                            var name = "unknown";
+
+                            var x509Certificate2 = clientCert as X509Certificate2;
+                            if (x509Certificate2 != null)
+                            {
+                                thumbprint = x509Certificate2.Thumbprint;
+                                name = x509Certificate2.GetNameInfo(X509NameType.SimpleName, false);
+                            }
+
+                            certString += String.Format("[name: \"{0}\", serial: \"{1}\", thumbprint: \"{2}\"] ",
+                                                        name,
+                                                        clientCert.GetSerialNumberString(),
+                                                        thumbprint);
+                        }
+
+                        //Try get the username that is running the current process (so we know who to give permissions to)
+                        var processUser = System.Security.Principal.WindowsIdentity.GetCurrent();
+                        var userId = "your current process";
+                        if (processUser != null)
+                        {
+                            userId = String.Format("\"{0}\"", processUser.Name);
+                        }
+
+                        throw new WebException(String.Format("{0} Check that {1} has permission to read the following certificates: {2}", webEx.Message, userId, certString));
+                    }
+
                     throw new ApplicationException("An HttpWebResponse could not be obtained from the WebException. Status was " + webEx.Status, webEx);
                 }
 
@@ -50,5 +86,5 @@ namespace DevDefined.OAuth.Consumer
         }
     }
 
-    
+
 }
