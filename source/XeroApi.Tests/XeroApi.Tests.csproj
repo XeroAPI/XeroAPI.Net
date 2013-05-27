@@ -50,6 +50,7 @@
     <Compile Include="MimeTypesTests.cs" />
     <Compile Include="ModelSerializationTests.cs" />
     <Compile Include="OAuth\Consumer\ConsumerRequestTests.cs" />
+    <Compile Include="OAuth\Consumer\ConsumerRequestRunnerTests.cs" />
     <Compile Include="PauseTimeTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RepositoryTests.cs" />
