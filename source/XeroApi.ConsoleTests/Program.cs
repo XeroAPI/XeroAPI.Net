@@ -288,9 +288,9 @@ namespace XeroApi.ConsoleApp
             {
                 Console.WriteLine("The uploaded attachment filesize {0} does not match the original filesize {1}", attachment.ContentLength, attachmentFileInfo.Length);
             }
-            else if (attachment.Filename != attachmentFileInfo.Name)
+            else if (attachment.FileName != attachmentFileInfo.Name)
             {
-                Console.WriteLine("The uploaded attachment filename '{0}' does not match the original filename '{1}'", attachment.Filename, attachmentFileInfo.Name);
+                Console.WriteLine("The uploaded attachment filename '{0}' does not match the original filename '{1}'", attachment.FileName, attachmentFileInfo.Name);
             }
             else
             {

@@ -35,6 +35,8 @@ namespace XeroApi.Model
         public int FinancialYearEndMonth;
         
         public string Timezone;
+        
+        public string ShortCode;
 
         public override string ToString()
         {
