@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using DevDefined.OAuth.Utility;
 using XeroApi.Model;
+using XeroApi.Model.Constants;
 using XeroApi.Model.Reporting;
 
 namespace XeroApi.ConsoleApp
@@ -61,6 +62,7 @@ namespace XeroApi.ConsoleApp
             TestFindingTrackingCategories(repository);
             TestFindingItemsUsingLinqSyntax(repository, organisation);
             TestCreatingInvoiceWithValidationErrors(repository);
+            TestCreatingInvoiceWithValuesFromStringConstants(repository);
             TestAttachmentFromByteArray(repository);
             TestAttachmentsAgainstPurchaseInvoice(repository);
             
@@ -359,7 +361,7 @@ namespace XeroApi.ConsoleApp
         private static void TestCreatingInvoiceWithValidationErrors(Repository repository)
         {
             // Try and create an invoice - but using incorrect data. This should hopefully be rejected by the Xero API
-            Invoice invoiceToCreate = new Invoice
+            var invoiceToCreate = new Invoice
                 {
                     Contact = new Contact
                         {
@@ -389,6 +391,43 @@ namespace XeroApi.ConsoleApp
                 {
                     Console.WriteLine("Validation Error: " + message.Message);
                 }
+            }
+        }
+
+        private static void TestCreatingInvoiceWithValuesFromStringConstants(Repository repository)
+        {
+            var contact = repository.Contacts.FirstOrDefault() ?? new Contact
+                {
+                    Name = "Test Contact",
+                };
+
+            // Try and create an invoice with correct data. But using values that would be passed in as strings from helper class
+            var invoiceToCreate = new Invoice
+            {
+                Type = InvoiceTypes.AccountsReceivable,
+                Status = InvoiceStatusCodes.Draft,
+                Contact = contact,
+                Date = DateTime.Today,
+                DueDate = DateTime.Today.AddDays(30),
+                LineAmountTypes = LineAmountType.NoTax,
+                LineItems = new LineItems
+                        {
+                            new LineItem
+                                {
+                                    Description = "New Item",
+                                    Quantity = 1,
+                                    UnitAmount = 300,
+                                    TaxType = LineItemTaxTypes.NewZealand.ZeroRated
+                                }
+                        }
+            };
+
+            Console.WriteLine("Creating an invoice that should cause a validation error...");
+            var createdInvoice = repository.Create(invoiceToCreate);
+
+            if (createdInvoice.ValidationStatus == ValidationStatus.OK)
+            {
+                Console.WriteLine("Invoice created successfully");
             }
         }
 
