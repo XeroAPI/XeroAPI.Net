@@ -53,4 +53,15 @@ namespace XeroApi.Model
     public class CreditNotes : ModelList<CreditNote>
     {
     }
+
+    public class Allocation : EndpointModelBase
+    {
+        public decimal AppliedAmount { get; set; }
+        public Invoice Invoice { get; set; }
+    }
+
+    public class Allocations : ModelList<Allocation>
+    {
+    }
+
 }

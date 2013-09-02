@@ -65,6 +65,12 @@ namespace XeroApi.Integration
             return _innerIntegrationProxy.CreateAttachment(endpointName, itemId, attachment);
         }
 
+        public string ApplyAllocation(CreditNote creditNote, string body)
+        {
+            EnforceRateLimit();
+            return _innerIntegrationProxy.ApplyAllocation(creditNote, body);
+        }
+
         private void EnforceRateLimit()
         {
             _rateLimiter.CheckAndEnforceRateLimit(DateTime.Now);
