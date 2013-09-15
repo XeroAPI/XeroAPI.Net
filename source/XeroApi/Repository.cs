@@ -221,7 +221,16 @@ namespace XeroApi
             return response.GetTypedProperty<TModel>().First();
         }
 
-       
+        public Allocation Allocate(CreditNote creditNote, Allocation allocation)
+        {
+            string requestXml = ModelSerializer.Serialize(allocation);
+
+            string responseXml = _proxy.ApplyAllocation(creditNote, requestXml);
+
+            Response response = ModelSerializer.DeserializeTo<Response>(responseXml);
+
+            return response.GetTypedProperty<Allocation>().First();
+        }
     }
 
 }

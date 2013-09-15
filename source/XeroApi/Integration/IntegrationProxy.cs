@@ -181,6 +181,7 @@ namespace XeroApi.Integration
 
             throw new ApiResponseException(consumerResponse);
         }
+
         public Stream FindOneAttachment(string endpointName, string itemId, string attachmentIdOrFileName)
         {
             Uri uri = ConstructChildResourceUri(_oauthSession.ConsumerContext.BaseEndpointUri, endpointName, itemId, "Attachments", attachmentIdOrFileName);
@@ -200,6 +201,30 @@ namespace XeroApi.Integration
 
             throw new ApiResponseException(consumerResponse);
         }
+
+        public string ApplyAllocation(CreditNote creditNote, string body)
+        {
+            Uri uri = ConstructChildResourceUri(_oauthSession.ConsumerContext.BaseEndpointUri, "CreditNotes", creditNote.CreditNoteID.ToString(), "Allocations", null);
+
+            IConsumerRequest oauthRequest = _oauthSession.Request()
+                .ForMethod("PUT")
+                .WithAcceptHeader(MimeTypes.TextXml)
+                .ForUri(uri)
+                .SignWithToken()
+                .WithBody(body);
+
+            var consumerResponse = oauthRequest.ToConsumerResponse();
+
+            // Check for <ApiException> response message
+            if (consumerResponse.Content.StartsWith("<ApiException"))
+            {
+                ApiExceptionDetails details = ModelSerializer.DeserializeTo<ApiExceptionDetails>(consumerResponse.Content);
+                throw new ApiException(details);
+            }
+
+            return consumerResponse.Content;
+        }
+
 
         #endregion
 
