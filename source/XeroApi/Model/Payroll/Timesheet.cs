@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml.Serialization;
 
 namespace XeroApi.Model.Payroll
 {
@@ -13,6 +14,7 @@ namespace XeroApi.Model.Payroll
         public TimesheetLines TimesheetLines { get; set; }        
     }
 
+    [XmlType("Timesheets")]
     public class Timesheets : ModelList<Timesheet>
     {
     }

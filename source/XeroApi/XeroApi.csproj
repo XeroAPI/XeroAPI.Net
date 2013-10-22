@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AttachmentRepository.cs" />
+    <Compile Include="Model\ModelSerializer.cs" />
     <Compile Include="Repository.cs" />
     <Compile Include="GenericRepository.cs" />
     <Compile Include="Integration\CoreIntegrationProxy.cs" />

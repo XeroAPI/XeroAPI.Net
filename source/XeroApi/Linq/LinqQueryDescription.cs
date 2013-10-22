@@ -140,6 +140,11 @@ namespace XeroApi.Linq
             get { return _skipQuery.ToString(); }
         }
 
+        public string Page
+        {
+            get { return _skipQuery.ToString(); }
+        }
+
         /// <summary>
         /// Gets the query string parameter collection.
         /// </summary>
@@ -159,6 +164,9 @@ namespace XeroApi.Linq
 
                 if (!string.IsNullOrEmpty(Offset))
                     collectionToReturn.Add("offset", Offset);
+
+                if (!string.IsNullOrEmpty(Page))
+                    collectionToReturn.Add("Page", Page);
 
                 return collectionToReturn; 
             }
@@ -183,6 +191,9 @@ namespace XeroApi.Linq
 
             if (!string.IsNullOrEmpty(Offset))
                 sb.Append("Offset:" + Offset + " ");
+
+            if (!string.IsNullOrEmpty(Page))
+                sb.Append("Page:" + Page + " ");
 
             if (UpdatedSinceDate.HasValue)
                 sb.Append("After:" + UpdatedSinceDate.Value.ToString("yyyy-MM-ddTHH:mm:ss") + " ");

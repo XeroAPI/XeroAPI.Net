@@ -2,27 +2,29 @@
 using System.Linq;
 using XeroApi.Integration;
 using XeroApi.Model;
-using XeroApi.Model.Serialize;
+
 
 namespace XeroApi
 {
     public class AttachmentRepository
     {
         private readonly IIntegrationProxy _integrationProxy;
-        private readonly IModelSerializer _serializer;
+
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AttachmentRepository"/> class.
         /// </summary>
         /// <param name="integrationProxy">The integration proxy.</param>
-        /// <param name="serializer"></param>
-        internal AttachmentRepository(IIntegrationProxy integrationProxy, IModelSerializer serializer)
+        internal AttachmentRepository(IIntegrationProxy integrationProxy)
         {
             _integrationProxy = integrationProxy;
-            _serializer = serializer;
         }
 
+
+
+
         // POST
+
 
         public Attachment UpdateOrCreate<TModel>(TModel model, FileInfo fileInfo)
             where TModel : ModelBase, IAttachmentParent
@@ -30,21 +32,27 @@ namespace XeroApi
             return UpdateOrCreate(model, new Attachment(fileInfo));
         }
 
+
         public Attachment UpdateOrCreate<TModel>(TModel model, Attachment attachment)
             where TModel : ModelBase, IAttachmentParent
         {
-            string data = _integrationProxy.UpdateOrCreateAttachment(
+            string xml = _integrationProxy.UpdateOrCreateAttachment(
                 typeof(TModel).Name,
                 ModelTypeHelper.GetModelItemId(model),
                 attachment);
 
-            var response = _serializer.DeserializeTo<Response>(data);
+
+            Response response = ModelSerializer.DeserializeTo<Response>(xml);
+
 
             return response.Attachments.First();
         }
 
 
+
+
         // PUT
+
 
         public Attachment Create<TModel>(TModel model, FileInfo fileInfo)
             where TModel : ModelBase, IAttachmentParent
@@ -52,19 +60,24 @@ namespace XeroApi
             return Create(model, new Attachment(fileInfo));
         }
 
+
         public Attachment Create<TModel>(TModel model, Attachment attachment)
             where TModel : ModelBase, IAttachmentParent
         {
-            string data = _integrationProxy.CreateAttachment(
+            string xml = _integrationProxy.CreateAttachment(
                 typeof(TModel).Name,
                 ModelTypeHelper.GetModelItemId(model),
                 attachment);
 
-            return _serializer.DeserializeTo<Response>(data).Attachments.First();
+
+            return ModelSerializer.DeserializeTo<Response>(xml).Attachments.First();
         }
 
 
+
+
         // GET (one)
+
 
         public Attachment GetAttachmentFor<TModel>(TModel model)
             where TModel : ModelBase, IAttachmentParent
@@ -72,24 +85,31 @@ namespace XeroApi
             // List the attachments against this model.
             var modelItemId = ModelTypeHelper.GetModelItemId(model);
 
+
             var allAttachmentsXml = _integrationProxy.FindAttachments(typeof(TModel).Name, modelItemId);
 
-            var allAttachments = _serializer.DeserializeTo<Response>(allAttachmentsXml).Attachments;
+
+            var allAttachments = ModelSerializer.DeserializeTo<Response>(allAttachmentsXml).Attachments;
+
 
             if (allAttachments == null || allAttachments.Count == 0)
             {
                 return null;
             }
 
+
             var theFirstAttachment = allAttachments.First();
+
 
             // Get the attachment content
             var content = _integrationProxy.FindOneAttachment(
-                typeof (TModel).Name,
+                typeof(TModel).Name,
                 modelItemId,
-                theFirstAttachment.AttachmentID.ToString());
+                theFirstAttachment.FileName);
+
 
             return theFirstAttachment.WithContent(content);
         }
     }
+
 }
