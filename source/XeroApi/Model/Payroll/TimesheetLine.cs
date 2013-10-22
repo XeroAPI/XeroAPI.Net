@@ -15,16 +15,4 @@ namespace XeroApi.Model.Payroll
     {
     }
 
-    //public class NumberOfUnits : EndpointModelBase //: ModelList<NumberOfUnit>
-    //{
-    //    [System.Xml.Serialization.XmlArrayItem("NumberOfUnit")]
-    //    public decimal[] NumberOfUnit { get; set; }
-    //}
-
-
-    //public class NumberOfUnit : EndpointModelBase
-    //{
-    //   // [System.Xml.Serialization.XmlRoot("NumberOfUnit")]
-    //    //public decimal Value { get; set; }
-    //}
 }
