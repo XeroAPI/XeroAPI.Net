@@ -47,6 +47,12 @@ namespace XeroApi.Model
         
         public string DefaultCurrency { get;  set; }
 
+        public Balances Balances { get; set; }
+
+        public BatchPayments BatchPayments { get; set; }
+
+        public PaymentTerms PaymentTerms { get; set; }
+
         public override string ToString()
         {
             return string.Format("Contact:{0}", Name);
