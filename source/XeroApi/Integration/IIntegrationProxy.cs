@@ -75,5 +75,7 @@ namespace XeroApi.Integration
         /// <param name="attachment">The attachment.</param>
         /// <returns></returns>
         string CreateAttachment(string endpointName, string itemId, Attachment attachment);
+
+        string ApplyAllocation(CreditNote creditNote, string requestXml);
     }
 }
