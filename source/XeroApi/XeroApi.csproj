@@ -103,6 +103,7 @@
     <Compile Include="Model\Reporting\PublishedReportBase.cs" />
     <Compile Include="Model\Reporting\ReportQueryDescription.cs" />
     <Compile Include="Model\Reporting\TrialBalanceReport.cs" />
+    <Compile Include="Model\TaxComponent.cs" />
     <Compile Include="Model\TaxRate.cs" />
     <Compile Include="Model\TrackingCategory.cs" />
     <Compile Include="Model\User.cs" />
