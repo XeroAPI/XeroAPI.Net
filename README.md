@@ -7,7 +7,7 @@ XeroApi .Net Library
 Introduction
 ------------
 
-This is a .Net wrapper library, written in C#, used to comnunicate with the Xero API (http://api.xero.com).
+This is a .Net wrapper library, written in C#, used to comnunicate with the Xero Core API (http://api.xero.com).  There is a branch that adds support for the [Payroll API](https://github.com/XeroAPI/XeroAPI.Net/tree/payroll) [(payroll API documentation)](http://developer.xero.com/documentation/payroll-api/overview/)
 
 You can use this library to communicate with the Xero API, without needing any prior knowledge of Xml or OAuth. The library can work in [public](http://developer.xero.com/api-overview/setup-an-application/#public-apps), [private](http://developer.xero.com/api-overview/setup-an-application/#private-apps) or [partner](http://developer.xero.com/api-overview/setup-an-application/#partner-apps) mode.
 
