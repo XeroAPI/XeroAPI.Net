@@ -2,7 +2,7 @@ namespace XeroApi.Model
 {
     public class TaxRate : EndpointModelBase
     {
-        [ItemNumber]
+        
         public string Name { get; set; }
 
         public string TaxType { get; set; }
@@ -22,10 +22,14 @@ namespace XeroApi.Model
         public decimal? EffectiveRate { get; set; }
 
         public string Status { get; set; }
+
+        public virtual TaxComponents TaxComponents { get; set; }
     }
 
     public class TaxRates : ModelList<TaxRate>
     {
     }
+
+    
 
 }
