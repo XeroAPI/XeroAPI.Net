@@ -38,6 +38,8 @@ namespace XeroApi.Model
         
         public string ShortCode;
 
+        public Addresses Addresses;
+
         public override string ToString()
         {
             return string.Format("Organisation:{0}", Name);

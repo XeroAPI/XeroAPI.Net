@@ -10,15 +10,21 @@ namespace XeroApi.Model.Reporting
     {
         protected const string ReportDateFormatString = "yyyy-MM-dd";
 
+        protected readonly NameValueCollection _queryStringParams = new NameValueCollection();
+
+        public virtual void AddQueryStrimgParam(string key, string value)
+        {
+            _queryStringParams.Add(key, value);
+        }
+
         /// <summary>
         /// Gets the query string param collection.
         /// </summary>
         /// <returns></returns>
         internal NameValueCollection GetQueryStringParamCollection()
         {
-            NameValueCollection queryStringParams = new NameValueCollection();
-            GenerateQuerystringParams(queryStringParams);
-            return queryStringParams;
+            GenerateQuerystringParams(_queryStringParams);
+            return _queryStringParams;
         }
 
         /// <summary>
