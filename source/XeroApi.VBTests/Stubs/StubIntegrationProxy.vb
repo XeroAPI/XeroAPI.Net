@@ -54,4 +54,8 @@ Public Class StubIntegrationProxy
 
     Public LastQueryDescription As IApiQueryDescription = Nothing
 
+    Public Function ApplyAllocation(creditNote As CreditNote, xml As String) As String Implements IIntegrationProxy.ApplyAllocation
+        Return String.Empty
+    End Function
+
 End Class

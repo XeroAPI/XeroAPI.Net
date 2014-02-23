@@ -57,6 +57,11 @@ namespace XeroApi.Tests.Stubs
             throw new NotImplementedException();
         }
 
+        public string ApplyAllocation(CreditNote creditNote, string requestXml)
+        {
+            throw new NotImplementedException();
+        }
+
         public LinqQueryDescription LastQueryDescription
         {
             get;
