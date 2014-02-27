@@ -72,6 +72,10 @@ namespace XeroApi.Model
         [ReadOnly]
         public DateTime? FullyPaidOnDate { get; set; }
 
+        public DateTime? ExpectedPaymentDate { get; set; }
+
+        public DateTime? PlannedPaymentDate { get; set; }
+
         public override string ToString()
         {
             return string.Format("Invoice:{0} Id:{1}", InvoiceNumber, InvoiceID);
