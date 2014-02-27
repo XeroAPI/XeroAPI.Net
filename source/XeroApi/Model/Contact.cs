@@ -24,6 +24,8 @@ namespace XeroApi.Model
         public string EmailAddress { get; set; }
         
         public string SkypeUserName { get; set; }
+
+        public ContactPersons ContactPersons { get; set; }
         
         public string BankAccountDetails { get; set; }
         

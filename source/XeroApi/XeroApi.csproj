@@ -70,6 +70,7 @@
     <Compile Include="Model\BatchPayments.cs" />
     <Compile Include="Model\BrandingTheme.cs" />
     <Compile Include="Model\ContactGroup.cs" />
+    <Compile Include="Model\ContactPerson.cs" />
     <Compile Include="Model\CreditNote.cs" />
     <Compile Include="Model\Currency.cs" />
     <Compile Include="Model\Employee.cs" />
