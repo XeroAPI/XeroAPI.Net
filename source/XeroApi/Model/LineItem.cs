@@ -22,6 +22,8 @@ namespace XeroApi.Model
 
         public decimal? Quantity { get; set; }
 
+        public decimal? DiscountRate { get; set; }
+
         public override string ToString()
         {
             return string.Format("LineItem:{0}", Description ?? ItemCode);
