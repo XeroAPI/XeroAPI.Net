@@ -18,6 +18,8 @@ namespace XeroApi.Model
         public string PaymentType { get; set; }
 
         public string Status { get; set; }
+        
+        public bool IsReconciled { get; set; }
 
         [ItemUpdatedDate]
         public DateTime? UpdatedDateUTC { get; set; }
