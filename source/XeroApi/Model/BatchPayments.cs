@@ -10,6 +10,8 @@ namespace XeroApi.Model
         public string BankAccountNumber { get; set; }
         public string BankAccountName { get; set; }
         public string Details { get; set; }
+        public string Code { get; set; }
+        public string Reference { get; set; }
 
         public override string ToString()
         {
@@ -20,7 +22,11 @@ namespace XeroApi.Model
             sb.AppendFormat("Bank Account Name: {0} ", BankAccountName);
 
             sb.AppendFormat("Details: {0}", Details);
-
+            
+            sb.AppendFormat("Code: {0}", Code);
+            
+            sb.AppendFormat("Reference: {0}", Reference);
+            
             return sb.ToString();
         }
     }
