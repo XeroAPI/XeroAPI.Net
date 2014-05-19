@@ -23,6 +23,7 @@ namespace XeroApi
         // Taken from http://stackoverflow.com/questions/58510/using-net-how-can-you-find-the-mime-type-of-a-file-based-on-the-file-signature
         public static string GetMimeType(FileInfo fileInfo)
         {
+			#if !__IOS
             string mimeType = "application/unknown";
 
             RegistryKey regKey = Registry.ClassesRoot.OpenSubKey(fileInfo.Extension.ToLower(), RegistryKeyPermissionCheck.ReadSubTree);
@@ -36,6 +37,9 @@ namespace XeroApi
             }
 
             return mimeType;
+			#else
+			return Unknown;
+			#endif
         }
 
         public static string GetMimeType(string fileName)
