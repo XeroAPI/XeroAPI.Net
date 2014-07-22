@@ -18,7 +18,8 @@ namespace XeroApi.Tests
 
             stopwatch.Stop();
 
-            Assert.AreEqual(1000, stopwatch.ElapsedMilliseconds, 10, "Actual elapsed timespan is not within 50ms of the expected timespan");
+            // Time delta was 10ms and exception said 50ms. Fixing delta.
+            Assert.AreEqual(1000, stopwatch.ElapsedMilliseconds, 50, "Actual elapsed timespan is not within 50ms of the expected timespan");
         }
 
     }
