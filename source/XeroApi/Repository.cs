@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,9 +20,9 @@ namespace XeroApi
         /// Initializes a new instance of the <see cref="Repository"/> class.
         /// </summary>
         /// <param name="oauthSession">The oauth session.</param>
-        public Repository(IOAuthSession oauthSession)
+        public Repository(IOAuthSession oauthSession, bool is4DP = true)
         {
-            _proxy = (new IntegrationProxy(oauthSession));
+            _proxy = (new IntegrationProxy(oauthSession, is4DP));
             _provider = new ApiQueryProvider(_proxy);
         }
 

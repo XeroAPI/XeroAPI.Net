@@ -12,15 +12,17 @@ namespace XeroApi.Integration
     public class IntegrationProxy : IIntegrationProxy
     {
         private readonly IOAuthSession _oauthSession;
+        private bool _is4DP;
 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IntegrationProxy"/> class.
         /// </summary>
         /// <param name="oauthSession">The oauth session.</param>
-        public IntegrationProxy (IOAuthSession oauthSession)
+        public IntegrationProxy (IOAuthSession oauthSession, bool is4DP)
         {
             _oauthSession = oauthSession;
+            _is4DP = is4DP;
         }
         
 
@@ -84,7 +86,7 @@ namespace XeroApi.Integration
                 ModelTypeHelper.Pluralize(endpointName),
                 null,
                 null,
-                new NameValueCollection { { "summarizeErrors", "false" } }, 
+                GetAdditionalQueryParams(), 
                 null);
 
             if (consumerResponse.IsGoodResponse || consumerResponse.IsClientError)
@@ -105,7 +107,7 @@ namespace XeroApi.Integration
                 ModelTypeHelper.Pluralize(endpointName),
                 null,
                 null,
-                new NameValueCollection { { "summarizeErrors", "false" } }, 
+                GetAdditionalQueryParams(),
                 null);
 
             if (consumerResponse.IsGoodResponse || consumerResponse.IsClientError)
@@ -333,5 +335,15 @@ namespace XeroApi.Integration
             return uriBuilder.Uri;
         }
         
+
+        private NameValueCollection GetAdditionalQueryParams()
+        {
+            var additionalQueryParams = new NameValueCollection { { "summarizeErrors", "false" } };
+            if (_is4DP)
+            {
+                additionalQueryParams.Add("unitdp", "4");
+            }
+            return additionalQueryParams;
+        }        
     }
 }
