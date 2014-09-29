@@ -54,10 +54,10 @@ namespace DevDefined.OAuth.Consumer
         {
             webResponse.GetResponseStream().CopyTo(_responseContentStream);
 
-            if (webResponse.Headers["Content-Type"] != string.Empty)
+            if (!string.IsNullOrEmpty(webResponse.Headers["Content-Type"]))
                 ContentType = webResponse.Headers["Content-Type"];
 
-            if (webResponse.Headers["Content-Length"] != string.Empty)
+            if (!string.IsNullOrEmpty(webResponse.Headers["Content-Length"]))
                 ContentLength = int.Parse(webResponse.Headers["Content-Length"]);
 
             TimeTaken = timeTaken;
