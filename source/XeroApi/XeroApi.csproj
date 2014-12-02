@@ -108,16 +108,6 @@
     <Compile Include="Model\TaxRate.cs" />
     <Compile Include="Model\TrackingCategory.cs" />
     <Compile Include="Model\User.cs" />
-    <Compile Include="OAuth\Consumer\ConsumerRequestRunner.cs" />
-    <Compile Include="OAuth\Consumer\IMessageLogger.cs" />
-    <Compile Include="OAuth\Framework\MissingTokenException.cs" />
-    <Compile Include="OAuth\Logging\DebugMessageLogger.cs" />
-    <Compile Include="OAuth\Utility\Storage\Basic\FixedValueTokenRepository.cs" />
-    <Compile Include="OAuth\Utility\Storage\Basic\InMemoryTokenRepository.cs" />
-    <Compile Include="OAuth\Utility\Storage\Basic\ITokenRepository.cs" />
-    <Compile Include="OAuth\Utility\StreamExtensions.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="ReportRepository.cs" />
     <Compile Include="Repository.cs" />
     <Compile Include="Linq\ExpressionVisitor.cs" />
@@ -131,54 +121,6 @@
     <Compile Include="Model\ModelTypeHelper.cs" />
     <Compile Include="Model\Organisation.cs" />
     <Compile Include="Model\Response.cs" />
-    <Compile Include="OAuth\Consumer\ConsumerRequest.cs" />
-    <Compile Include="OAuth\Consumer\ConsumerRequestExtensions.cs" />
-    <Compile Include="OAuth\Consumer\ConsumerResponse.cs" />
-    <Compile Include="OAuth\Consumer\DefaultConsumerRequestFactory.cs" />
-    <Compile Include="OAuth\Consumer\ICertificateFactory.cs" />
-    <Compile Include="OAuth\Consumer\IConsumerRequest.cs" />
-    <Compile Include="OAuth\Consumer\IConsumerRequestFactory.cs" />
-    <Compile Include="OAuth\Consumer\IOAuthConsumerContext.cs" />
-    <Compile Include="OAuth\Consumer\IOAuthSession.cs" />
-    <Compile Include="OAuth\Consumer\LocalFileCertificateFactory.cs" />
-    <Compile Include="OAuth\Consumer\LocalMachineCertificateFactory.cs" />
-    <Compile Include="OAuth\Consumer\NullCertificateFactory.cs" />
-    <Compile Include="OAuth\Consumer\OAuthConsumerContext.cs" />
-    <Compile Include="OAuth\Consumer\OAuthSession.cs" />
-    <Compile Include="OAuth\Consumer\RequestDescription.cs" />
-    <Compile Include="OAuth\Consumer\SimpleCertificateFactory.cs" />
-    <Compile Include="OAuth\Consumer\WebExceptionHelper.cs" />
-    <Compile Include="OAuth\Framework\BoundParameter.cs" />
-    <Compile Include="OAuth\Framework\DateTimeUtility.cs" />
-    <Compile Include="OAuth\Framework\Error.cs" />
-    <Compile Include="OAuth\Framework\IConsumer.cs" />
-    <Compile Include="OAuth\Framework\INonceGenerator.cs" />
-    <Compile Include="OAuth\Framework\IOAuthContext.cs" />
-    <Compile Include="OAuth\Framework\IToken.cs" />
-    <Compile Include="OAuth\Framework\NonceGenerator.cs" />
-    <Compile Include="OAuth\Framework\OAuthContext.cs" />
-    <Compile Include="OAuth\Framework\OAuthException.cs" />
-    <Compile Include="OAuth\Framework\OAuthProblemReport.cs" />
-    <Compile Include="OAuth\Framework\OAuthProblems.cs" />
-    <Compile Include="OAuth\Framework\Parameters.cs" />
-    <Compile Include="OAuth\Framework\SignatureMethod.cs" />
-    <Compile Include="OAuth\Framework\SigningContext.cs" />
-    <Compile Include="OAuth\Framework\Signing\HmacSha1SignatureImplementation.cs" />
-    <Compile Include="OAuth\Framework\Signing\IContextSignatureImplementation.cs" />
-    <Compile Include="OAuth\Framework\Signing\IOAuthContextSigner.cs" />
-    <Compile Include="OAuth\Framework\Signing\OAuthContextSigner.cs" />
-    <Compile Include="OAuth\Framework\Signing\PlainTextSignatureImplementation.cs" />
-    <Compile Include="OAuth\Framework\Signing\RsaSha1SignatureImplementation.cs" />
-    <Compile Include="OAuth\Framework\TokenBase.cs" />
-    <Compile Include="OAuth\Framework\UriUtility.cs" />
-    <Compile Include="OAuth\Framework\With.cs" />
-    <Compile Include="OAuth\Utility\Storage\Basic\AccessToken.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="OAuth\Utility\Storage\Basic\RequestToken.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="OAuth\Utility\ReflectionBasedDictionaryAdapter.cs" />
     <Compile Include="OAuth\XeroApiPartnerSession.cs" />
     <Compile Include="OAuth\XeroApiPrivateSession.cs" />
     <Compile Include="OAuth\XeroApiEndpoints.cs" />
@@ -190,6 +132,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="XeroAPI.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\DevDefined.OAuth\src\DevDefined.OAuth\DevDefined.OAuth.csproj">
+      <Project>{61b700b6-3911-4cef-8751-7f42ca765068}</Project>
+      <Name>DevDefined.OAuth</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
