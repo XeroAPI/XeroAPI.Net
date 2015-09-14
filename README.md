@@ -1,6 +1,8 @@
 XeroApi .Net Library 
 ====================
 
+Unsupported - no longer under active development
+------------
 This library is unsupported. Please see [https://github.com/XeroAPI/Xero-Net](https://github.com/XeroAPI/Xero-Net) for the updated and supported .Net library.
 
 Introduction
