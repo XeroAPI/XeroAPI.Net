@@ -7,6 +7,7 @@ namespace XeroApi.Model.Payroll.Enums
         ALLOWANCE,
         COMMISSION,
         BONUS,
-        BACKPAY
+        BACKPAY,
+        LUMPSUMD
     }
 }
