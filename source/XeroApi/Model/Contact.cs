@@ -44,14 +44,41 @@ namespace XeroApi.Model
 
         [ReadOnly]
         public bool IsCustomer { get; set; }
-        
+
+        [ReadOnly]
         public string DefaultCurrency { get;  set; }
+
+        [ReadOnly]
+        public BatchPayments BatchPayments { get; set; }
+
+        [ReadOnly]
+        public Balances Balances { get; set; }
 
         public override string ToString()
         {
             return string.Format("Contact:{0}", Name);
         }
     }
+
+    public class BatchPayments : ModelBase
+    {
+        public string BankAccountNumber { get; set; }
+        public string BankAccountName { get; set; }
+        public string Details { get; set; }
+    }
+
+    public class Balances : ModelBase
+    {
+        public Balance AccountsReceivable { get; set; }
+        public Balance AccountsPayable { get; set; }
+    }
+
+    public class Balance : ModelBase
+    {
+        public decimal Outstanding { get; set; }
+        public decimal Overdue { get; set; }
+    }
+
 
     public class Contacts : ModelList<Contact>
     {

@@ -545,7 +545,10 @@ namespace XeroApi.Linq
 
                 case "Int64":
                     var longValue = EvaluateExpression<long>(exp);
-                    return string.Format("\"{0}\"", longValue);                               
+                    return string.Format("\"{0}\"", longValue);
+                case "Boolean":
+                    var boolValue = EvaluateExpression<bool>(exp);
+                    return string.Format("{0}", boolValue);           
             }
 
             throw new NotSupportedException(string.Format("The Expression return type '{0}' is not supported", exp.Type.Name));

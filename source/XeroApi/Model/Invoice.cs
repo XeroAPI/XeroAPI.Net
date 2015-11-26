@@ -40,6 +40,9 @@ namespace XeroApi.Model
         [ReadOnly]
         public bool? SentToContact { get; set; }
 
+        [ReadOnly]
+        public bool? HasAttachments { get; set; }
+
         public decimal? CurrencyRate { get; set; }
 
         public Contact Contact { get; set; }

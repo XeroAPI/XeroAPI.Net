@@ -118,7 +118,7 @@ namespace XeroApi
 
         public AttachmentRepository Attachments
         {
-            get { return new AttachmentRepository(Proxy, Serializer); }
+            get { return new AttachmentRepository(Proxy); }
         }
 
         public ReportRepository Reports
