@@ -2,7 +2,7 @@ namespace XeroApi.Model.Payroll.Enums
 {
     public enum RateType
     {
-        FIXED,
+        FIXEDAMOUNT,
         MULTIPLE,
         RATEPERUNIT
     }
