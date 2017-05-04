@@ -39,16 +39,13 @@ namespace DevDefined.OAuth.Consumer
     {
         private readonly IOAuthConsumerContext _consumerContext;
         private readonly IOAuthContext _context;
-        private readonly ICertificateFactory _clientSslCertificateFactory;
         private readonly IOAuthSession _oauthSession;
 
-        public ConsumerRequest(IOAuthSession oauthSession, IOAuthContext context, IOAuthConsumerContext consumerContext,
-                               ICertificateFactory clientSslCertificateFactory)
+        public ConsumerRequest(IOAuthSession oauthSession, IOAuthContext context, IOAuthConsumerContext consumerContext)
         {
             _oauthSession = oauthSession;
             _context = context;
             _consumerContext = consumerContext;
-            _clientSslCertificateFactory = clientSslCertificateFactory;
         }
 
         public IOAuthContext Context
@@ -65,8 +62,8 @@ namespace DevDefined.OAuth.Consumer
         {
             RequestDescription description = GetRequestDescription();
 
-            var request = (HttpWebRequest) WebRequest.Create(description.Url);
-            request.Timeout = (int) TimeSpan.FromMinutes(3).TotalMilliseconds; 
+            var request = (HttpWebRequest)WebRequest.Create(description.Url);
+            request.Timeout = (int)TimeSpan.FromMinutes(3).TotalMilliseconds;
             request.Method = description.Method;
             request.UserAgent = _consumerContext.UserAgent;
 
@@ -116,18 +113,6 @@ namespace DevDefined.OAuth.Consumer
                     request.Headers[key] = description.Headers[key];
                 }
             }
-
-            // Attach a client ssl certificate to the HttpWebRequest
-            if (_clientSslCertificateFactory != null)
-            {
-                X509Certificate2 certificate = _clientSslCertificateFactory.CreateCertificate();
-
-                if (certificate != null)
-                {
-                    request.ClientCertificates.Add(certificate);
-                }
-            }
-
             return request;
         }
 
@@ -138,13 +123,14 @@ namespace DevDefined.OAuth.Consumer
                 _consumerContext.SignContext(_context);
             }
 
+
             Uri uri = _context.GenerateUri();
 
             var description = new RequestDescription
-                                  {
-                                      Url = uri,
-                                      Method = _context.RequestMethod
-                                  };
+            {
+                Url = uri,
+                Method = _context.RequestMethod
+            };
 
             if ((_context.FormEncodedParameters != null) && (_context.FormEncodedParameters.Count > 0))
             {
@@ -175,7 +161,7 @@ namespace DevDefined.OAuth.Consumer
             try
             {
                 HttpWebRequest request = ToWebRequest();
-                return (HttpWebResponse) request.GetResponse();
+                return (HttpWebResponse)request.GetResponse();
             }
             catch (WebException webEx)
             {
@@ -240,7 +226,7 @@ namespace DevDefined.OAuth.Consumer
                 AssertValidIfModifiedSinceDate(context.IfModifiedSince.Value);
                 return context.IfModifiedSince.Value;
             }
-            
+
             string ifModifiedSinceString = context.Headers["If-Modified-Since"];
 
             if (string.IsNullOrEmpty(ifModifiedSinceString))
@@ -253,7 +239,7 @@ namespace DevDefined.OAuth.Consumer
                 AssertValidIfModifiedSinceDate(ifModifiedSinceDate);
                 return ifModifiedSinceDate;
             }
-            
+
             return null;
         }
 
