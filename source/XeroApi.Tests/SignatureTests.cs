@@ -3,7 +3,6 @@ using System.Security.Cryptography.X509Certificates;
 using DevDefined.OAuth.Consumer;
 using DevDefined.OAuth.Framework;
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 using XeroApi.OAuth;
 
 namespace XeroApi.Tests
