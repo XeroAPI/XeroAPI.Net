@@ -13,10 +13,10 @@ namespace XeroApi.ConsoleApp
     class PartnerApplicationRunner
     {
         private const string UserAgent = "Xero.API.ScreenCast v1.0 (Partner App Testing)";
-        private const string ConsumerKey = "ZWVJMWFMNZJMYJG0NDRIY2IYZGIWMZ";
+        private const string ConsumerKey = "My-consumer-key";
 
-        private static readonly X509Certificate2 OAuthCertificate = new X509Certificate2(@"D:\Stevie-Cert.pfx", "xero");
-        private static readonly X509Certificate2 ClientSslCertificate = new X509Certificate2(@"D:\EnTrust-D4-Mk2.p12", "xero");
+        private static readonly X509Certificate2 OAuthCertificate = new X509Certificate2(@"C:\my-path-to\public_privatekey.pfx", "my password");
+        private static readonly X509Certificate2 ClientSslCertificate = null;
 
         public static Repository CreateRepository()
         {
