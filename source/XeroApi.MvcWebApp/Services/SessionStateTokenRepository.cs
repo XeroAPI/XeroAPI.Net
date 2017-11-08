@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Web;
 
-using DevDefined.OAuth.Consumer;
-using DevDefined.OAuth.Storage.Basic;
+using Booyami.DevDefined.OAuth.Consumer;
+using Booyami.DevDefined.OAuth.Storage.Basic;
 
 namespace Xero.ScreencastWeb.Services
 {

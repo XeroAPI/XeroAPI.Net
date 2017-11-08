@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography.X509Certificates;
-using DevDefined.OAuth.Consumer;
-using DevDefined.OAuth.Framework;
+using Booyami.DevDefined.OAuth.Consumer;
+using Booyami.DevDefined.OAuth.Framework;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 using XeroApi.OAuth;

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Configuration;
 
-using DevDefined.OAuth.Consumer;
-using DevDefined.OAuth.Storage.Basic;
+using Booyami.DevDefined.OAuth.Consumer;
+using Booyami.DevDefined.OAuth.Storage.Basic;
 
 using XeroApi;
 using XeroApi.OAuth;

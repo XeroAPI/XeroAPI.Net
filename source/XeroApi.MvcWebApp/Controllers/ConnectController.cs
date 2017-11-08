@@ -2,8 +2,8 @@ using System;
 using System.Diagnostics;
 using System.Web.Mvc;
 
-using DevDefined.OAuth.Consumer;
-using DevDefined.OAuth.Storage.Basic;
+using Booyami.DevDefined.OAuth.Consumer;
+using Booyami.DevDefined.OAuth.Storage.Basic;
 
 using Xero.ScreencastWeb.Services;
 

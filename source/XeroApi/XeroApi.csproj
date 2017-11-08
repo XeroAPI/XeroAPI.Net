@@ -40,6 +40,9 @@
     <AssemblyOriginatorKeyFile>XeroAPI.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Booyami.DevDefined.OAuth, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a3261f5b4697e67d, processorArchitecture=MSIL">
+      <HintPath>..\packages\Booyami.DevDefined.OAuth.1.0.1\lib\Booyami.DevDefined.OAuth.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
@@ -132,13 +135,8 @@
     <Compile Include="Linq\TypeSystem.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="XeroAPI.snk" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\DevDefined.OAuth\src\DevDefined.OAuth\DevDefined.OAuth.csproj">
-      <Project>{61b700b6-3911-4cef-8751-7f42ca765068}</Project>
-      <Name>DevDefined.OAuth</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

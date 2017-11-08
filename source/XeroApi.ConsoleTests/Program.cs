@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DevDefined.OAuth.Utility;
+using Booyami.DevDefined.OAuth.Utility;
 using XeroApi.Model;
 using XeroApi.Model.Reporting;
 
