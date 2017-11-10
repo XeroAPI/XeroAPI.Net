@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
 using System.Net;
-using DevDefined.OAuth.Consumer;
+using Booyami.DevDefined.OAuth.Consumer;
 using XeroApi.Exceptions;
 using XeroApi.Model;
 
@@ -287,7 +287,7 @@ namespace XeroApi.Integration
                 uriBuilder.Path += (itemId);
             }
             
-            string queryString = DevDefined.OAuth.Framework.UriUtility.FormatQueryString(additionalQueryParams);
+            string queryString = Booyami.DevDefined.OAuth.Framework.UriUtility.FormatQueryString(additionalQueryParams);
 
             if (!string.IsNullOrEmpty(queryString))
                 uriBuilder.Query = queryString;

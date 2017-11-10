@@ -3,7 +3,7 @@ using System.Configuration;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 
-using DevDefined.OAuth.Consumer;
+using Booyami.DevDefined.OAuth.Consumer;
 
 namespace Xero.ScreencastWeb.Services
 {

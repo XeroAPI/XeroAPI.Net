@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>XeroAPI.Net</id>
-    <version>0.0.0.0</version>
+    <id>Booyami.XeroAPI.Net</id>
+    <version>1.0.2</version>
     <title>.Net wrapper library for Xero API</title>
     <authors>XeroAPI</authors>
     <owners />
@@ -11,9 +11,12 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>.Net wrapper library for Xero API. This library allows you to perform GET/PUT/POST methods against the Xero API without needing to know the internals of xml serialisation, oauth signatures or character encodings. See http://developer.xero.com for more information.</description>
     <summary>.Net wrapper library for Xero API</summary>
+    <dependencies>
+      <dependency id="Booyami.DevDefined.OAuth" version="1.0.1" />
+    </dependencies>
   </metadata>
   <files>
-    <file src="XeroApi\bin\Release\XeroApi.dll" target="lib\XeroApi.dll" />
-    <file src="XeroApi\bin\Release\XeroApi.pdb" target="lib\XeroApi.pdb" />
+    <file src="XeroApi\bin\release\XeroApi.dll" target="lib\XeroApi.dll" />
+    <file src="XeroApi\bin\release\XeroApi.docs.xml" target="lib\XeroApi.docs.xml" />
   </files>
 </package>

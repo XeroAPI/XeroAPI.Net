@@ -33,6 +33,13 @@ namespace XeroApi.Model
 
         public string ReportingCodeName { get; set; }
 
+        /// <summary>
+        /// This is an important property because Accounts that represent credit cards will
+        /// have a Type=BANK, Class=ASSET. The only way that we can map a credit card account
+        /// to a liablility isto check that BankAccountType=CREDITCARD.
+        /// </summary>
+        public string BankAccountType { get; set; }
+
         // Added for v2.14
         public bool ShowInExpenseClaims { get; set; }
 

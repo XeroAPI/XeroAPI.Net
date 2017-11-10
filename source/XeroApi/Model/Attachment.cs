@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Xml.Serialization;
-using DevDefined.OAuth.Utility;
+using Booyami.DevDefined.OAuth.Utility;
 
 namespace XeroApi.Model
 {

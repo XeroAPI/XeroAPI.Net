@@ -1,5 +1,5 @@
 ﻿using System;
-using DevDefined.OAuth.Consumer;
+using Booyami.DevDefined.OAuth.Consumer;
 
 namespace XeroApi.Exceptions
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
-using DevDefined.OAuth.Consumer;
+using Booyami.DevDefined.OAuth.Consumer;
 using NUnit.Framework;
 
 using Rhino.Mocks;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using DevDefined.OAuth.Consumer;
+using Booyami.DevDefined.OAuth.Consumer;
 
 using XeroApi.Integration;
 using XeroApi.Linq;

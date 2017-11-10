@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Net;
-using DevDefined.OAuth.Consumer;
-using DevDefined.OAuth.Framework;
-using DevDefined.OAuth.Storage.Basic;
+using Booyami.DevDefined.OAuth.Consumer;
+using Booyami.DevDefined.OAuth.Framework;
+using Booyami.DevDefined.OAuth.Storage.Basic;
 using NUnit.Framework;
 
 using Rhino.Mocks;

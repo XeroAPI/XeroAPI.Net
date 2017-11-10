@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 
-using DevDefined.OAuth.Consumer;
-using DevDefined.OAuth.Logging;
+using Booyami.DevDefined.OAuth.Consumer;
+using Booyami.DevDefined.OAuth.Logging;
 
 using XeroApi.OAuth;
 
