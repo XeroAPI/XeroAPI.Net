@@ -54,6 +54,8 @@ namespace XeroApi.Model
         public BatchPayments BatchPayments { get; set; }
 
         public PaymentTerms PaymentTerms { get; set; }
+		
+		public string AccountNumber { get; set; }
 
         public override string ToString()
         {
