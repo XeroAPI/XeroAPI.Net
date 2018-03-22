@@ -9,17 +9,17 @@ namespace XeroApi.OAuth
     public class XeroApiPartnerSession : OAuthSession
     {
         [Obsolete("Use the constructor with ITokenRepository")]
-        public XeroApiPartnerSession(string userAgent, string consumerKey, X509Certificate2 signingCertificate, X509Certificate2 sslCertificate)
+        public XeroApiPartnerSession(string userAgent, string consumerKey, X509Certificate2 signingCertificate)
             : base(CreateConsumerContext(userAgent, consumerKey, signingCertificate))
         {
-            ConsumerRequestFactory = new DefaultConsumerRequestFactory(new SimpleCertificateFactory(sslCertificate));
+            ConsumerRequestFactory = new DefaultConsumerRequestFactory();
         }
 
 
-        public XeroApiPartnerSession(string userAgent, string consumerKey, X509Certificate2 signingCertificate, X509Certificate2 sslCertificate, ITokenRepository tokenRepository)
+        public XeroApiPartnerSession(string userAgent, string consumerKey, X509Certificate2 signingCertificate, ITokenRepository tokenRepository)
             : base(CreateConsumerContext(userAgent, consumerKey, signingCertificate), tokenRepository)
         {
-            ConsumerRequestFactory = new DefaultConsumerRequestFactory(new SimpleCertificateFactory(sslCertificate));
+            ConsumerRequestFactory = new DefaultConsumerRequestFactory();
         }
 
 

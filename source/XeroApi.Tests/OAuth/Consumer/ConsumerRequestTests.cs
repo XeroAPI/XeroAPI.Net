@@ -53,7 +53,7 @@ namespace XeroApi.Tests.OAuth.Consumer
         [Test]
         public void it_can_parse_unset_IfModifiedSince_date()
         {
-            ConsumerRequest consumerRequest = new ConsumerRequest(null, null, null, null);
+            ConsumerRequest consumerRequest = new ConsumerRequest(null, null, null);
             NameValueCollection headers = new NameValueCollection();
             OAuthContext oauthContext = new OAuthContext {Headers = headers};
 
@@ -126,7 +126,7 @@ namespace XeroApi.Tests.OAuth.Consumer
 
         private static ConsumerRequest NewConsumerRequest()
         {
-            return new ConsumerRequest(null, null, null, null);
+            return new ConsumerRequest(null, null, null);
         }
 
         private static ConsumerRequest NewConsumerRequest(OAuthContext oAuthContext)
@@ -142,7 +142,7 @@ namespace XeroApi.Tests.OAuth.Consumer
                 ConsumerRequestRunner = consumerRequestRunner
             };
 
-            return new ConsumerRequest(oAuthSession, oAuthContext, consumerContext, new NullCertificateFactory());
+            return new ConsumerRequest(oAuthSession, oAuthContext, consumerContext);
         }
     }
 }
