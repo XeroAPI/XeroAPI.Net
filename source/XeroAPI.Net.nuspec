@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+<package >
   <metadata>
     <id>XeroAPI.Net</id>
-    <version>0.0.0.0</version>
+    <version>1.1.0.34</version>
     <title>.Net wrapper library for Xero API</title>
     <authors>XeroAPI</authors>
     <owners />
     <projectUrl>https://github.com/XeroAPI/XeroAPI.Net</projectUrl>
     <iconUrl>https://secure.gravatar.com/avatar/7fff030fb8040a5157c3fd463858167f.png?s=128</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>.Net wrapper library for Xero API. This library allows you to perform GET/PUT/POST methods against the Xero API without needing to know the internals of xml serialisation, oauth signatures or character encodings. See http://developer.xero.com for more information.</description>
-    <summary>.Net wrapper library for Xero API</summary>
+    <description>Obsolete Xero SDK. See https://github.com/XeroAPI/Xero-NetStandard for the new dotnet standard SDK</description>
+    <summary>Obsolete Xero SDK. See https://github.com/XeroAPI/Xero-NetStandard for the new dotnet standard SDK</summary>
   </metadata>
   <files>
     <file src="XeroApi\bin\Release\XeroApi.dll" target="lib\XeroApi.dll" />

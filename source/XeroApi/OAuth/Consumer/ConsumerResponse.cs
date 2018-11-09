@@ -57,7 +57,7 @@ namespace DevDefined.OAuth.Consumer
             if (webResponse.Headers["Content-Type"] != string.Empty)
                 ContentType = webResponse.Headers["Content-Type"];
 
-            if (webResponse.Headers["Content-Length"] != string.Empty)
+            if (!string.IsNullOrEmpty(webResponse.Headers["Content-Length"]))
                 ContentLength = int.Parse(webResponse.Headers["Content-Length"]);
 
             TimeTaken = timeTaken;
