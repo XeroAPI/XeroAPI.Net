@@ -2,18 +2,18 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>XeroAPI.Net</id>
-    <version>0.0.0.0</version>
-    <title>.Net wrapper library for Xero API</title>
-    <authors>XeroAPI</authors>
+    <version>1.0.6</version>
+    <title>.Net wrapper library for Xero API with 4DP support</title>
+    <authors>Unleashed Software</authors>
     <owners />
-    <projectUrl>https://github.com/XeroAPI/XeroAPI.Net</projectUrl>
-    <iconUrl>https://secure.gravatar.com/avatar/7fff030fb8040a5157c3fd463858167f.png?s=128</iconUrl>
+    <projectUrl>https://github.com/unleashedsoftware/XeroAPI.Net</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>.Net wrapper library for Xero API. This library allows you to perform GET/PUT/POST methods against the Xero API without needing to know the internals of xml serialisation, oauth signatures or character encodings. See http://developer.xero.com for more information.</description>
-    <summary>.Net wrapper library for Xero API</summary>
+    <description>This library is same as XeroAPI.Net (https://www.nuget.org/packages/XeroAPI.Net) with 4DP support by default.</description>
+    <summary>.Net wrapper library for Xero API with 4DP support</summary>
+	<releaseNotes>Replicating fix for bug in Content-Length from https://github.com/XeroAPI/XeroAPI.Net/commit/3946a195397870b81cb5ce55ad9b20dd9c679658</releaseNotes>
   </metadata>
   <files>
-    <file src="XeroApi\bin\Release\XeroApi.dll" target="lib\XeroApi.dll" />
-    <file src="XeroApi\bin\Release\XeroApi.pdb" target="lib\XeroApi.pdb" />
+    <file src="XeroApi\bin\Release\XeroApi.dll" target="lib\net45\XeroApi.dll" />
+    <file src="XeroApi\bin\Release\XeroApi.pdb" target="lib\net45\XeroApi.pdb" />
   </files>
 </package>
