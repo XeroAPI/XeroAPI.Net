@@ -1,11 +1,10 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>XeroAPI.Net</id>
+    <id>XeroAPI.Net-4DP</id>
     <version>1.0.6</version>
     <title>.Net wrapper library for Xero API with 4DP support</title>
     <authors>Unleashed Software</authors>
-    <owners />
     <projectUrl>https://github.com/unleashedsoftware/XeroAPI.Net</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>This library is same as XeroAPI.Net (https://www.nuget.org/packages/XeroAPI.Net) with 4DP support by default.</description>
