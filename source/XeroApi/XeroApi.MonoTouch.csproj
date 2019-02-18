@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5827049A-5B3A-479C-8CBF-CCE370871E4D}</ProjectGuid>
+    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>XeroApi.MonoTouch</RootNamespace>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+    <AssemblyName>XeroApi.MonoTouch</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;__IOS;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="monotouch" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml.Serialization" />
+    <Reference Include="System.Runtime.Serialization" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Include="Exceptions\ApiResponseException.cs" />
+    <Compile Include="Integration\IApiQueryDescription.cs" />
+    <Compile Include="Integration\IIntegrationProxy.cs" />
+    <Compile Include="Integration\IntegrationProxy.cs" />
+    <Compile Include="Integration\IRateLimiter.cs" />
+    <Compile Include="Integration\NullRateLimiter.cs" />
+    <Compile Include="Integration\ThrottlingIntegrationProxy.cs" />
+    <Compile Include="Integration\TrickleRateLimiter.cs" />
+    <Compile Include="Linq\ApiQuery.cs" />
+    <Compile Include="Linq\ApiQueryProvider.cs" />
+    <Compile Include="Linq\ApiQueryTranslator.cs" />
+    <Compile Include="Linq\ExpressionVisitor.cs" />
+    <Compile Include="Linq\LinqQueryDescription.cs" />
+    <Compile Include="Linq\PropertyInfoExtensions.cs" />
+    <Compile Include="Linq\QueryProvider.cs" />
+    <Compile Include="Linq\TypeSystem.cs" />
+    <Compile Include="Model\Reporting\AgedPayablesByContactReport.cs" />
+    <Compile Include="Model\Reporting\AgedReceivablesByContactReport.cs" />
+    <Compile Include="Model\Reporting\BalanceSheetReport.cs" />
+    <Compile Include="Model\Reporting\BankStatementReport.cs" />
+    <Compile Include="Model\Reporting\BankSummaryReport.cs" />
+    <Compile Include="Model\Reporting\BudgetSummaryReport.cs" />
+    <Compile Include="Model\Reporting\DynamicReportBase.cs" />
+    <Compile Include="Model\Reporting\ExecutiveSummaryReport.cs" />
+    <Compile Include="Model\Reporting\ProfitAndLossReport.cs" />
+    <Compile Include="Model\Reporting\PublishedReportBase.cs" />
+    <Compile Include="Model\Reporting\ReportQueryDescription.cs" />
+    <Compile Include="Model\Reporting\TrialBalanceReport.cs" />
+    <Compile Include="Model\Account.cs" />
+    <Compile Include="Model\AccountBase.cs" />
+    <Compile Include="Model\Address.cs" />
+    <Compile Include="Model\ApiException.cs" />
+    <Compile Include="Model\Attachment.cs" />
+    <Compile Include="Model\Balances.cs" />
+    <Compile Include="Model\BankTransaction.cs" />
+    <Compile Include="Model\BatchPayments.cs" />
+    <Compile Include="Model\BrandingTheme.cs" />
+    <Compile Include="Model\Contact.cs" />
+    <Compile Include="Model\ContactGroup.cs" />
+    <Compile Include="Model\CreditNote.cs" />
+    <Compile Include="Model\Currency.cs" />
+    <Compile Include="Model\Employee.cs" />
+    <Compile Include="Model\ExpenseClaim.cs" />
+    <Compile Include="Model\InventoryPrice.cs" />
+    <Compile Include="Model\Invoice.cs" />
+    <Compile Include="Model\Item.cs" />
+    <Compile Include="Model\Journal.cs" />
+    <Compile Include="Model\JournalLine.cs" />
+    <Compile Include="Model\LineAmountType.cs" />
+    <Compile Include="Model\LineItem.cs" />
+    <Compile Include="Model\Links.cs" />
+    <Compile Include="Model\ManualJournal.cs" />
+    <Compile Include="Model\ManualJournalLineItem.cs" />
+    <Compile Include="Model\ModelAttributes.cs" />
+    <Compile Include="Model\ModelBase.cs" />
+    <Compile Include="Model\ModelList.cs" />
+    <Compile Include="Model\ModelSerializer.cs" />
+    <Compile Include="Model\ModelTreeNavigator.cs" />
+    <Compile Include="Model\ModelTypeHelper.cs" />
+    <Compile Include="Model\Organisation.cs" />
+    <Compile Include="Model\Payment.cs" />
+    <Compile Include="Model\PaymentTermBase.cs" />
+    <Compile Include="Model\PaymentTerms.cs" />
+    <Compile Include="Model\Phone.cs" />
+    <Compile Include="Model\Receipt.cs" />
+    <Compile Include="Model\Report.cs" />
+    <Compile Include="Model\Response.cs" />
+    <Compile Include="Model\TaxComponent.cs" />
+    <Compile Include="Model\TaxRate.cs" />
+    <Compile Include="Model\TrackingCategory.cs" />
+    <Compile Include="Model\User.cs" />
+    <Compile Include="OAuth\Consumer\ConsumerRequest.cs" />
+    <Compile Include="OAuth\Consumer\ConsumerRequestExtensions.cs" />
+    <Compile Include="OAuth\Consumer\ConsumerRequestRunner.cs" />
+    <Compile Include="OAuth\Consumer\ConsumerResponse.cs" />
+    <Compile Include="OAuth\Consumer\DefaultConsumerRequestFactory.cs" />
+    <Compile Include="OAuth\Consumer\ICertificateFactory.cs" />
+    <Compile Include="OAuth\Consumer\IConsumerRequest.cs" />
+    <Compile Include="OAuth\Consumer\IConsumerRequestFactory.cs" />
+    <Compile Include="OAuth\Consumer\IMessageLogger.cs" />
+    <Compile Include="OAuth\Consumer\IOAuthConsumerContext.cs" />
+    <Compile Include="OAuth\Consumer\IOAuthSession.cs" />
+    <Compile Include="OAuth\Consumer\LocalFileCertificateFactory.cs" />
+    <Compile Include="OAuth\Consumer\LocalMachineCertificateFactory.cs" />
+    <Compile Include="OAuth\Consumer\NullCertificateFactory.cs" />
+    <Compile Include="OAuth\Consumer\OAuthConsumerContext.cs" />
+    <Compile Include="OAuth\Consumer\OAuthSession.cs" />
+    <Compile Include="OAuth\Consumer\RequestDescription.cs" />
+    <Compile Include="OAuth\Consumer\SimpleCertificateFactory.cs" />
+    <Compile Include="OAuth\Consumer\WebExceptionHelper.cs" />
+    <Compile Include="OAuth\Framework\Signing\HmacSha1SignatureImplementation.cs" />
+    <Compile Include="OAuth\Framework\Signing\IContextSignatureImplementation.cs" />
+    <Compile Include="OAuth\Framework\Signing\IOAuthContextSigner.cs" />
+    <Compile Include="OAuth\Framework\Signing\OAuthContextSigner.cs" />
+    <Compile Include="OAuth\Framework\Signing\PlainTextSignatureImplementation.cs" />
+    <Compile Include="OAuth\Framework\Signing\RsaSha1SignatureImplementation.cs" />
+    <Compile Include="OAuth\Framework\BoundParameter.cs" />
+    <Compile Include="OAuth\Framework\DateTimeUtility.cs" />
+    <Compile Include="OAuth\Framework\Error.cs" />
+    <Compile Include="OAuth\Framework\IConsumer.cs" />
+    <Compile Include="OAuth\Framework\INonceGenerator.cs" />
+    <Compile Include="OAuth\Framework\IOAuthContext.cs" />
+    <Compile Include="OAuth\Framework\IToken.cs" />
+    <Compile Include="OAuth\Framework\MissingTokenException.cs" />
+    <Compile Include="OAuth\Framework\NonceGenerator.cs" />
+    <Compile Include="OAuth\Framework\OAuthContext.cs" />
+    <Compile Include="OAuth\Framework\OAuthException.cs" />
+    <Compile Include="OAuth\Framework\OAuthProblemReport.cs" />
+    <Compile Include="OAuth\Framework\OAuthProblems.cs" />
+    <Compile Include="OAuth\Framework\Parameters.cs" />
+    <Compile Include="OAuth\Framework\SignatureMethod.cs" />
+    <Compile Include="OAuth\Framework\SigningContext.cs" />
+    <Compile Include="OAuth\Framework\TokenBase.cs" />
+    <Compile Include="OAuth\Framework\UriUtility.cs" />
+    <Compile Include="OAuth\Framework\With.cs" />
+    <Compile Include="OAuth\Logging\DebugMessageLogger.cs" />
+    <Compile Include="OAuth\Utility\Storage\Basic\AccessToken.cs" />
+    <Compile Include="OAuth\Utility\Storage\Basic\FixedValueTokenRepository.cs" />
+    <Compile Include="OAuth\Utility\Storage\Basic\InMemoryTokenRepository.cs" />
+    <Compile Include="OAuth\Utility\Storage\Basic\ITokenRepository.cs" />
+    <Compile Include="OAuth\Utility\Storage\Basic\RequestToken.cs" />
+    <Compile Include="OAuth\Utility\Storage\IConsumerStore.cs" />
+    <Compile Include="OAuth\Utility\Storage\INonceStore.cs" />
+    <Compile Include="OAuth\Utility\Storage\ITokenStore.cs" />
+    <Compile Include="OAuth\Utility\Storage\RequestForAccessStatus.cs" />
+    <Compile Include="OAuth\Utility\ReflectionBasedDictionaryAdapter.cs" />
+    <Compile Include="OAuth\Utility\StreamExtensions.cs" />
+    <Compile Include="OAuth\Utility\UnguessableGenerator.cs" />
+    <Compile Include="OAuth\XeroApiEndpoints.cs" />
+    <Compile Include="OAuth\XeroApiPartnerSession.cs" />
+    <Compile Include="OAuth\XeroApiPrivateSession.cs" />
+    <Compile Include="OAuth\XeroApiPublicSession.cs" />
+    <Compile Include="AttachmentRepository.cs" />
+    <Compile Include="IRepository.cs" />
+    <Compile Include="MimeTypes.cs" />
+    <Compile Include="ReportRepository.cs" />
+    <Compile Include="Repository.cs" />
+  </ItemGroup>
+</Project>
