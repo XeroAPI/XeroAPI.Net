@@ -69,6 +69,9 @@
     <Compile Include="Model\BankTransaction.cs" />
     <Compile Include="Model\BatchPayments.cs" />
     <Compile Include="Model\BrandingTheme.cs" />
+    <Compile Include="Model\Constants\InvoiceStatusCodes.cs" />
+    <Compile Include="Model\Constants\InvoiceTypes.cs" />
+    <Compile Include="Model\Constants\LineItemTaxTypes.cs" />
     <Compile Include="Model\ContactGroup.cs" />
     <Compile Include="Model\ContactPerson.cs" />
     <Compile Include="Model\CreditNote.cs" />
